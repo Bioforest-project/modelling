@@ -11,6 +11,7 @@ format:
 All Bayesian models in stan:
 
 -   dummy.stan: dummy model for dummy example
+-   dummy_par.stan: dummy model parrallelized for dummy example
 
 ```{r, comment=""}
 fs::dir_tree()

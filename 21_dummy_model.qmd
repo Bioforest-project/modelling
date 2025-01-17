@@ -3,6 +3,167 @@
 #| include: false
 library(tidyverse)
 library(knitr)
+library(cmdstanr)
+library(bayesplot)
+library(loo)
 ```
 
 # Dummy models {.unnumbered}
+
+Code example for model fitting and diagnostic with a simple and a paralleled version. The code is based on `cmdstanr` back-end. To do that we will use the following dummy model:
+
+$$
+AGB_{plot}  \sim \mathcal N(\alpha_{plot} + \beta_{plot} \times year, \sigma) \\
+\alpha_{plot} \sim \mathcal N(\alpha, \sigma_{alpha}) \\
+\beta_{plot} \sim \mathcal N(\beta \times year, \sigma_{beta})
+$$
+
+## Classic
+
+```{r data}
+#| message: false
+#| warning: false
+data <- read_csv("data/raw_data/aggregated_data.csv") %>%
+  rename_all(tolower) %>%
+  filter(variable == "agb") %>%
+  mutate(site_plot = paste0(site, "_", plot)) %>%
+  mutate(site_plot_num = as.numeric(as.factor(site_plot)))
+```
+
+```{r fit}
+#| eval: false
+mdata <- list(
+  N = nrow(data),
+  P = max(data$site_plot_num),
+  y = data$value,
+  year = data$year,
+  plot = data$site_plot_num
+)
+model <- cmdstan_model("models/dummy.stan")
+fit <- model$sample(
+  data = mdata,
+  chains = 4,
+  parallel_chains = 4,
+  threads_per_chain = 1,
+  save_warmup = FALSE,
+  max_treedepth = 12
+)
+dir.create("data/derived_data/dummy")
+fit$save_output_files(dir = "data/derived_data/dummy")
+```
+
+```{r load}
+#| message: false
+#| warning: false
+fit <- as_cmdstan_fit(list.files("data/derived_data/dummy", full.names = TRUE))
+```
+
+```{r rhat}
+#| fig-cap: "Rhat"
+rhat(fit) %>%
+  mcmc_rhat()
+```
+
+```{r trace}
+#| fig-cap: "Trace"
+fit$draws(c("alpha", "beta", "sigma", "sigma_a", "sigma_b")) %>%
+  mcmc_trace()
+```
+
+```{r pairs}
+#| fig-cap: "Pairs"
+fit$draws(c("alpha", "beta", "sigma", "sigma_a", "sigma_b")) %>%
+  mcmc_pairs()
+```
+
+```{r summarytab}
+fit$summary(c("alpha", "beta", "sigma", "sigma_a", "sigma_b")) %>%
+  kable(caption = "Summary")
+```
+
+```{r lootab}
+fit$loo()
+```
+
+```{r intervals}
+#| fig-cap: "Intervals"
+fit$draws(c("alpha", "beta", "sigma", "sigma_a", "sigma_b")) %>%
+  mcmc_intervals()
+```
+
+```{r pvo}
+#| message: false
+#| warning: false
+#| fig-cap: "Predicted versus observed."
+preds <- fit$summary(c("mu"), mean) %>%
+  rename(predicted = mean) %>%
+  mutate(variable = gsub("]", "", variable)) %>%
+  separate(variable, c("X", "site_plot_num"), sep = "mu\\[", convert = TRUE) %>%
+  select(-X) %>%
+  left_join(data) %>%
+  rename(observed = value)
+rmse <- sqrt(mean((preds$predicted - preds$observed)^2, na.rm = TRUE))
+preds %>%
+  ggplot(aes(predicted, observed)) +
+  geom_point(alpha = 0.25) +
+  geom_abline(col = "red", linetype = "dashed") +
+  ggtitle(paste("RMSE =", round(rmse, 2))) +
+  theme_bw()
+```
+
+```{r predicted}
+#| fig-cap: "Predicted trajectory"
+preds %>%
+  filter(site == "Paracou", plot == 1) %>%
+  ggplot(aes(year)) +
+  geom_point(aes(y = observed)) +
+  geom_line(aes(y = predicted)) +
+  theme_bw() +
+  theme(axis.title = element_blank())
+```
+
+## Parallel
+
+```{r fit_par}
+#| eval: false
+mdata <- list(
+  N = nrow(data),
+  P = max(data$site_plot_num),
+  y = data$value,
+  year = data$year,
+  plot = data$site_plot_num
+)
+model_par <- cmdstan_model("models/dummy.stan",
+                           cpp_options = list(stan_threads = TRUE))
+fit_par <- model_par$sample(
+  data = mdata,
+  chains = 4,
+  parallel_chains = 4,
+  threads_per_chain = 5,
+  save_warmup = FALSE,
+  max_treedepth = 12
+)
+dir.create("data/derived_data/dummy_par")
+fit_par$save_output_files(dir = "data/derived_data/dummy_par")
+```
+
+```{r load_par}
+#| message: false
+#| warning: false
+fit_par <- as_cmdstan_fit(list.files("data/derived_data/dummy_par",
+                                     full.names = TRUE))
+```
+
+```{r time}
+#| fig_cap: "Model benchmarking"
+list(
+  classic = fit$time()$chains,
+  parrallel = fit_par$time()$chains
+) %>%
+  bind_rows(.id = "model") %>%
+  ggplot(aes(model, total)) +
+  geom_boxplot() +
+  theme_bw() +
+  xlab("Model") +
+  ylab("Total time [ seconds ]")
+```

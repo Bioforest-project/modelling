@@ -11,7 +11,8 @@ format:
 
 This folder will contains the derived data for all analyses. In particular:
 
--   **...**
+-   dummy/: dummy model outputs for dummy example
+-   dummy_par/: dummy model parrallelized outputs for dummy example
 
 ```{r, comment=""}
 fs::dir_tree()

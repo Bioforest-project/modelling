@@ -1,3 +1,8 @@
+functions {
+  real partial_sum_lpdf(array[] real slice_y, int start, int end, vector mu, real sigma) {
+    return normal_lupdf(slice_y | mu[start:end], sigma);
+  }
+}
 data {
   int<lower=0> N ;
   int<lower=0> P ;
@@ -18,7 +23,8 @@ transformed parameters {
   vector[N] mu = alpha_p[plot] + beta_p[plot] .* year ;
 }
 model {
-  y ~ normal(mu, sigma) ;
+  int grainsize = 1;
+  target += reduce_sum(partial_sum_lpdf, y, grainsize, mu, sigma) ;
   alpha_p ~ normal(alpha, sigma_a) ;
   beta_p ~ normal(beta, sigma_b) ;
 }
