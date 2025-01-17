@@ -3,21 +3,28 @@
 #| include: false
 library(tidyverse)
 library(knitr)
+library(googlesheets4)
 ```
 
 # Dummy observations {.unnumbered}
 
 Code example for data exploration.
 
-> We should add plot infos on disturbance intensity, *i.e.* lost BA, and treatments (especially controls).
-
 ```{r data}
 #| message: false
 #| warning: false
+metadata <- read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?gid=0#gid=0", col_types = "c") %>%  #nolint
+  rename_all(tolower) %>%
+  select(site, plot, treatment, year_of_harvest) %>%
+  mutate(year_of_harvest = as.numeric(year_of_harvest)) %>%
+  rename(harvest_year = year_of_harvest) %>%
+  mutate(treatment = ifelse(treatment %in% c("Control", "Natural_Forest"),
+                            "control", "logged"))
 data <- read_csv("data/raw_data/aggregated_data.csv") %>%
   rename_all(tolower) %>%
   left_join(read_tsv("data/raw_data/environment.tsv") %>%
-              gather(env, env_value, -site, -plot))
+              gather(env, env_value, -site, -plot)) %>%
+  left_join(metadata)
 ```
 
 ```{r fig1}
@@ -46,4 +53,21 @@ data %>%
   ylab(expression("AGB [" ~ Mg ~ ha^{
     -1
   } ~ "]"))
+```
+
+```{r fig3}
+#| warning: false
+#| fig-cap: "Dummy figure 3 - treatment."
+data %>%
+  filter(variable == "agb") %>%
+  ggplot(aes(year, value, group = paste(site, plot), col = treatment)) +
+  geom_line() +
+  theme_bw() +
+  xlab("") +
+  ylab(expression("AGB [" ~ Mg ~ ha^{
+    -1
+  } ~ "]")) +
+  facet_wrap(~ site) +
+  geom_vline(aes(xintercept = harvest_year)) +
+  theme(legend.position = "bottom")
 ```
