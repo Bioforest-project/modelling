@@ -1,0 +1,44 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "species",
+    "section": "",
+    "text": "Introduction\nmodelling is a sub-project of the BioForest project aimed at species related data (correct names, functional traits, phylogeny) as part of the data preparation for data preparation within the project."
+  },
+  {
+    "objectID": "index.html#usage",
+    "href": "index.html#usage",
+    "title": "species",
+    "section": "Usage",
+    "text": "Usage\nAll modelling analyses rely on the quarto documents (files.qmd) that can be run with R and associated environment defined with renv."
+  },
+  {
+    "objectID": "index.html#project",
+    "href": "index.html#project",
+    "title": "species",
+    "section": "Project",
+    "text": "Project\nmodelling includes:\n\nAnalyse of the data with associated documentation and figures:\n\nReproductive analyses in files.qmd\nResulting pages in docs/\nDocument structure definition in _quarto.yml\n\nData in data/ with:\n\nAll raw data in raw_data/\nAll derived data in derived_sata/\n\nStan Bayesian models in models/\nR scripts with funtions in r/\nIntermediary files in outputs/\nFigures in figures/\nR environment definition with renv in renv/ and renv/lock\nR files (.Rbuildignore , .Rdata , .Rprofile , .Rhistory, .lintr)\nGit and GitHub files (.gitignore , .github/)\nProject documentation (README.qmd , README.md , NEWS.md, LICENSE )"
+  },
+  {
+    "objectID": "index.html#contribution",
+    "href": "index.html#contribution",
+    "title": "species",
+    "section": "Contribution",
+    "text": "Contribution\nYou can contribute to the project by forking the repository on github and cloning the fork to your machine using several options, including GitHub desktop GUI. Further informations on contribution are detailed in the online document: https://bioforest-project.github.io/data_preparation/98_contributing.html."
+  },
+  {
+    "objectID": "index.html#help",
+    "href": "index.html#help",
+    "title": "species",
+    "section": "Help",
+    "text": "Help\nPlease preferentially create an issue on GitHub for any questions, bugs or help needed regarding modelling: https://github.com/Bioforest-project/modelling/issues . You may however reach us by mail with people from the core group (see below)."
+  },
+  {
+    "objectID": "index.html#core-group",
+    "href": "index.html#core-group",
+    "title": "species",
+    "section": "Core group",
+    "text": "Core group\n\nSylvain Schmitt (sylvain.schmitt@cirad.fr)\nCamille Piponiot-Laroche (camille.piponiot-laroche@cirad.fr)\nBruno Hérault (bruno.herault@cirad.fr)\n\nThe whole group consist of participants to the Bioforest project."
+  }
+]

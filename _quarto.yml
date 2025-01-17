@@ -1,0 +1,23 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "species"
+  date: last-modified
+  chapters:
+    - index.qmd
+    - 11_dummy_obs.qmd
+    - 21_dummy_model.qmd
+  appendices:
+    - 99_references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+    code-fold: true
+    number-depth: -1
+
+editor: visual
