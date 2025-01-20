@@ -1,0 +1,166 @@
+```{r setup}
+#| message: false
+#| include: false
+library(tidyverse)
+library(knitr)
+library(cmdstanr)
+library(bayesplot)
+library(loo)
+```
+
+# Test 1 {.unnumbered}
+
+## Data
+
+```{r data}
+#| message: false
+#| warning: false
+data <- read_tsv("data/derived_data/data.tsv") %>% 
+  filter(variable == "nstem") %>% 
+  unique() %>% 
+  rename(stem = value) %>% 
+  select(-env, -env_value, -variable) %>% 
+  unique() %>% 
+  filter(!is.infinite(harvest_year_min))
+data_rec <- data %>% filter(treatment == "logged", rel_year > 2)
+data_old <- data %>% filter(treatment == "control")
+data_pre <- data %>% filter(rel_year <= 0)
+mdata <- list(
+  n_rec = nrow(data_rec),
+  n_old = nrow(data_old),
+  n_pre = nrow(data_pre),
+  n_site = max(data$sitenum),
+  n_plot = max(data$plotnum),
+  stem_rec = data_rec$stem,
+  stem_old = data_old$stem,
+  stem_pre = data_pre$stem,
+  time = data_rec$rel_year - 3,
+  site_rec = data_rec$sitenum,
+  site_old = data_old$sitenum,
+  site_pre = data_pre$sitenum,
+  plot_rec = data_rec$plotnum,
+  plot_old = data_old$plotnum ,
+  plot_pre = data_pre$plotnum
+)
+```
+
+```{r fig}
+ggplot(data, aes(rel_year, stem, group = siteplot, col = treatment)) +
+  geom_line() +
+  facet_wrap(~ site) +
+  theme_bw() +
+  xlab("") +
+  theme(legend.position = "bottom")
+```
+
+## LTP
+
+```{r ltp_fit}
+#| eval: false
+ltp <- cmdstan_model("models/ltp.stan")
+fit <- ltp$sample(
+  data = mdata,
+  chains = 4,
+  parallel_chains = 4,
+  threads_per_chain = 1,
+  save_warmup = FALSE
+)
+unlink("data/derived_data/ltp", recursive = TRUE)
+dir.create("data/derived_data/ltp")
+fit$save_output_files(dir = "data/derived_data/ltp")
+```
+
+```{r load_ltp}
+#| message: false
+#| warning: false
+fit_ltp <- as_cmdstan_fit(list.files("data/derived_data/ltp", full.names = TRUE))
+```
+
+```{r ltp}
+fit_ltp
+```
+
+```{r pvo_ltp}
+#| message: false
+#| warning: false
+#| fig-cap: "Predicted versus observed."
+data_rec$preds <- fit_ltp$summary(c("mu_rec"), median)$median
+rmse <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
+data_rec %>%
+  ggplot(aes(preds, stem)) +
+  geom_point(alpha = 0.25) +
+  geom_abline(col = "red", linetype = "dashed") +
+  ggtitle(paste("RMSE =", round(rmse, 2))) +
+  theme_bw()
+```
+
+```{r preds_ltp}
+ggplot(data_rec, aes(rel_year, group = siteplot)) +
+  geom_point(aes(y = stem), alpha = .5) +
+  geom_line(aes(y = preds)) +
+  facet_wrap(~ site, scales = "free") +
+  theme_bw() +
+  xlab("") +
+  theme(legend.position = "bottom")
+```
+
+## STP
+
+```{r stp_fit}
+#| eval: false
+stp <- cmdstan_model("models/stp.stan")
+fit <- stp$sample(
+  data = mdata,
+  chains = 4,
+  parallel_chains = 4,
+  threads_per_chain = 1,
+  save_warmup = FALSE
+)
+unlink("data/derived_data/stp", recursive = TRUE)
+dir.create("data/derived_data/stp")
+fit$save_output_files(dir = "data/derived_data/stp")
+```
+
+```{r load_stp}
+#| message: false
+#| warning: false
+fit_stp <- as_cmdstan_fit(list.files("data/derived_data/stp", full.names = TRUE))
+```
+
+```{r stp}
+fit_stp
+```
+
+```{r pvo_stp}
+#| message: false
+#| warning: false
+#| fig-cap: "Predicted versus observed."
+data_rec$preds <- fit_stp$summary(c("mu_rec"), median)$median
+rmse <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
+data_rec %>%
+  ggplot(aes(preds, stem)) +
+  geom_point(alpha = 0.25) +
+  geom_abline(col = "red", linetype = "dashed") +
+  ggtitle(paste("RMSE =", round(rmse, 2))) +
+  theme_bw()
+```
+
+```{r stp_fig}
+ggplot(data_rec, aes(rel_year, group = siteplot)) +
+  geom_point(aes(y = stem), alpha = .5) +
+  geom_line(aes(y = preds)) +
+  facet_wrap(~ site, scales = "free") +
+  theme_bw() +
+  xlab("") +
+  theme(legend.position = "bottom")
+```
+
+## Horseshoe
+
+## Comparison
+
+```{r loo_compare}
+loo_compare(fit_ltp$loo(), 
+            fit_stp$loo()) %>% 
+  kable()
+```
