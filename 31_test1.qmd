@@ -15,12 +15,12 @@ library(loo)
 ```{r data}
 #| message: false
 #| warning: false
-data <- read_tsv("data/derived_data/data.tsv") %>% 
-  filter(variable == "nstem") %>% 
-  unique() %>% 
-  rename(stem = value) %>% 
-  select(-env, -env_value, -variable) %>% 
-  unique() %>% 
+data <- read_tsv("data/derived_data/data.tsv") %>%
+  filter(variable == "nstem") %>%
+  unique() %>%
+  rename(stem = value) %>%
+  select(-env, -env_value, -variable) %>%
+  unique() %>%
   filter(!is.infinite(harvest_year_min))
 data_rec <- data %>% filter(treatment == "logged", rel_year > 2)
 data_old <- data %>% filter(treatment == "control")
@@ -39,7 +39,7 @@ mdata <- list(
   site_old = data_old$sitenum,
   site_pre = data_pre$sitenum,
   plot_rec = data_rec$plotnum,
-  plot_old = data_old$plotnum ,
+  plot_old = data_old$plotnum,
   plot_pre = data_pre$plotnum
 )
 ```
@@ -47,7 +47,7 @@ mdata <- list(
 ```{r fig}
 ggplot(data, aes(rel_year, stem, group = siteplot, col = treatment)) +
   geom_line() +
-  facet_wrap(~ site) +
+  facet_wrap(~site) +
   theme_bw() +
   xlab("") +
   theme(legend.position = "bottom")
@@ -73,7 +73,8 @@ fit$save_output_files(dir = "data/derived_data/ltp")
 ```{r load_ltp}
 #| message: false
 #| warning: false
-fit_ltp <- as_cmdstan_fit(list.files("data/derived_data/ltp", full.names = TRUE))
+fit_ltp <- as_cmdstan_fit(list.files("data/derived_data/ltp",
+                                     full.names = TRUE))
 ```
 
 ```{r ltp}
@@ -98,7 +99,7 @@ data_rec %>%
 ggplot(data_rec, aes(rel_year, group = siteplot)) +
   geom_point(aes(y = stem), alpha = .5) +
   geom_line(aes(y = preds)) +
-  facet_wrap(~ site, scales = "free") +
+  facet_wrap(~site, scales = "free") +
   theme_bw() +
   xlab("") +
   theme(legend.position = "bottom")
@@ -124,7 +125,8 @@ fit$save_output_files(dir = "data/derived_data/stp")
 ```{r load_stp}
 #| message: false
 #| warning: false
-fit_stp <- as_cmdstan_fit(list.files("data/derived_data/stp", full.names = TRUE))
+fit_stp <- as_cmdstan_fit(list.files("data/derived_data/stp",
+                                     full.names = TRUE))
 ```
 
 ```{r stp}
@@ -149,7 +151,7 @@ data_rec %>%
 ggplot(data_rec, aes(rel_year, group = siteplot)) +
   geom_point(aes(y = stem), alpha = .5) +
   geom_line(aes(y = preds)) +
-  facet_wrap(~ site, scales = "free") +
+  facet_wrap(~site, scales = "free") +
   theme_bw() +
   xlab("") +
   theme(legend.position = "bottom")
@@ -160,7 +162,9 @@ ggplot(data_rec, aes(rel_year, group = siteplot)) +
 ## Comparison
 
 ```{r loo_compare}
-loo_compare(fit_ltp$loo(), 
-            fit_stp$loo()) %>% 
+loo_compare(
+  fit_ltp$loo(),
+  fit_stp$loo()
+) %>%
   kable()
 ```

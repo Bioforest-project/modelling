@@ -134,7 +134,8 @@ mdata <- list(
   plot = data$site_plot_num
 )
 model_par <- cmdstan_model("models/dummy.stan",
-                           cpp_options = list(stan_threads = TRUE))
+  cpp_options = list(stan_threads = TRUE)
+)
 fit_par <- model_par$sample(
   data = mdata,
   chains = 4,
@@ -151,7 +152,8 @@ fit_par$save_output_files(dir = "data/derived_data/dummy_par")
 #| message: false
 #| warning: false
 fit_par <- as_cmdstan_fit(list.files("data/derived_data/dummy_par",
-                                     full.names = TRUE))
+  full.names = TRUE
+))
 ```
 
 ```{r time}

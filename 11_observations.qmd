@@ -10,43 +10,44 @@ library(googlesheets4)
 
 Code example for data exploration.
 
-ToDo:
+In progress:
 
 -   Add new functional traits to species analyses: plant nitrogen fixation capacity & leaf phenology type
 -   Include Kibale in environmental analyses with coordinates (0deg13–0deg41 N; 30deg19–30deg32 E = 0.27°N; 30.255°E = 0.45;34.25)
--   Clean metadata with lacking treatments and fortified harvesting year
--   Prepare models with n_stem LTP only, LTP + STP, LTP + STP with horseshoe, including models comparisons with loo (with or without parrallelization, to be tested)
 
 Done:
 
 -   Remove Kabo pre-logging inventories (incomplete)
 -   Remove Peteco from analyses
+-   Prepare models with n_stem LTP only, LTP + STP, LTP + STP with horseshoe, including models comparisons with loo (with or without parrallelization, to be tested)
+-   Clean metadata with lacking treatments and fortified harvesting year
 
 ```{r data}
 #| message: false
 #| warning: false
 #| eval: false
-metadata <- read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?gid=0#gid=0", col_types = "c") %>%  #nolint
+metadata <- read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?gid=0#gid=0", col_types = "c") %>% # nolint
   rename_all(tolower) %>%
   select(site, plot, treatment, year_of_harvest) %>%
-  separate(year_of_harvest, "year_of_harvest") %>% 
+  separate(year_of_harvest, "year_of_harvest") %>%
   mutate(year_of_harvest = as.numeric(year_of_harvest)) %>%
   rename(harvest_year = year_of_harvest) %>%
   mutate(treatment = ifelse(treatment %in% c("Control", "Natural_Forest"),
-                            "control", "logged")) %>% 
-  group_by(site) %>% 
-  mutate(harvest_year_min = min(harvest_year, na.rm = T)) %>% 
+    "control", "logged"
+  )) %>%
+  group_by(site) %>%
+  mutate(harvest_year_min = min(harvest_year, na.rm = TRUE)) %>%
   mutate(harvest_year_min = ifelse(site == "Paracou", 1986, harvest_year_min))
 data <- read_csv("data/raw_data/aggregated_data.csv") %>%
   rename_all(tolower) %>%
   left_join(read_tsv("data/raw_data/environment.tsv") %>%
               gather(env, env_value, -site, -plot)) %>%
-  left_join(metadata) %>% 
-  filter(site != "Peteco") %>% 
-  filter(!(site == "Kabo" & year < 1980)) %>% 
-  mutate(sitenum = as.numeric(as.factor(site))) %>% 
-  mutate(siteplot = paste0(site, "_", plot)) %>% 
-  mutate(plotnum = as.numeric(as.factor(siteplot))) %>% 
+  left_join(metadata) %>%
+  filter(site != "Peteco") %>%
+  filter(!(site == "Kabo" & year < 1980)) %>%
+  mutate(sitenum = as.numeric(as.factor(site))) %>%
+  mutate(siteplot = paste0(site, "_", plot)) %>%
+  mutate(plotnum = as.numeric(as.factor(siteplot))) %>%
   mutate(rel_year = year - harvest_year_min)
 write_tsv(data, "data/derived_data/data.tsv")
 ```
@@ -85,21 +86,21 @@ read_tsv("data/derived_data/data.tsv") %>%
 
 ```{r figs_out}
 #| eval: false
-make_fig <- function(var){
+make_fig <- function(var) {
   g <- read_tsv("data/derived_data/data.tsv") %>%
-  filter(variable == var) %>%
-  ggplot(aes(year, value, group = paste(site, plot), col = treatment)) +
-  geom_line() +
-  theme_bw() +
-  xlab("") +
-  ylab("") +
-  facet_wrap(~ site, scales = "free") +
-  geom_vline(aes(xintercept = harvest_year)) +
-  theme(legend.position = "bottom") +
+    filter(variable == var) %>%
+    ggplot(aes(year, value, group = paste(site, plot), col = treatment)) +
+    geom_line() +
+    theme_bw() +
+    xlab("") +
+    ylab("") +
+    facet_wrap(~site, scales = "free") +
+    geom_vline(aes(xintercept = harvest_year)) +
+    theme(legend.position = "bottom") +
     ggtitle(var)
   ggsave(plot = g, filename = paste0("figures/obs/", var, ".png"))
 }
-unique(read_tsv("data/derived_data/data.tsv")$variable) %>% 
+unique(read_tsv("data/derived_data/data.tsv")$variable) %>%
   lapply(make_fig)
 ```
 
@@ -114,9 +115,9 @@ read_tsv("data/derived_data/data.tsv") %>%
   theme_bw() +
   xlab("") +
   ylab(expression("AGB [" ~ Mg ~ ha^{
-   -1
+    -1
   } ~ "]")) +
-  facet_wrap(~ site, scales = "free") +
+  facet_wrap(~site, scales = "free") +
   geom_vline(aes(xintercept = harvest_year)) +
   theme(legend.position = "bottom")
 ```

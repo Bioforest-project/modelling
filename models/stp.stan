@@ -16,7 +16,7 @@ data {
   array[n_pre] int<lower=0, upper=n_plot> plot_pre;
 }
 parameters {
-    real<lower=0, upper=2000> mu_theta0 ; // starting point
+  real<lower=0, upper=2000> mu_theta0 ; // starting point
   real<lower=0> sigma_theta0 ;
   vector<lower=0, upper=2000>[n_plot] theta0_p ;
   real<lower=0, upper=0.5> mu_lambda ; // recovery rate
@@ -38,15 +38,12 @@ parameters {
 transformed parameters {
   vector[n_old] mu_old = thetaInf_s[site_old];
   vector[n_pre] mu_pre = thetaInf_s[site_pre];
-  vector[n_rec] mu_rec;
-  for(k in 1:n_rec)
-    mu_rec[k] = theta0_p[plot_rec[k]] + 
-                (thetaInf_s[site_rec[k]] - theta0_p[plot_rec[k]]) *
-                (1 - exp(-lambda_p[plot_rec[k]] * time[k])) *
-                (delta_p[plot_rec[k]] * 
-                (time[k]/tau_s[site_rec[k]] * exp( 1 - time[k]/tau_s[site_rec[k]] )) *
-                (time[k]/tau_s[site_rec[k]] * exp( 1 - time[k]/tau_s[site_rec[k]] ))
-                );
+  vector[n_rec] mu_rec = theta0_p[plot_rec] + 
+                         (thetaInf_s[site_rec] - theta0_p[plot_rec]) .*
+                         (1 - exp(-lambda_p[plot_rec] .* time)) .*
+                         (delta_p[plot_rec] .* 
+                         (time ./ tau_s[site_rec] .* exp( 1 - time ./ tau_s[site_rec] )) .*
+                         (time ./ tau_s[site_rec] .* exp( 1 - time ./ tau_s[site_rec] )));
 }
 model {
   stem_old ~ lognormal(log(mu_old), sigma_old) ;
