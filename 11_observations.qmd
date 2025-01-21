@@ -8,19 +8,7 @@ library(googlesheets4)
 
 # Observations {.unnumbered}
 
-Code example for data exploration.
-
-In progress:
-
--   Add new functional traits to species analyses: plant nitrogen fixation capacity & leaf phenology type
--   Include Kibale in environmental analyses with coordinates (0deg13–0deg41 N; 30deg19–30deg32 E = 0.27°N; 30.255°E = 0.45;34.25)
-
-Done:
-
--   Remove Kabo pre-logging inventories (incomplete)
--   Remove Peteco from analyses
--   Prepare models with n_stem LTP only, LTP + STP, LTP + STP with horseshoe, including models comparisons with loo (with or without parrallelization, to be tested)
--   Clean metadata with lacking treatments and fortified harvesting year
+Data exploration.
 
 ```{r data}
 #| message: false
@@ -32,23 +20,29 @@ metadata <- read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcd
   separate(year_of_harvest, "year_of_harvest") %>%
   mutate(year_of_harvest = as.numeric(year_of_harvest)) %>%
   rename(harvest_year = year_of_harvest) %>%
-  mutate(treatment = ifelse(treatment %in% c("Control", "Natural_Forest"),
+  mutate(treatment = ifelse(
+    treatment %in% c("control", "Control", "Natural_Forest"),
     "control", "logged"
   )) %>%
   group_by(site) %>%
   mutate(harvest_year_min = min(harvest_year, na.rm = TRUE)) %>%
+  mutate(harvest_year = ifelse(site == "Paracou", 1986, harvest_year)) %>%
   mutate(harvest_year_min = ifelse(site == "Paracou", 1986, harvest_year_min))
 data <- read_csv("data/raw_data/aggregated_data.csv") %>%
   rename_all(tolower) %>%
   left_join(read_tsv("data/raw_data/environment.tsv") %>%
               gather(env, env_value, -site, -plot)) %>%
+  left_join(read_csv("data/raw_data/plot_area.csv") %>%
+              rename_all(tolower) %>%
+              select(site, plot, plotarea) %>%
+              unique()) %>%
   left_join(metadata) %>%
-  filter(site != "Peteco") %>%
+  filter(!(site %in% c("Peteco", "Bafog", "Tene", "Montagne_Tortue"))) %>%
   filter(!(site == "Kabo" & year < 1980)) %>%
-  mutate(sitenum = as.numeric(as.factor(site))) %>%
-  mutate(siteplot = paste0(site, "_", plot)) %>%
-  mutate(plotnum = as.numeric(as.factor(siteplot))) %>%
-  mutate(rel_year = year - harvest_year_min)
+  mutate(rel_year = ifelse(treatment == "control",
+    year - harvest_year_min,
+    year - harvest_year
+  ))
 write_tsv(data, "data/derived_data/data.tsv")
 ```
 

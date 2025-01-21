@@ -1,0 +1,357 @@
+```{r setup}
+#| message: false
+#| include: false
+library(tidyverse)
+library(knitr)
+library(cmdstanr)
+library(bayesplot)
+library(loo)
+library(patchwork)
+```
+
+# Stem {.unnumbered}
+
+Test of modelling with stem density.
+
+ToDo:
+
+-   Add Mbaiki control
+
+## Data
+
+```{r data}
+#| message: false
+#| warning: false
+data <- read_tsv("data/derived_data/data.tsv") %>%
+  filter(variable == "nstem") %>%
+  unique() %>%
+  rename(stem = value) %>%
+  select(-env, -env_value, -variable) %>%
+  unique() %>%
+  filter(!is.infinite(harvest_year_min)) %>%
+  mutate(sitenum = as.numeric(as.factor(site)))
+data_rec <- data %>%
+  filter(treatment == "logged", rel_year > 2) %>%
+  mutate(plotnum = as.numeric(as.factor(paste0(site, "_", plot))))
+data_old <- data %>% filter(treatment == "control")
+data_pre <- data %>% filter(rel_year <= 0)
+ind_rec <- data_rec %>%
+  select(site, plot, sitenum, plotnum) %>%
+  unique() %>%
+  arrange(plotnum)
+mdata <- list(
+  n_rec = nrow(data_rec),
+  n_old = nrow(data_old),
+  n_pre = nrow(data_pre),
+  n_site = max(data_rec$sitenum),
+  n_plot_rec = max(data_rec$plotnum),
+  stem_rec = data_rec$stem,
+  stem_old = data_old$stem,
+  stem_pre = data_pre$stem,
+  time = data_rec$rel_year - 3,
+  site_rec = data_rec$sitenum,
+  site_old = data_old$sitenum,
+  site_pre = data_pre$sitenum,
+  plot_rec = data_rec$plotnum,
+  site_plot_rec = ind_rec$sitenum
+)
+```
+
+```{r fig}
+#| fig-cap: "Modelled trajectories."
+ggplot(data, aes(rel_year, stem, group = paste(site, plot), col = treatment)) +
+  geom_line() +
+  facet_wrap(~site) +
+  theme_bw() +
+  xlab("") +
+  ylab(expression("Stems [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  theme(legend.position = "bottom") +
+  scale_color_discrete("")
+```
+
+## LTP
+
+Long term process only model:
+
+$$
+\begin{align}
+\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times LTP \\
+LTP = 1 - e^{-\lambda_p \times time}
+\end{align}
+$$
+
+```{r ltp_fit}
+#| eval: false
+ltp <- cmdstan_model("models/ltp.stan")
+unlink("data/derived_data/ltp", recursive = TRUE)
+dir.create("data/derived_data/ltp")
+fit_ltp <- ltp$sample(
+  data = mdata,
+  chains = 4,
+  parallel_chains = 4,
+  save_warmup = FALSE,
+  output_dir = "data/derived_data/ltp"
+)
+```
+
+```{r load_ltp}
+#| message: false
+#| warning: false
+fit_ltp <- as_cmdstan_fit(list.files("data/derived_data/ltp",
+  full.names = TRUE
+))
+fit_ltp
+```
+
+```{r pvo_ltp}
+#| message: false
+#| warning: false
+#| fig-cap: "Predicted versus observed."
+data_rec$preds <- fit_ltp$summary(c("mu_rec"), median)$median
+rmse_rec <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
+g_rec <- data_rec %>%
+  ggplot(aes(preds, stem)) +
+  geom_point(alpha = 0.25) +
+  geom_abline(col = "red", linetype = "dashed") +
+  ggtitle("Recovery", paste("RMSE =", round(rmse_rec, 2))) +
+  theme_bw() +
+  xlab(expression("Predicted [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  ylab(expression("Observed [ trees" ~ ha^{
+    -1
+  } ~ "]"))
+data_pre$preds <- fit_ltp$summary(c("mu_pre"), median)$median
+rmse_pre <- sqrt(mean((data_pre$preds - data_pre$stem)^2, na.rm = TRUE))
+g_pre <- data_pre %>%
+  ggplot(aes(preds, stem, col = site)) +
+  geom_point(alpha = 0.25) +
+  geom_abline(col = "red", linetype = "dashed") +
+  ggtitle("Prelogging", paste("RMSE =", round(rmse_pre, 2))) +
+  theme_bw() +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression("Predicted [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  ylab(expression("Observed [ trees" ~ ha^{
+    -1
+  } ~ "]"))
+g_pre + g_rec
+```
+
+```{r preds_ltp}
+#| fig-cap: "Predicted trajectories."
+bind_rows(data_pre, data_rec) %>%
+  ggplot(aes(rel_year, group = paste(site, plot), col = plot)) +
+  geom_point(aes(y = stem), alpha = .5) +
+  geom_line(aes(y = preds)) +
+  facet_wrap(~site, scales = "free") +
+  theme_bw() +
+  xlab("") +
+  theme(legend.position = "bottom") +
+  ylab(expression("Stem [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  scale_color_discrete(guide = "none")
+```
+
+## STP sum
+
+Long term and short term processes model based on initial value $\theta_0$:
+
+$$
+\begin{align}
+\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times (LTP+STP) \\
+LTP = 1 - e^{-\lambda_p \times time} \\
+STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2
+\end{align}
+$$
+
+```{r stp_sum_fit}
+#| eval: false
+stp_sum <- cmdstan_model("models/stp_sum.stan")
+unlink("data/derived_data/stp_sum", recursive = TRUE)
+dir.create("data/derived_data/stp_sum")
+fit_stp_sum <- stp_sum$sample(
+  data = mdata,
+  chains = 4,
+  parallel_chains = 4,
+  save_warmup = FALSE,
+  output_dir = "data/derived_data/stp_sum"
+)
+```
+
+```{r load_stp_sum}
+#| message: false
+#| warning: false
+fit_stp_sum <- as_cmdstan_fit(list.files("data/derived_data/stp_sum",
+  full.names = TRUE
+))
+fit_stp_sum
+```
+
+```{r pvo_stp_sum}
+#| message: false
+#| warning: false
+#| fig-cap: "Predicted versus observed."
+data_rec$preds <- fit_stp_sum$summary(c("mu_rec"), median)$median
+rmse_rec <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
+g_rec <- data_rec %>%
+  ggplot(aes(preds, stem)) +
+  geom_point(alpha = 0.25) +
+  geom_abline(col = "red", linetype = "dashed") +
+  ggtitle("Recovery", paste("RMSE =", round(rmse_rec, 2))) +
+  theme_bw() +
+  xlab(expression("Predicted [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  ylab(expression("Observed [ trees" ~ ha^{
+    -1
+  } ~ "]"))
+data_pre$preds <- fit_stp_sum$summary(c("mu_pre"), median)$median
+rmse_pre <- sqrt(mean((data_pre$preds - data_pre$stem)^2, na.rm = TRUE))
+g_pre <- data_pre %>%
+  ggplot(aes(preds, stem, col = site)) +
+  geom_point(alpha = 0.25) +
+  geom_abline(col = "red", linetype = "dashed") +
+  ggtitle("Prelogging", paste("RMSE =", round(rmse_pre, 2))) +
+  theme_bw() +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression("Predicted [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  ylab(expression("Observed [ trees" ~ ha^{
+    -1
+  } ~ "]"))
+g_pre + g_rec
+```
+
+```{r preds_stp_sum}
+#| fig-cap: "Predicted trajectories."
+bind_rows(data_pre, data_rec) %>%
+  ggplot(aes(rel_year, group = paste(site, plot), col = plot)) +
+  geom_point(aes(y = stem), alpha = .5) +
+  geom_line(aes(y = preds)) +
+  facet_wrap(~site, scales = "free") +
+  theme_bw() +
+  xlab("") +
+  theme(legend.position = "bottom") +
+  ylab(expression("Stem [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  scale_color_discrete(guide = "none")
+```
+
+## STP dist
+
+Long term and short term processes model based on disturbance index $dist$:
+
+$$
+\begin{align}
+\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times (LTP+STP) \\
+LTP = 1 - e^{-\lambda_p \times time} \\
+STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \\
+\theta_{0,p} = \theta_{\infty,s} \times dist_p
+\end{align}
+$$
+
+```{r stp_fit}
+#| eval: false
+stp <- cmdstan_model("models/stp.stan")
+unlink("data/derived_data/stp", recursive = TRUE)
+dir.create("data/derived_data/stp")
+fit_stp <- stp$sample(
+  data = mdata,
+  chains = 4,
+  parallel_chains = 4,
+  save_warmup = FALSE,
+  output_dir = "data/derived_data/stp"
+)
+```
+
+```{r load_stp}
+#| message: false
+#| warning: false
+fit_stp <- as_cmdstan_fit(list.files("data/derived_data/stp",
+  full.names = TRUE
+))
+fit_stp
+```
+
+```{r pvo_stp}
+#| message: false
+#| warning: false
+#| fig-cap: "Predicted versus observed."
+data_rec$preds <- fit_stp$summary(c("mu_rec"), median)$median
+rmse_rec <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
+g_rec <- data_rec %>%
+  ggplot(aes(preds, stem)) +
+  geom_point(alpha = 0.25) +
+  geom_abline(col = "red", linetype = "dashed") +
+  ggtitle("Recovery", paste("RMSE =", round(rmse_rec, 2))) +
+  theme_bw() +
+  xlab(expression("Predicted [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  ylab(expression("Observed [ trees" ~ ha^{
+    -1
+  } ~ "]"))
+data_pre$preds <- fit_stp$summary(c("mu_pre"), median)$median
+rmse_pre <- sqrt(mean((data_pre$preds - data_pre$stem)^2, na.rm = TRUE))
+g_pre <- data_pre %>%
+  ggplot(aes(preds, stem, col = site)) +
+  geom_point(alpha = 0.25) +
+  geom_abline(col = "red", linetype = "dashed") +
+  ggtitle("Prelogging", paste("RMSE =", round(rmse_pre, 2))) +
+  theme_bw() +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression("Predicted [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  ylab(expression("Observed [ trees" ~ ha^{
+    -1
+  } ~ "]"))
+g_pre + g_rec
+```
+
+```{r preds_stp}
+#| fig-cap: "Predicted trajectories."
+bind_rows(data_pre, data_rec) %>%
+  ggplot(aes(rel_year, group = paste(site, plot), col = plot)) +
+  geom_point(aes(y = stem), alpha = .5) +
+  geom_line(aes(y = preds)) +
+  facet_wrap(~site, scales = "free") +
+  theme_bw() +
+  xlab("") +
+  theme(legend.position = "bottom") +
+  ylab(expression("Stem [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  scale_color_discrete(guide = "none")
+```
+
+```{r dist_stp}
+#| fig-cap: "Disturbance parameters posteriors."
+fit_stp$draws("dist_p") %>%
+  mcmc_intervals()
+```
+
+## Horseshoe
+
+> *To be developed.*
+
+## Comparison
+
+```{r loo_compare}
+loo_compare(
+  fit_ltp$loo(),
+  fit_stp_sum$loo(),
+  fit_stp$loo()
+) %>%
+  kable()
+```
