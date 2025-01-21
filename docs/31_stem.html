@@ -190,6 +190,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#ltp" id="toc-ltp" class="nav-link" data-scroll-target="#ltp">LTP</a></li>
   <li><a href="#stp-sum" id="toc-stp-sum" class="nav-link" data-scroll-target="#stp-sum">STP sum</a></li>
   <li><a href="#stp-dist" id="toc-stp-dist" class="nav-link" data-scroll-target="#stp-dist">STP dist</a></li>
+  <li><a href="#stp-n" id="toc-stp-n" class="nav-link" data-scroll-target="#stp-n">STP n</a></li>
   <li><a href="#horseshoe" id="toc-horseshoe" class="nav-link" data-scroll-target="#horseshoe">Horseshoe</a></li>
   <li><a href="#comparison" id="toc-comparison" class="nav-link" data-scroll-target="#comparison">Comparison</a></li>
   </ul>
@@ -557,16 +558,16 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>   variable   mean median    sd   mad     q5    q95 rhat ess_bulk ess_tail
- lp__       535.50 586.96 94.45 43.99 384.59 630.54 1.68        4       43
- mu_dist      0.86   0.86  0.03  0.03   0.82   0.91 1.14       13      120
- sigma_dist   0.26   0.26  0.02  0.02   0.23   0.30 1.06       33      902
- dist_p[1]    0.74   0.73  0.06  0.06   0.64   0.85 1.01     1693     1337
- dist_p[2]    0.93   0.93  0.08  0.08   0.80   1.05 1.00     2331     1868
- dist_p[3]    0.78   0.78  0.06  0.06   0.69   0.88 1.01     1993     1438
- dist_p[4]    0.76   0.76  0.07  0.07   0.66   0.88 1.02     1736     1420
- dist_p[5]    0.78   0.78  0.07  0.06   0.68   0.89 1.01     2115     1923
- dist_p[6]    0.88   0.88  0.06  0.06   0.78   0.99 1.01     1581     1599
- dist_p[7]    0.81   0.81  0.07  0.07   0.70   0.93 1.01     1515      915
+ lp__       441.17 444.89 52.29 68.06 357.90 513.61 1.82        3      199
+ mu_dist      0.88   0.88  0.03  0.03   0.83   0.93 1.04       44     1020
+ sigma_dist   0.28   0.28  0.02  0.02   0.24   0.32 1.10       14      652
+ dist_p[1]    0.73   0.73  0.06  0.06   0.64   0.84 1.01     2175     1379
+ dist_p[2]    0.92   0.92  0.07  0.07   0.80   1.04 1.00     1850     1325
+ dist_p[3]    0.77   0.77  0.06  0.06   0.68   0.87 1.01     1682     1323
+ dist_p[4]    0.76   0.76  0.06  0.06   0.66   0.87 1.00     2174     1622
+ dist_p[5]    0.78   0.78  0.06  0.06   0.68   0.88 1.00     1515     1259
+ dist_p[6]    0.87   0.87  0.06  0.06   0.77   0.99 1.03       56      830
+ dist_p[7]    0.81   0.80  0.07  0.07   0.70   0.92 1.01     1703     1625
 
  # showing 10 of 4397 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
@@ -656,6 +657,187 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \
 </div>
 </div>
 </section>
+<section id="stp-n" class="level2">
+<h2 class="anchored" data-anchor-id="stp-n">STP n</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>stp <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"models/stp_norm.stan"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unlink</span>(<span class="st">"data/derived_data/stp_norm"</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"data/derived_data/stp_norm"</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>fit_stp_norm <span class="ot">&lt;-</span> stp<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mdata,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_warmup =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">output_dir =</span> <span class="st">"data/derived_data/stp_norm"</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>fit_stp_norm <span class="ot">&lt;-</span> <span class="fu">as_cmdstan_fit</span>(<span class="fu">list.files</span>(<span class="st">"data/derived_data/stp_norm"</span>,</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">full.names =</span> <span class="cn">TRUE</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>fit_stp_norm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>     variable    mean  median    sd   mad      q5     q95 rhat ess_bulk
+ lp__         2289.82 2274.98 59.33 57.93 2213.99 2393.93 2.16        5
+ mu_theta0       5.79    5.78  0.06  0.06    5.69    5.89 1.29       10
+ sigma_theta0    0.47    0.46  0.04  0.04    0.40    0.54 1.18       15
+ theta0_p[1]     5.32    5.32  0.07  0.07    5.20    5.43 1.00     4454
+ theta0_p[2]     5.56    5.57  0.07  0.07    5.45    5.67 1.00     4181
+ theta0_p[3]     5.38    5.39  0.06  0.06    5.27    5.48 1.00     4224
+ theta0_p[4]     5.35    5.36  0.08  0.08    5.23    5.47 1.00     3921
+ theta0_p[5]     5.38    5.38  0.07  0.07    5.27    5.49 1.00     4335
+ theta0_p[6]     5.51    5.51  0.05  0.05    5.42    5.59 1.00     4566
+ theta0_p[7]     5.42    5.42  0.07  0.07    5.29    5.54 1.00     4309
+ ess_tail
+       24
+       90
+       77
+     2389
+     3347
+     2884
+     2535
+     3267
+     2582
+     2714
+
+ # showing 10 of 4291 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>data_rec<span class="sc">$</span>preds <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_stp_norm<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"mu_rec"</span>), median)<span class="sc">$</span>median)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>rmse_rec <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((data_rec<span class="sc">$</span>preds <span class="sc">-</span> data_rec<span class="sc">$</span>stem)<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>g_rec <span class="ot">&lt;-</span> data_rec <span class="sc">%&gt;%</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(preds, stem)) <span class="sc">+</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">col =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Recovery"</span>, <span class="fu">paste</span>(<span class="st">"RMSE ="</span>, <span class="fu">round</span>(rmse_rec, <span class="dv">2</span>))) <span class="sc">+</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="fu">expression</span>(<span class="st">"Predicted [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>)) <span class="sc">+</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="st">"Observed [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>))</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>data_pre<span class="sc">$</span>preds <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_stp_norm<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"mu_pre"</span>), median)<span class="sc">$</span>median)</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>rmse_pre <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((data_pre<span class="sc">$</span>preds <span class="sc">-</span> data_pre<span class="sc">$</span>stem)<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>g_pre <span class="ot">&lt;-</span> data_pre <span class="sc">%&gt;%</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(preds, stem, <span class="at">col =</span> site)) <span class="sc">+</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">col =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Prelogging"</span>, <span class="fu">paste</span>(<span class="st">"RMSE ="</span>, <span class="fu">round</span>(rmse_pre, <span class="dv">2</span>))) <span class="sc">+</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="fu">expression</span>(<span class="st">"Predicted [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>)) <span class="sc">+</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="st">"Observed [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>))</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>g_pre <span class="sc">+</span> g_rec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="31_stem_files/figure-html/pvo_stp_norm-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Predicted versus observed.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(data_pre, data_rec) <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rel_year, <span class="at">group =</span> <span class="fu">paste</span>(site, plot), <span class="at">col =</span> plot)) <span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> stem), <span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> preds)) <span class="sc">+</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>site, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="st">"Stem [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>)) <span class="sc">+</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">guide =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="31_stem_files/figure-html/preds_stp_norm-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Predicted trajectories.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> fit_stp_norm<span class="sc">$</span><span class="fu">summary</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">"mu_theta0"</span>, <span class="st">"sigma_theta0"</span>, </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_lambda"</span>, <span class="st">"sigma_lambda"</span>, <span class="st">"lambda_p"</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_thetaInf"</span>, <span class="st">"sigma_thetaInf"</span>, <span class="st">"thetaInf_s"</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_delta"</span>, <span class="st">"delta_p"</span>, <span class="st">"sigma_delta"</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_tau"</span>, <span class="st">"tau_s"</span>, <span class="st">"sigma_tau"</span>,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sigma_old"</span>, <span class="st">"sigma_pre"</span>, <span class="st">"sigma_rec"</span>),</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rhat"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(rhat <span class="sc">&gt;</span> <span class="fl">1.2</span>)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>t<span class="sc">$</span>variable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "mu_theta0"      "mu_lambda"      "lambda_p[12]"   "lambda_p[13]"  
+ [5] "lambda_p[16]"   "lambda_p[17]"   "lambda_p[18]"   "lambda_p[20]"  
+ [9] "lambda_p[21]"   "lambda_p[22]"   "lambda_p[23]"   "lambda_p[24]"  
+[13] "lambda_p[39]"   "lambda_p[40]"   "lambda_p[41]"   "lambda_p[42]"  
+[17] "lambda_p[44]"   "lambda_p[45]"   "lambda_p[97]"   "lambda_p[98]"  
+[21] "lambda_p[99]"   "thetaInf_s[2]"  "thetaInf_s[5]"  "thetaInf_s[10]"
+[25] "delta_p[10]"    "delta_p[12]"    "delta_p[17]"    "delta_p[18]"   
+[29] "delta_p[20]"    "delta_p[21]"    "delta_p[23]"    "delta_p[24]"   
+[33] "delta_p[40]"    "delta_p[42]"    "delta_p[97]"    "delta_p[98]"   
+[37] "delta_p[99]"    "delta_p[100]"   "sigma_delta"    "tau_s[2]"      
+[41] "tau_s[10]"      "sigma_old"      "sigma_pre"      "sigma_rec"     </code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>fit_stp_norm<span class="sc">$</span><span class="fu">draws</span>(t<span class="sc">$</span>variable[<span class="fu">grepl</span>(<span class="st">"lambda"</span>, t<span class="sc">$</span>variable)]) <span class="sc">%&gt;%</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_trace</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="31_stem_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fit_stp_norm<span class="sc">$</span><span class="fu">draws</span>(t<span class="sc">$</span>variable[<span class="fu">grepl</span>(<span class="st">"delta_p"</span>, t<span class="sc">$</span>variable)]) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_trace</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="31_stem_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>fit_stp_norm<span class="sc">$</span><span class="fu">draws</span>(t<span class="sc">$</span>variable[<span class="sc">!</span>(<span class="fu">grepl</span>(<span class="st">"lambda"</span>, t<span class="sc">$</span>variable) <span class="sc">|</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">grepl</span>(<span class="st">"delta_p"</span>, t<span class="sc">$</span>variable))]) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_trace</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="31_stem_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
 <section id="horseshoe" class="level2">
 <h2 class="anchored" data-anchor-id="horseshoe">Horseshoe</h2>
 <blockquote class="blockquote">
@@ -667,12 +849,13 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">loo_compare</span>(</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  fit_ltp<span class="sc">$</span><span class="fu">loo</span>(),</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  fit_stp_sum<span class="sc">$</span><span class="fu">loo</span>(),</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  fit_stp<span class="sc">$</span><span class="fu">loo</span>()</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">loo_compare</span>(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  fit_ltp<span class="sc">$</span><span class="fu">loo</span>(),</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  fit_stp_sum<span class="sc">$</span><span class="fu">loo</span>(),</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  fit_stp<span class="sc">$</span><span class="fu">loo</span>(),</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  fit_stp_norm<span class="sc">$</span><span class="fu">loo</span>()</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Some Pareto k diagnostic values are too high. See help('pareto-k-diagnostic') for details.</code></pre>
@@ -682,8 +865,14 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \
 the same.</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: Some Pareto k diagnostic values are too high. See help('pareto-k-diagnostic') for details.
-Warning: Some Pareto k diagnostic values are too high. See help('pareto-k-diagnostic') for details.</code></pre>
+<pre><code>Warning: Some Pareto k diagnostic values are too high. See help('pareto-k-diagnostic') for details.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Can't fit generalized Pareto distribution because all tail values are
+the same.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Some Pareto k diagnostic values are too high. See help('pareto-k-diagnostic') for details.</code></pre>
 </div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
@@ -724,6 +913,28 @@ Warning: Some Pareto k diagnostic values are too high. See help('pareto-k-diagno
 <td style="text-align: right;">13.86902</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">model4</td>
+<td style="text-align: right;">-24.32766</td>
+<td style="text-align: right;">5.093329</td>
+<td style="text-align: right;">418.5670</td>
+<td style="text-align: right;">5.748930</td>
+<td style="text-align: right;">24.31693</td>
+<td style="text-align: right;">0.7495339</td>
+<td style="text-align: right;">-837.1339</td>
+<td style="text-align: right;">11.49786</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">model3</td>
+<td style="text-align: right;">-24.90213</td>
+<td style="text-align: right;">5.572362</td>
+<td style="text-align: right;">417.9925</td>
+<td style="text-align: right;">5.870447</td>
+<td style="text-align: right;">18.91123</td>
+<td style="text-align: right;">0.5669962</td>
+<td style="text-align: right;">-835.9850</td>
+<td style="text-align: right;">11.74089</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">model2</td>
 <td style="text-align: right;">-25.92172</td>
 <td style="text-align: right;">5.796471</td>
@@ -733,17 +944,6 @@ Warning: Some Pareto k diagnostic values are too high. See help('pareto-k-diagno
 <td style="text-align: right;">0.6022396</td>
 <td style="text-align: right;">-833.9458</td>
 <td style="text-align: right;">11.64017</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">model3</td>
-<td style="text-align: right;">-28.06625</td>
-<td style="text-align: right;">5.376330</td>
-<td style="text-align: right;">414.8284</td>
-<td style="text-align: right;">5.935723</td>
-<td style="text-align: right;">18.79057</td>
-<td style="text-align: right;">0.4840138</td>
-<td style="text-align: right;">-829.6568</td>
-<td style="text-align: right;">11.87145</td>
 </tr>
 </tbody>
 </table>

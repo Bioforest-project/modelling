@@ -1,3 +1,4 @@
+-   modelling 0.1.0.9007: stp_norm
 -   modelling 0.1.0.9006: tests d2
 -   modelling 0.1.0.9005: test 1 stp.stan vect & lint
 -   modelling 0.1.0.9004: test 1

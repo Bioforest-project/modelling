@@ -341,6 +341,117 @@ fit_stp$draws("dist_p") %>%
   mcmc_intervals()
 ```
 
+## STP n
+
+```{r stp_norm_fit}
+#| eval: false
+stp <- cmdstan_model("models/stp_norm.stan")
+unlink("data/derived_data/stp_norm", recursive = TRUE)
+dir.create("data/derived_data/stp_norm")
+fit_stp_norm <- stp$sample(
+  data = mdata,
+  chains = 4,
+  parallel_chains = 4,
+  save_warmup = FALSE,
+  output_dir = "data/derived_data/stp_norm"
+)
+```
+
+```{r load_stp_norm}
+#| message: false
+#| warning: false
+fit_stp_norm <- as_cmdstan_fit(list.files("data/derived_data/stp_norm",
+  full.names = TRUE
+))
+fit_stp_norm
+```
+
+```{r pvo_stp_norm}
+#| message: false
+#| warning: false
+#| fig-cap: "Predicted versus observed."
+data_rec$preds <- exp(fit_stp_norm$summary(c("mu_rec"), median)$median)
+rmse_rec <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
+g_rec <- data_rec %>%
+  ggplot(aes(preds, stem)) +
+  geom_point(alpha = 0.25) +
+  geom_abline(col = "red", linetype = "dashed") +
+  ggtitle("Recovery", paste("RMSE =", round(rmse_rec, 2))) +
+  theme_bw() +
+  xlab(expression("Predicted [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  ylab(expression("Observed [ trees" ~ ha^{
+    -1
+  } ~ "]"))
+data_pre$preds <- exp(fit_stp_norm$summary(c("mu_pre"), median)$median)
+rmse_pre <- sqrt(mean((data_pre$preds - data_pre$stem)^2, na.rm = TRUE))
+g_pre <- data_pre %>%
+  ggplot(aes(preds, stem, col = site)) +
+  geom_point(alpha = 0.25) +
+  geom_abline(col = "red", linetype = "dashed") +
+  ggtitle("Prelogging", paste("RMSE =", round(rmse_pre, 2))) +
+  theme_bw() +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression("Predicted [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  ylab(expression("Observed [ trees" ~ ha^{
+    -1
+  } ~ "]"))
+g_pre + g_rec
+```
+
+```{r preds_stp_norm}
+#| fig-cap: "Predicted trajectories."
+bind_rows(data_pre, data_rec) %>%
+  ggplot(aes(rel_year, group = paste(site, plot), col = plot)) +
+  geom_point(aes(y = stem), alpha = .5) +
+  geom_line(aes(y = preds)) +
+  facet_wrap(~site, scales = "free") +
+  theme_bw() +
+  xlab("") +
+  theme(legend.position = "bottom") +
+  ylab(expression("Stem [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  scale_color_discrete(guide = "none")
+```
+
+```{r}
+t <- fit_stp_norm$summary(
+  c(
+    "mu_theta0", "sigma_theta0",
+    "mu_lambda", "sigma_lambda", "lambda_p",
+    "mu_thetaInf", "sigma_thetaInf", "thetaInf_s",
+    "mu_delta", "delta_p", "sigma_delta",
+    "mu_tau", "tau_s", "sigma_tau",
+    "sigma_old", "sigma_pre", "sigma_rec"
+  ),
+  "rhat"
+) %>%
+  filter(rhat > 1.2)
+t$variable
+```
+
+```{r}
+fit_stp_norm$draws(t$variable[grepl("lambda", t$variable)]) %>%
+  mcmc_trace()
+```
+
+```{r}
+fit_stp_norm$draws(t$variable[grepl("delta_p", t$variable)]) %>%
+  mcmc_trace()
+```
+
+```{r}
+fit_stp_norm$draws(t$variable[!(grepl("lambda", t$variable) |
+                                  grepl("delta_p", t$variable))]) %>%
+  mcmc_trace()
+```
+
+
 ## Horseshoe
 
 > *To be developed.*
@@ -351,7 +462,8 @@ fit_stp$draws("dist_p") %>%
 loo_compare(
   fit_ltp$loo(),
   fit_stp_sum$loo(),
-  fit_stp$loo()
+  fit_stp$loo(),
+  fit_stp_norm$loo()
 ) %>%
   kable()
 ```
