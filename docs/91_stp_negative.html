@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>modelling - References</title>
+<title>modelling - STP negatives</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,26 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
 }
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -49,7 +64,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./91_stp_negative.html" rel="prev">
+<link href="./99_references.html" rel="next">
+<link href="./31_stem.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -80,6 +96,8 @@ div.csl-indent {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -92,7 +110,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./91_stp_negative.html">Appendices</a></li><li class="breadcrumb-item"><a href="./99_references.html">References</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./91_stp_negative.html">Appendices</a></li><li class="breadcrumb-item"><a href="./91_stp_negative.html">STP negatives</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -152,13 +170,13 @@ div.csl-indent {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./91_stp_negative.html" class="sidebar-item-text sidebar-link">
+  <a href="./91_stp_negative.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">STP negatives</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./99_references.html" class="sidebar-item-text sidebar-link active">
+  <a href="./99_references.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">References</span></a>
   </div>
 </li>
@@ -177,7 +195,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">References</h1>
+<h1 class="title">STP negatives</h1>
 </div>
 
 
@@ -192,8 +210,76 @@ div.csl-indent {
 
 </header>
 
-<div id="refs" role="list" style="display: none">
-
+<p>Using long term and short term processes model based on initial value <span class="math inline">\(\theta_0\)</span> we had issue with negatives values of <span class="math inline">\(\mu_{rec}\)</span> resulting in impossible log-values:</p>
+<p><span class="math display">\[
+\begin{align}
+\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times (LTP+STP) \\
+LTP = 1 - e^{-\lambda_p \times time} \\
+STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2
+\end{align}
+\]</span></p>
+<p>Negatives values happen when the trajectory is negative and the difference of <span class="math inline">\(\theta\)</span> and the bump fall below 0, so when <span class="math inline">\(time=\tau\)</span>:</p>
+<p><span class="math display">\[
+\begin{align}
+\theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times (1 - e^{-\lambda_p \times \tau_s}+\delta_p) \leq 0\\
+\end{align}
+\]</span></p>
+<p>En <span class="math inline">\(\lambda_p=0.5\)</span> et <span class="math inline">\(\tau_s=30\)</span> , <span class="math inline">\(LTP = 1-e^{-0.5*30} \approx 1\)</span>, thus:</p>
+<p><span class="math display">\[
+\begin{align}
+\theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times (1+\delta_p) \leq 0\\
+\theta_{\infty,s} + (\theta_{\infty,s} - \theta_{0,p}) \times \delta_p \leq 0\\
+\delta_p \geq \frac{-\theta_{\infty,s}}  {\theta_{\infty,s} - \theta_{0,p}} ~|~ \theta_{\infty,s} - \theta_{0,p} &lt; 0 \\
+\delta_p \geq \frac{-1}  {1 - dist_p} ~|~\theta_{0,p}=dist_p\times\theta_{\infty,s} \\
+\delta_p \geq \frac{1}  {dist_p-1}
+\end{align}
+\]</span></p>
+<p>We could thus use this inequality to constrain <span class="math inline">\(\delta_p\)</span> on <span class="math inline">\(dist_p\)</span> knowing that <code>stan</code> now accepts parameters bounds to depend on another parameter. However, this is complicated as it depends on the sign in the division above, <span class="math inline">\(dist=1\)</span> is no possible, and near 1 values results in positive or negative infinite values. Thus we simply bounded <span class="math inline">\(dist_p\)</span> to 1.5 for now (50% gain of attribute post-disturbance).</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="cf">function</span>(time, dist, thetaInf, lambda, tau, delta){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  theta0 <span class="ot">=</span> thetaInf<span class="sc">*</span>dist</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  ltp <span class="ot">=</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>lambda<span class="sc">*</span>time)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  stp <span class="ot">=</span> delta<span class="sc">*</span>(time<span class="sc">/</span>tau<span class="sc">*</span><span class="fu">exp</span>(<span class="dv">1</span><span class="sc">-</span>time<span class="sc">/</span>tau))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(theta0 <span class="sc">+</span> (thetaInf <span class="sc">-</span> theta0)<span class="sc">*</span>(ltp<span class="sc">+</span>stp))</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fu">model</span>(time,<span class="at">dist=</span><span class="dv">2</span>, <span class="at">thetaInf=</span><span class="dv">20</span>, <span class="at">lambda=</span><span class="fl">0.5</span>, <span class="at">tau=</span><span class="dv">30</span>, <span class="at">delta=</span><span class="fl">0.5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y2 =</span> <span class="fu">model</span>(time,<span class="at">dist=</span><span class="dv">2</span>, <span class="at">thetaInf=</span><span class="dv">20</span>, <span class="at">lambda=</span><span class="fl">0.5</span>, <span class="at">tau=</span><span class="dv">30</span>, <span class="at">delta=</span><span class="dv">2</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y3 =</span> <span class="fu">model</span>(time,<span class="at">dist=</span><span class="dv">2</span>, <span class="at">thetaInf=</span><span class="dv">20</span>, <span class="at">lambda=</span><span class="fl">0.5</span>, <span class="at">tau=</span><span class="dv">30</span>, <span class="at">delta=</span><span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(time)) <span class="sc">+</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> y, <span class="at">col =</span> <span class="st">"dist=2, delta=.5"</span>)) <span class="sc">+</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> y2, <span class="at">col =</span> <span class="st">"dist=2, delta=2"</span>)) <span class="sc">+</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> y3, <span class="at">col =</span> <span class="st">"dist=2, delta=1"</span>)) <span class="sc">+</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="91_stp_negative_files/figure-html/fig1-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Negative STR examples with delta-dist link.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">dist =</span> <span class="fu">seq</span>(.<span class="dv">5</span>, <span class="dv">2</span>, <span class="at">length.out =</span> <span class="dv">100</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">delta_max =</span> <span class="dv">2</span><span class="sc">-</span>(<span class="dv">1</span><span class="sc">/</span>(dist<span class="dv">-1</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(dist, delta_max)) <span class="sc">+</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="91_stp_negative_files/figure-html/fig2-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">delta_max with dist.</figcaption>
+</figure>
+</div>
+</div>
 </div>
 
 
@@ -434,11 +520,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./91_stp_negative.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">STP negatives</span>
+      <a href="./31_stem.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Stem</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./99_references.html" class="pagination-link">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

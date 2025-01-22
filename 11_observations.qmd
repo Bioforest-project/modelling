@@ -31,11 +31,11 @@ metadata <- read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcd
 data <- read_csv("data/raw_data/aggregated_data.csv") %>%
   rename_all(tolower) %>%
   left_join(read_tsv("data/raw_data/environment.tsv") %>%
-              gather(env, env_value, -site, -plot)) %>%
+    gather(env, env_value, -site, -plot)) %>%
   left_join(read_csv("data/raw_data/plot_area.csv") %>%
-              rename_all(tolower) %>%
-              select(site, plot, plotarea) %>%
-              unique()) %>%
+    rename_all(tolower) %>%
+    select(site, plot, plotarea) %>%
+    unique()) %>%
   left_join(metadata) %>%
   filter(!(site %in% c("Peteco", "Bafog", "Tene", "Montagne_Tortue"))) %>%
   filter(!(site == "Kabo" & year < 1980)) %>%
@@ -103,8 +103,8 @@ unique(read_tsv("data/derived_data/data.tsv")$variable) %>%
 #| warning: false
 #| fig-cap: "Dummy figure 3 - treatment."
 read_tsv("data/derived_data/data.tsv") %>%
-  filter(variable == "agb") %>%
-  ggplot(aes(year, value, group = paste(site, plot), col = treatment)) +
+  filter(variable == "agb_mort") %>%
+  ggplot(aes(year, log(value), group = paste(site, plot), col = treatment)) +
   geom_line() +
   theme_bw() +
   xlab("") +
