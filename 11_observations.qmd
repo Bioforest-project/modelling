@@ -31,11 +31,11 @@ metadata <- read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcd
 data <- read_csv("data/raw_data/aggregated_data.csv") %>%
   rename_all(tolower) %>%
   left_join(read_tsv("data/raw_data/environment.tsv") %>%
-    gather(env, env_value, -site, -plot)) %>%
+              gather(env, env_value, -site, -plot)) %>%
   left_join(read_csv("data/raw_data/plot_area.csv") %>%
-    rename_all(tolower) %>%
-    select(site, plot, plotarea) %>%
-    unique()) %>%
+              rename_all(tolower) %>%
+              select(site, plot, plotarea) %>%
+              unique()) %>%
   left_join(metadata) %>%
   filter(!(site %in% c("Peteco", "Bafog", "Tene", "Montagne_Tortue"))) %>%
   filter(!(site == "Kabo" & year < 1980)) %>%

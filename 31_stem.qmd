@@ -290,8 +290,8 @@ fit_stp$draws(t$variable[grepl("delta_p", t$variable)]) %>%
 ```{r trace_other_stp}
 #| fig-cap: "other traces."
 fit_stp$draws(t$variable[!(grepl("lambda", t$variable) |
-  grepl("dist_p", t$variable) |
-  grepl("delta_p", t$variable))]) %>%
+                             grepl("dist_p", t$variable) |
+                             grepl("delta_p", t$variable))]) %>%
   mcmc_trace()
 ```
 
@@ -410,8 +410,8 @@ fit_stp_norm$draws(t$variable[grepl("delta_p", t$variable)]) %>%
 ```{r trace_other_stp_norm}
 #| fig-cap: "other traces."
 fit_stp_norm$draws(t$variable[!(grepl("lambda", t$variable) |
-  grepl("dist_p", t$variable) |
-  grepl("delta_p", t$variable))]) %>%
+                                  grepl("dist_p", t$variable) |
+                                  grepl("delta_p", t$variable))]) %>%
   mcmc_trace()
 ```
 
@@ -434,9 +434,7 @@ fit_stp_norm_false <- stp_norm_false$sample(
 ```{r load_stp_norm_false}
 #| message: false
 #| warning: false
-fit_stp_norm_false <- as_cmdstan_fit(list.files("data/derived_data/stp_norm_false",
-  full.names = TRUE
-))
+fit_stp_norm_false <- as_cmdstan_fit(list.files("data/derived_data/stp_norm_false", full.names = TRUE)) #nolint
 fit_stp_norm_false
 ```
 
@@ -514,9 +512,7 @@ fit_stp_norm_false2 <- stp_norm_false$sample(
 ```{r load_stp_norm_false2}
 #| message: false
 #| warning: false
-fit_stp_norm_false2 <- as_cmdstan_fit(list.files("data/derived_data/stp_norm_false2",
-  full.names = TRUE
-))
+fit_stp_norm_false2 <- as_cmdstan_fit(list.files("data/derived_data/stp_norm_false2", full.names = TRUE)) #nolint
 fit_stp_norm_false2
 ```
 
@@ -656,18 +652,20 @@ fit_stp_norm_false$draws(pars) %>%
 ```
 
 ```{r ulu_pars}
-#| warnign: false
+#| warning: false
 #| message: false
 bind_rows(
   fit_stp_norm$draws(pars) %>%
     as_tibble() %>%
     gather() %>%
-    separate(key, c("chain", "parameter", "index", "ind_value"), convert = T) %>%
+    separate(key, c("chain", "parameter", "index", "ind_value"),
+             convert = TRUE) %>%
     mutate(model = "STP normal"),
   fit_stp_norm_false$draws(pars) %>%
     as_tibble() %>%
     gather() %>%
-    separate(key, c("chain", "parameter", "index", "ind_value"), convert = T) %>%
+    separate(key, c("chain", "parameter", "index", "ind_value"),
+             convert = TRUE) %>%
     mutate(model = "STP false") %>%
     mutate(value = ifelse(parameter == "thetaInf", exp(value), value))
 ) %>%
@@ -678,7 +676,7 @@ bind_rows(
 ```
 
 ```{r ulu_pars2}
-#| warnign: false
+#| warning: false
 #| message: false
 pars <- c(
   "mu_dist", "sigma_dist", "mu_lambda", "sigma_lambda", "mu_thetaInf",
@@ -689,12 +687,12 @@ bind_rows(
   fit_stp_norm$draws(pars) %>%
     as_tibble() %>%
     gather() %>%
-    separate(key, c("chain", "parameter"), sep = "\\.", convert = T) %>%
+    separate(key, c("chain", "parameter"), sep = "\\.", convert = TRUE) %>%
     mutate(model = "STP normal"),
   fit_stp_norm_false$draws(pars) %>%
     as_tibble() %>%
     gather() %>%
-    separate(key, c("chain", "parameter"), sep = "\\.", convert = T) %>%
+    separate(key, c("chain", "parameter"), sep = "\\.", convert = TRUE) %>%
     mutate(model = "STP false") %>%
     mutate(value = ifelse(parameter == "mu_thetaInf", exp(value), value))
 ) %>%

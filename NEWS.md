@@ -1,3 +1,4 @@
+-   rmodelling 0.1.0.9009: linting
 -   rmodelling 0.1.0.9008: day 3
 -   rmodelling 0.1.0.9007: stp_norm
 -   modelling 0.1.0.9006: tests d2
