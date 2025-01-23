@@ -13,18 +13,6 @@ library(patchwork)
 
 Test of modelling with stem density.
 
-ToDo:
-
--   LTP
--   loo
--   boxplot control infini
--   coverage 0.8 sp 0.9 gen
--   gini and dbh mean
--   n_fixation, dispersal
--   log sla log la
-
-> compo flux instead of div flux
-
 ## Data
 
 ```{r data}
@@ -33,6 +21,7 @@ ToDo:
 var <- "nstem"
 if(!exists(file.path("chains", var)))
   dir.create(file.path("chains", var))
+lab <- expression("Stem [ trees" ~ ha^{-1} ~ "]")
 data <- read_tsv("data/derived_data/data.tsv") %>%
   filter(variable == var) %>%
   unique() %>%
@@ -79,9 +68,7 @@ ggplot(data, aes(rel_year, stem, group = paste(site, plot), col = treatment)) +
   facet_wrap(~site) +
   theme_bw() +
   xlab("") +
-  ylab(expression("Stems [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
+  ylab(lab) +
   theme(legend.position = "bottom") +
   scale_color_discrete("")
 ```
@@ -115,6 +102,9 @@ fit_ltp
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted versus observed."
+data_old <- data_old %>% 
+  group_by(site) %>% 
+  mutate(rel_year = max(rel_year+2))
 data_rec$preds <- fit_ltp$summary(c("mu_rec"), median)$median
 rmse_rec <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
 g_rec <- data_rec %>%
@@ -123,12 +113,8 @@ g_rec <- data_rec %>%
   geom_abline(col = "red", linetype = "dashed") +
   ggtitle("Recovery", paste("RMSE =", round(rmse_rec, 2))) +
   theme_bw() +
-  xlab(expression("Predicted [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  ylab(expression("Observed [ trees" ~ ha^{
-    -1
-  } ~ "]"))
+  xlab("Predicted") +
+  ylab("Observed")
 data_pre$preds <- fit_ltp$summary(c("mu_pre"), median)$median
 rmse_pre <- sqrt(mean((data_pre$preds - data_pre$stem)^2, na.rm = TRUE))
 g_pre <- data_pre %>%
@@ -139,18 +125,14 @@ g_pre <- data_pre %>%
   theme_bw() +
   scale_color_discrete("") +
   theme(legend.position = "bottom") +
-  xlab(expression("Predicted [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  ylab(expression("Observed [ trees" ~ ha^{
-    -1
-  } ~ "]"))
+  xlab("Predicted") +
+  ylab("Observed")
 g_pre + g_rec
 ```
 
 ```{r preds_ltp}
 #| fig-cap: "Predicted trajectories."
-bind_rows(data_pre, data_rec) %>%
+bind_rows(data_pre, data_rec, data_old) %>%
   ggplot(aes(rel_year, group = paste(site, plot), col = plot)) +
   geom_point(aes(y = stem), alpha = .5) +
   geom_line(aes(y = preds)) +
@@ -158,9 +140,7 @@ bind_rows(data_pre, data_rec) %>%
   theme_bw() +
   xlab("") +
   theme(legend.position = "bottom") +
-  ylab(expression("Stem [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
+  ylab(lab) +
   scale_color_discrete(guide = "none")
 ```
 
@@ -193,6 +173,9 @@ fit_stp
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted versus observed."
+data_old <- data_old %>% 
+  group_by(site) %>% 
+  mutate(rel_year = max(rel_year+2))
 data_rec$preds <- fit_stp$summary(c("mu_rec"), median)$median
 rmse_rec <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
 g_rec <- data_rec %>%
@@ -201,12 +184,8 @@ g_rec <- data_rec %>%
   geom_abline(col = "red", linetype = "dashed") +
   ggtitle("Recovery", paste("RMSE =", round(rmse_rec, 2))) +
   theme_bw() +
-  xlab(expression("Predicted [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  ylab(expression("Observed [ trees" ~ ha^{
-    -1
-  } ~ "]"))
+  xlab("Predicted") +
+  ylab("Observed")
 data_pre$preds <- fit_stp$summary(c("mu_pre"), median)$median
 rmse_pre <- sqrt(mean((data_pre$preds - data_pre$stem)^2, na.rm = TRUE))
 g_pre <- data_pre %>%
@@ -217,18 +196,14 @@ g_pre <- data_pre %>%
   theme_bw() +
   scale_color_discrete("") +
   theme(legend.position = "bottom") +
-  xlab(expression("Predicted [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  ylab(expression("Observed [ trees" ~ ha^{
-    -1
-  } ~ "]"))
+  xlab("Predicted") +
+  ylab("Observed")
 g_pre + g_rec
 ```
 
 ```{r preds_stp}
 #| fig-cap: "Predicted trajectories."
-bind_rows(data_pre, data_rec) %>%
+bind_rows(data_pre, data_rec, data_old) %>%
   ggplot(aes(rel_year, group = paste(site, plot), col = plot)) +
   geom_point(aes(y = stem), alpha = .5) +
   geom_line(aes(y = preds)) +
@@ -236,9 +211,7 @@ bind_rows(data_pre, data_rec) %>%
   theme_bw() +
   xlab("") +
   theme(legend.position = "bottom") +
-  ylab(expression("Stem [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
+  ylab(lab) +
   scale_color_discrete(guide = "none")
 ```
 

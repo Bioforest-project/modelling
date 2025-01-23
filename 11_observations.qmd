@@ -10,6 +10,11 @@ library(googlesheets4)
 
 Data exploration.
 
+To do:
+
+-   n_fixation, dispersal
+-   log sla log la
+
 ```{r data}
 #| message: false
 #| warning: false

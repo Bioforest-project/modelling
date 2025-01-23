@@ -18,8 +18,12 @@ Test of modelling with stem density.
 ```{r data}
 #| message: false
 #| warning: false
+var <- "WD_cwm_ba"
+if(!exists(file.path("chains", var)))
+  dir.create(file.path("chains", var))
+lab <- expression("WD [ g" ~ cm^{-3} ~ "]")
 data <- read_tsv("data/derived_data/data.tsv") %>%
-  filter(variable == "WD_cwm_ba") %>%
+  filter(variable == var) %>%
   unique() %>%
   rename(stem = value) %>%
   select(-env, -env_value, -variable) %>%
@@ -64,43 +68,44 @@ ggplot(data, aes(rel_year, stem, group = paste(site, plot), col = treatment)) +
   facet_wrap(~site) +
   theme_bw() +
   xlab("") +
-  ylab(expression("Stems [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
+  ylab(lab) +
   theme(legend.position = "bottom") +
   scale_color_discrete("")
 ```
 
-## STP normal
+## LTP
 
-```{r stp_norm_fit}
+```{r ltp_fit}
 #| eval: false
-stp_norm <- cmdstan_model("models/stp_norm.stan")
-unlink("data/derived_data/wd/stp_norm", recursive = TRUE)
-dir.create("data/derived_data/wd/stp_norm")
-fit_stp_norm <- stp_norm$sample(
+ltp <- cmdstan_model("models/ltp.stan")
+path <- file.path("chains", var, "ltp")
+unlink(path, recursive = TRUE)
+dir.create(path)
+fit_ltp <- ltp$sample(
   data = mdata,
   chains = 4,
   parallel_chains = 4,
   save_warmup = FALSE,
-  output_dir = "data/derived_data/wd/stp_norm"
+  output_dir = path
 )
 ```
 
-```{r load_stp_norm}
+```{r load_ltp}
 #| message: false
 #| warning: false
-fit_stp_norm <- as_cmdstan_fit(list.files("data/derived_data/wd/stp_norm",
-  full.names = TRUE
-))
-fit_stp_norm
+path <- file.path("chains", var, "ltp")
+fit_ltp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
+fit_ltp
 ```
 
-```{r pvo_stp_norm}
+```{r pvo_ltp}
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted versus observed."
-data_rec$preds <- fit_stp_norm$summary(c("mu_rec"), median)$median
+data_old <- data_old %>% 
+  group_by(site) %>% 
+  mutate(rel_year = max(rel_year+2))
+data_rec$preds <- fit_ltp$summary(c("mu_rec"), median)$median
 rmse_rec <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
 g_rec <- data_rec %>%
   ggplot(aes(preds, stem)) +
@@ -108,13 +113,9 @@ g_rec <- data_rec %>%
   geom_abline(col = "red", linetype = "dashed") +
   ggtitle("Recovery", paste("RMSE =", round(rmse_rec, 2))) +
   theme_bw() +
-  xlab(expression("Predicted [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  ylab(expression("Observed [ trees" ~ ha^{
-    -1
-  } ~ "]"))
-data_pre$preds <- fit_stp_norm$summary(c("mu_pre"), median)$median
+  xlab("Predicted") +
+  ylab("Observed")
+data_pre$preds <- fit_ltp$summary(c("mu_pre"), median)$median
 rmse_pre <- sqrt(mean((data_pre$preds - data_pre$stem)^2, na.rm = TRUE))
 g_pre <- data_pre %>%
   ggplot(aes(preds, stem, col = site)) +
@@ -124,18 +125,16 @@ g_pre <- data_pre %>%
   theme_bw() +
   scale_color_discrete("") +
   theme(legend.position = "bottom") +
-  xlab(expression("Predicted [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  ylab(expression("Observed [ trees" ~ ha^{
-    -1
-  } ~ "]"))
+  xlab("Predicted") +
+  ylab("Observed")
 g_pre + g_rec
 ```
 
-```{r preds_stp_norm}
+```{r preds_ltp}
+#| message: false
+#| warning: false
 #| fig-cap: "Predicted trajectories."
-bind_rows(data_pre, data_rec) %>%
+bind_rows(data_pre, data_rec, data_old) %>%
   ggplot(aes(rel_year, group = paste(site, plot), col = plot)) +
   geom_point(aes(y = stem), alpha = .5) +
   geom_line(aes(y = preds)) +
@@ -143,44 +142,100 @@ bind_rows(data_pre, data_rec) %>%
   theme_bw() +
   xlab("") +
   theme(legend.position = "bottom") +
-  ylab(expression("Stem [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
+  ylab(lab) +
   scale_color_discrete(guide = "none")
 ```
 
-```{r}
-pars <- c(
-  "mu_dist", "sigma_dist", "mu_lambda", "sigma_lambda", "mu_thetaInf",
-  "sigma_thetaInf", "sigma_old", "sigma_pre", "sigma_rec", "mu_delta",
-  "sigma_delta", "mu_tau", "sigma_tau"
+## STP
+
+```{r stp_fit}
+#| eval: false
+stp <- cmdstan_model("models/stp.stan")
+path <- file.path("chains", var, "stp")
+unlink(path, recursive = TRUE)
+dir.create(path)
+fit_stp <- stp$sample(
+  data = mdata,
+  chains = 4,
+  parallel_chains = 4,
+  save_warmup = FALSE,
+  output_dir = path
 )
-fit_stp_norm$draws(pars) %>%
-  mcmc_dens()
 ```
 
-```{r}
-fit_stp_norm$draws("dist_p") %>% 
+```{r load_stp}
+#| message: false
+#| warning: false
+path <- file.path("chains", var, "stp")
+fit_stp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
+fit_stp
+```
+
+```{r pvo_stp}
+#| message: false
+#| warning: false
+#| fig-cap: "Predicted versus observed."
+data_old <- data_old %>% 
+  group_by(site) %>% 
+  mutate(rel_year = max(rel_year+2))
+data_rec$preds <- fit_stp$summary(c("mu_rec"), median)$median
+rmse_rec <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
+g_rec <- data_rec %>%
+  ggplot(aes(preds, stem)) +
+  geom_point(alpha = 0.25) +
+  geom_abline(col = "red", linetype = "dashed") +
+  ggtitle("Recovery", paste("RMSE =", round(rmse_rec, 2))) +
+  theme_bw() +
+  xlab("Predicted") +
+  ylab("Observed")
+data_pre$preds <- fit_stp$summary(c("mu_pre"), median)$median
+rmse_pre <- sqrt(mean((data_pre$preds - data_pre$stem)^2, na.rm = TRUE))
+g_pre <- data_pre %>%
+  ggplot(aes(preds, stem, col = site)) +
+  geom_point(alpha = 0.25) +
+  geom_abline(col = "red", linetype = "dashed") +
+  ggtitle("Prelogging", paste("RMSE =", round(rmse_pre, 2))) +
+  theme_bw() +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab("Predicted") +
+  ylab("Observed")
+g_pre + g_rec
+```
+
+```{r preds_stp}
+#| fig-cap: "Predicted trajectories."
+#| message: false
+#| warning: false
+bind_rows(data_pre, data_rec, data_old) %>%
+  ggplot(aes(rel_year, group = paste(site, plot), col = plot)) +
+  geom_point(aes(y = stem), alpha = .5) +
+  geom_line(aes(y = preds)) +
+  facet_wrap(~site, scales = "free") +
+  theme_bw() +
+  xlab("") +
+  theme(legend.position = "bottom") +
+  ylab(lab) +
+  scale_color_discrete(guide = "none")
+```
+
+```{r dist_delta_stp}
+#| fig-cap: "Posteriors delta_p."
+fit_stp$draws("dist_p") %>% 
   mcmc_intervals() +
   geom_vline(xintercept = 1)
 ```
 
-```{r}
-fit_stp_norm$draws("delta_p") %>% 
-  mcmc_intervals()
-```
+## Comparison
 
-```{r}
-fit_stp_norm$draws("lambda_p") %>% 
-  mcmc_intervals() +
-  scale_x_log10()
-```
-
-```{r}
-fit_stp_norm$summary("lambda_p", "mean") %>% 
-  mutate(t95 = log(20)/mean) %>% 
-  ggplot(aes(t95)) +
-  geom_histogram() +
-  theme_bw() +
-  scale_x_log10()
+```{r loo_compare}
+#| warning: false
+#| message: false
+loo_compare(
+  list(
+    ltp = fit_ltp$loo(),
+    stp = fit_stp$loo()
+  )
+) %>%
+  kable()
 ```

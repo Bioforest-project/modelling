@@ -13,6 +13,7 @@ library(loo)
 To do:
 
 -   Add schemes of LTP & STP trajs with pars on it.
+-   We need use random effect for control plots (plotoldnum).
 
 ## LTP
 
