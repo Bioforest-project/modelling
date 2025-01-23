@@ -39,6 +39,37 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \
 \end{align}
 $$
 
+```{r stp_proj}
+#| fig-cap: "STP proj with pars."
+ltp <- function(time, dist, thetainf, lambda, tau, delta) {
+  theta0 <- thetainf * dist
+  ltp <- 1 - exp(-lambda * time)
+  return(theta0 + (thetainf - theta0) * (ltp))
+}
+stp <- function(time, dist, thetainf, lambda, tau, delta) {
+  theta0 <- thetainf * dist
+  ltp <- 1 - exp(-lambda * time)
+  stp <- delta * (time / tau * exp(1 - time / tau))^2
+  return(theta0 + (thetainf - theta0) * (ltp + stp))
+}
+data.frame(time = seq(0.1, 50, length.out = 100)) %>%
+  mutate(y_stp = stp(time, dist = 0.5, thetainf = 20, lambda = 0.05,
+                     tau = 5, delta = 1)) %>%
+  mutate(y_ltp = ltp(time, dist = 0.5, thetainf = 20, lambda = 0.05,
+                     tau = 5, delta = 1)) %>%
+  bind_rows(data.frame(time = 0, y_stp = 20, y_ltp = 20)) %>%
+  ggplot(aes(time)) +
+  geom_line(aes(y = y_ltp), col = "grey") +
+  geom_line(aes(y = y_stp)) +
+  theme_bw() +
+  annotate("text", x = 50, y = 20, label = "theta[Inf]", parse = TRUE) +
+  annotate("text", x = 20, y = 15, label = "lambda", parse = TRUE) +
+  annotate("text", x = -1.5, y = 15, label = "dist", parse = TRUE) +
+  annotate("text", x = 6, y = 10, label = "tau", parse = TRUE) +
+  annotate("text", x = 6, y = 21, label = "delta", parse = TRUE) +
+  theme(axis.title = element_blank())
+```
+
 Choices:
 
 -   Using the log of y and a normal distribution centred on log(mu)
