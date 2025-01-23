@@ -1,7 +1,8 @@
--   rmodelling 0.1.0.9010: stem is good!
--   rmodelling 0.1.0.9009: linting
--   rmodelling 0.1.0.9008: day 3
--   rmodelling 0.1.0.9007: stp_norm
+-   modelling 0.1.0.9011: wd is ok!
+-   modelling 0.1.0.9010: stem is good!
+-   modelling 0.1.0.9009: linting
+-   modelling 0.1.0.9008: day 3
+-   modelling 0.1.0.9007: stp_norm
 -   modelling 0.1.0.9006: tests d2
 -   modelling 0.1.0.9005: test 1 stp.stan vect & lint
 -   modelling 0.1.0.9004: test 1

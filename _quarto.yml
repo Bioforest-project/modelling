@@ -10,6 +10,7 @@ book:
     - 11_observations.qmd
     - 21_dummy_model.qmd
     - 31_stem.qmd
+    - 32_wd.qmd
   appendices:
     - 91_stp_negative.qmd
     - 99_references.qmd

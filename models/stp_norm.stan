@@ -13,22 +13,26 @@ data {
   array[n_pre] int<lower=0, upper=n_site> site_pre;
   array[n_rec] int<lower=0, upper=n_plot_rec> plot_rec;
   array[n_plot_rec] int<lower=0, upper=n_site> site_plot_rec;
+  array[2] real dist_bounds;
+  array[2] real delta_bounds;
+  array[2] real mu_thetaInf_bounds;
+  array[2] real thetaInf_s_bounds;
 }
 parameters {
-  real<lower=0.1, upper=1> mu_dist ; // starting point
+  real<lower=dist_bounds[1], upper=dist_bounds[2]> mu_dist ; // starting point
   real<lower=0> sigma_dist ;
-  vector<lower=0.1, upper=1>[n_plot_rec] dist_p ;
+  vector<lower=dist_bounds[1], upper=dist_bounds[2]>[n_plot_rec] dist_p ;
   real<lower=0, upper=0.5> mu_lambda ; // recovery rate
   real<lower=0> sigma_lambda ;
   vector<lower=0, upper=0.5>[n_plot_rec] lambda_p ;
-  real<lower=100, upper=1000> mu_thetaInf ; // ending point
+  real<lower=mu_thetaInf_bounds[1], upper=mu_thetaInf_bounds[2]> mu_thetaInf ; // ending point
   real<lower=0> sigma_thetaInf ;
-  vector<lower=50, upper=2000>[n_site] thetaInf_s ;
+  vector<lower=thetaInf_s_bounds[1], upper=thetaInf_s_bounds[2]>[n_site] thetaInf_s ;
   real<lower=0> sigma_old ;
   real<lower=0> sigma_pre ;
   real<lower=0> sigma_rec ;
-  real<lower=0, upper=5> mu_delta ; // str var
-  vector<lower=0, upper=5>[n_plot_rec] delta_p ;
+  real<lower=delta_bounds[1], upper=delta_bounds[2]> mu_delta ; // str var
+  vector<lower=delta_bounds[1], upper=delta_bounds[2]>[n_plot_rec] delta_p ;
   real<lower=0> sigma_delta ;
   real<lower=2, upper=30> mu_tau ; //str time
   vector<lower=2, upper=30>[n_site] tau_s ;
