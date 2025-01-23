@@ -64,8 +64,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./91_stp_negative.html" rel="next">
-<link href="./21_dummy_model.html" rel="prev">
+<link href="./32_wd.html" rel="next">
+<link href="./21_models.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -96,8 +96,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -149,14 +147,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./21_dummy_model.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Dummy models</span></a>
+  <a href="./21_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Models</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./31_stem.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Stem</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./32_wd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WD</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./33_agb.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">AGB</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -195,10 +205,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#data" id="toc-data" class="nav-link active" data-scroll-target="#data">Data</a></li>
   <li><a href="#ltp" id="toc-ltp" class="nav-link" data-scroll-target="#ltp">LTP</a></li>
   <li><a href="#stp" id="toc-stp" class="nav-link" data-scroll-target="#stp">STP</a></li>
-  <li><a href="#stp-normal" id="toc-stp-normal" class="nav-link" data-scroll-target="#stp-normal">STP normal</a></li>
-  <li><a href="#stp-normal-false" id="toc-stp-normal-false" class="nav-link" data-scroll-target="#stp-normal-false">STP normal false</a></li>
-  <li><a href="#stp-normal-false-2" id="toc-stp-normal-false-2" class="nav-link" data-scroll-target="#stp-normal-false-2">STP normal false 2</a></li>
-  <li><a href="#ulu-muda" id="toc-ulu-muda" class="nav-link" data-scroll-target="#ulu-muda">Ulu Muda</a></li>
   <li><a href="#comparison" id="toc-comparison" class="nav-link" data-scroll-target="#comparison">Comparison</a></li>
   </ul>
 </nav>
@@ -226,46 +232,62 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Test of modelling with stem density.</p>
 <p>ToDo:</p>
 <ul>
-<li>…</li>
+<li>LTP</li>
+<li>loo</li>
+<li>boxplot control infini</li>
+<li>coverage 0.8 sp 0.9 gen</li>
+<li>gini and dbh mean</li>
+<li>n_fixation, dispersal</li>
+<li>log sla log la</li>
 </ul>
+<blockquote class="blockquote">
+<p>compo flux instead of div flux</p>
+</blockquote>
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data">Data</h2>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">"data/derived_data/data.tsv"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"nstem"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">stem =</span> value) <span class="sc">%&gt;%</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>env, <span class="sc">-</span>env_value, <span class="sc">-</span>variable) <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>var <span class="ot">&lt;-</span> <span class="st">"nstem"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">exists</span>(<span class="fu">file.path</span>(<span class="st">"chains"</span>, var)))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(<span class="fu">file.path</span>(<span class="st">"chains"</span>, var))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">"data/derived_data/data.tsv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> var) <span class="sc">%&gt;%</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.infinite</span>(harvest_year_min)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sitenum =</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(site)))</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>data_rec <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(treatment <span class="sc">==</span> <span class="st">"logged"</span>, rel_year <span class="sc">&gt;</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">plotnum =</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(<span class="fu">paste0</span>(site, <span class="st">"_"</span>, plot))))</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>data_old <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(treatment <span class="sc">==</span> <span class="st">"control"</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>data_pre <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(rel_year <span class="sc">&lt;=</span> <span class="dv">0</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>ind_rec <span class="ot">&lt;-</span> data_rec <span class="sc">%&gt;%</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(site, plot, sitenum, plotnum) <span class="sc">%&gt;%</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(plotnum)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>mdata <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_rec =</span> <span class="fu">nrow</span>(data_rec),</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_old =</span> <span class="fu">nrow</span>(data_old),</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_pre =</span> <span class="fu">nrow</span>(data_pre),</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_site =</span> <span class="fu">max</span>(data_rec<span class="sc">$</span>sitenum),</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_plot_rec =</span> <span class="fu">max</span>(data_rec<span class="sc">$</span>plotnum),</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">stem_rec =</span> data_rec<span class="sc">$</span>stem,</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">stem_old =</span> data_old<span class="sc">$</span>stem,</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">stem_pre =</span> data_pre<span class="sc">$</span>stem,</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> data_rec<span class="sc">$</span>rel_year <span class="sc">-</span> <span class="dv">3</span>,</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">site_rec =</span> data_rec<span class="sc">$</span>sitenum,</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">site_old =</span> data_old<span class="sc">$</span>sitenum,</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">site_pre =</span> data_pre<span class="sc">$</span>sitenum,</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_rec =</span> data_rec<span class="sc">$</span>plotnum,</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">site_plot_rec =</span> ind_rec<span class="sc">$</span>sitenum</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">stem =</span> value) <span class="sc">%&gt;%</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>env, <span class="sc">-</span>env_value, <span class="sc">-</span>variable) <span class="sc">%&gt;%</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.infinite</span>(harvest_year_min)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sitenum =</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(site)))</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>data_rec <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(treatment <span class="sc">==</span> <span class="st">"logged"</span>, rel_year <span class="sc">&gt;</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">plotnum =</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(<span class="fu">paste0</span>(site, <span class="st">"_"</span>, plot))))</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>data_old <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(treatment <span class="sc">==</span> <span class="st">"control"</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>data_pre <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(rel_year <span class="sc">&lt;=</span> <span class="dv">0</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>ind_rec <span class="ot">&lt;-</span> data_rec <span class="sc">%&gt;%</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(site, plot, sitenum, plotnum) <span class="sc">%&gt;%</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(plotnum)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>mdata <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_rec =</span> <span class="fu">nrow</span>(data_rec),</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_old =</span> <span class="fu">nrow</span>(data_old),</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_pre =</span> <span class="fu">nrow</span>(data_pre),</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_site =</span> <span class="fu">max</span>(data_rec<span class="sc">$</span>sitenum),</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_plot_rec =</span> <span class="fu">max</span>(data_rec<span class="sc">$</span>plotnum),</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">stem_rec =</span> data_rec<span class="sc">$</span>stem,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">stem_old =</span> data_old<span class="sc">$</span>stem,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">stem_pre =</span> data_pre<span class="sc">$</span>stem,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> data_rec<span class="sc">$</span>rel_year <span class="sc">-</span> <span class="dv">3</span>,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">site_rec =</span> data_rec<span class="sc">$</span>sitenum,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">site_old =</span> data_old<span class="sc">$</span>sitenum,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">site_pre =</span> data_pre<span class="sc">$</span>sitenum,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_rec =</span> data_rec<span class="sc">$</span>plotnum,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">site_plot_rec =</span> ind_rec<span class="sc">$</span>sitenum,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">dist_bounds =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="dv">1</span>),</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">delta_bounds =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>),</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">mu_thetaInf_bounds =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">1000</span>),</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">thetaInf_s_bounds =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">2000</span>)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
@@ -294,50 +316,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="ltp" class="level2">
 <h2 class="anchored" data-anchor-id="ltp">LTP</h2>
-<p>Long term process only model:</p>
-<p><span class="math display">\[
-\begin{align}
-\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times LTP \\
-LTP = 1 - e^{-\lambda_p \times time}
-\end{align}
-\]</span></p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ltp <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"models/ltp.stan"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unlink</span>(<span class="st">"data/derived_data/ltp"</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"data/derived_data/ltp"</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>fit_ltp <span class="ot">&lt;-</span> ltp<span class="sc">$</span><span class="fu">sample</span>(</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mdata,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_warmup =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">output_dir =</span> <span class="st">"data/derived_data/ltp"</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">"chains"</span>, var, <span class="st">"ltp"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">unlink</span>(path, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(path)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>fit_ltp <span class="ot">&lt;-</span> ltp<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mdata,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_warmup =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">output_dir =</span> path</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fit_ltp <span class="ot">&lt;-</span> <span class="fu">as_cmdstan_fit</span>(<span class="fu">list.files</span>(<span class="st">"data/derived_data/ltp"</span>,</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">full.names =</span> <span class="cn">TRUE</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>))</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>fit_ltp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">"chains"</span>, var, <span class="st">"ltp"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>fit_ltp <span class="ot">&lt;-</span> <span class="fu">as_cmdstan_fit</span>(<span class="fu">list.files</span>(path, <span class="at">full.names =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>fit_ltp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>     variable   mean median    sd   mad     q5    q95 rhat ess_bulk ess_tail
- lp__         785.36 785.87 15.50 15.28 758.77 810.17 1.01      827     1412
- mu_theta0    326.18 325.98 13.99 13.66 303.67 349.29 1.00     4723     3133
- sigma_theta0   0.41   0.41  0.03  0.03   0.37   0.47 1.00     5662     3109
- theta0_p[1]  213.24 213.21 28.82 31.47 165.88 259.62 1.00     4424     2925
- theta0_p[2]  269.27 271.27 22.18 19.91 228.50 302.02 1.00     4105     2924
- theta0_p[3]  224.47 226.14 18.76 18.57 191.06 252.88 1.00     4608     2925
- theta0_p[4]  222.43 222.15 29.18 30.96 174.74 269.02 1.00     5357     2968
- theta0_p[5]  222.45 224.14 21.97 21.96 183.95 255.68 1.00     4929     2830
- theta0_p[6]  250.85 250.30 16.97 15.39 223.88 278.83 1.00     6271     2742
- theta0_p[7]  238.46 241.29 26.65 28.20 192.34 277.50 1.00     4932     3336
+<pre><code>   variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
+ lp__       2114.75 2114.28 20.29 20.04 2083.79 2149.27 1.01      265      361
+ mu_dist       0.79    0.79  0.02  0.02    0.76    0.82 1.01      565      886
+ sigma_dist    0.08    0.08  0.01  0.01    0.06    0.10 1.00     1279     2686
+ dist_p[1]     0.79    0.79  0.06  0.06    0.68    0.88 1.01     1779     1647
+ dist_p[2]     0.87    0.87  0.06  0.06    0.77    0.97 1.00     1580     1260
+ dist_p[3]     0.77    0.77  0.05  0.05    0.68    0.85 1.00     2104     2457
+ dist_p[4]     0.80    0.80  0.06  0.06    0.70    0.90 1.00     1744     1982
+ dist_p[5]     0.77    0.77  0.05  0.05    0.69    0.85 1.00     2095     2713
+ dist_p[6]     0.81    0.81  0.05  0.05    0.73    0.90 1.00     1951     1425
+ dist_p[7]     0.82    0.82  0.06  0.06    0.72    0.92 1.00     1676     1701
 
- # showing 10 of 3319 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
+ # showing 10 of 3425 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -412,50 +427,41 @@ LTP = 1 - e^{-\lambda_p \times time}
 </section>
 <section id="stp" class="level2">
 <h2 class="anchored" data-anchor-id="stp">STP</h2>
-<p>Long term and short term processes model based on disturbance index <span class="math inline">\(dist\)</span>:</p>
-<p><span class="math display">\[
-\begin{align}
-\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times (LTP+STP) \\
-LTP = 1 - e^{-\lambda_p \times time} \\
-STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \\
-\theta_{0,p} = \theta_{\infty,s} \times dist_p
-\end{align}
-\]</span></p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>stp <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"models/stp.stan"</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unlink</span>(<span class="st">"data/derived_data/stp"</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"data/derived_data/stp"</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>fit_stp <span class="ot">&lt;-</span> stp<span class="sc">$</span><span class="fu">sample</span>(</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mdata,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>,</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_warmup =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">output_dir =</span> <span class="st">"data/derived_data/stp"</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">"chains"</span>, var, <span class="st">"stp"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">unlink</span>(path, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(path)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>fit_stp <span class="ot">&lt;-</span> stp<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mdata,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_warmup =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">output_dir =</span> path</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fit_stp <span class="ot">&lt;-</span> <span class="fu">as_cmdstan_fit</span>(<span class="fu">list.files</span>(<span class="st">"data/derived_data/stp"</span>,</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">full.names =</span> <span class="cn">TRUE</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>))</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>fit_stp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">"chains"</span>, var, <span class="st">"stp"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>fit_stp <span class="ot">&lt;-</span> <span class="fu">as_cmdstan_fit</span>(<span class="fu">list.files</span>(path, <span class="at">full.names =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>fit_stp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>   variable   mean median    sd   mad     q5    q95 rhat ess_bulk ess_tail
- lp__       448.89 443.61 82.81 68.08 299.22 580.14 2.68        4       12
- mu_dist      0.86   0.86  0.03  0.03   0.81   0.91 1.22       12       33
- sigma_dist   0.26   0.25  0.02  0.02   0.22   0.29 1.01     2200     2865
- dist_p[1]    0.74   0.74  0.06  0.06   0.64   0.84 1.01     2344     2265
- dist_p[2]    0.92   0.92  0.08  0.08   0.80   1.05 1.00     2397     2312
- dist_p[3]    0.78   0.78  0.06  0.06   0.68   0.88 1.01     2658     2560
- dist_p[4]    0.76   0.76  0.07  0.06   0.66   0.88 1.00     3239     2757
- dist_p[5]    0.78   0.78  0.06  0.06   0.68   0.88 1.00     2357     2633
- dist_p[6]    0.88   0.87  0.07  0.06   0.78   0.99 1.01     1867     1720
- dist_p[7]    0.81   0.81  0.07  0.07   0.70   0.93 1.01     2906     2510
+<pre><code>   variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
+ lp__       2512.30 2512.06 24.54 23.85 2472.42 2552.69 1.01      375      506
+ mu_dist       0.73    0.73  0.02  0.02    0.70    0.77 1.00     1462     2387
+ sigma_dist    0.09    0.09  0.01  0.01    0.07    0.11 1.00     2585     2677
+ dist_p[1]     0.70    0.70  0.04  0.04    0.63    0.77 1.00     3538     2868
+ dist_p[2]     0.85    0.85  0.05  0.06    0.76    0.94 1.00     2715     2234
+ dist_p[3]     0.72    0.72  0.04  0.04    0.65    0.79 1.00     3503     2657
+ dist_p[4]     0.72    0.72  0.04  0.04    0.65    0.79 1.00     3709     2584
+ dist_p[5]     0.73    0.73  0.04  0.04    0.66    0.80 1.00     3328     2682
+ dist_p[6]     0.80    0.80  0.04  0.04    0.73    0.87 1.00     2368     2258
+ dist_p[7]     0.76    0.76  0.05  0.04    0.69    0.84 1.00     3595     2389
 
  # showing 10 of 4397 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
@@ -532,66 +538,40 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fit_stp<span class="sc">$</span><span class="fu">draws</span>(<span class="st">"dist_p"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_intervals</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="31_stem_files/figure-html/dist_stp-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Disturbance parameters posteriors.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> fit_stp<span class="sc">$</span><span class="fu">summary</span>(</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_dist"</span>, <span class="st">"dist_p"</span>, <span class="st">"sigma_dist"</span>,</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_lambda"</span>, <span class="st">"sigma_lambda"</span>, <span class="st">"lambda_p"</span>,</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_thetaInf"</span>, <span class="st">"sigma_thetaInf"</span>, <span class="st">"thetaInf_s"</span>,</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_delta"</span>, <span class="st">"delta_p"</span>, <span class="st">"sigma_delta"</span>,</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_tau"</span>, <span class="st">"tau_s"</span>, <span class="st">"sigma_tau"</span>,</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sigma_old"</span>, <span class="st">"sigma_pre"</span>, <span class="st">"sigma_rec"</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rhat"</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(rhat <span class="sc">&gt;</span> <span class="fl">1.2</span>)</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>t<span class="sc">$</span>variable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> fit_stp<span class="sc">$</span><span class="fu">summary</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_dist"</span>, <span class="st">"dist_p"</span>, <span class="st">"sigma_dist"</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_lambda"</span>, <span class="st">"sigma_lambda"</span>, <span class="st">"lambda_p"</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_thetaInf"</span>, <span class="st">"sigma_thetaInf"</span>, <span class="st">"thetaInf_s"</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_delta"</span>, <span class="st">"delta_p"</span>, <span class="st">"sigma_delta"</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_tau"</span>, <span class="st">"tau_s"</span>, <span class="st">"sigma_tau"</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sigma_old"</span>, <span class="st">"sigma_pre"</span>, <span class="st">"sigma_rec"</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rhat"</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(rhat <span class="sc">&gt;</span> <span class="fl">1.1</span>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>t<span class="sc">$</span>variable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] "mu_dist"        "dist_p[10]"     "dist_p[12]"     "dist_p[13]"    
- [5] "dist_p[18]"     "dist_p[20]"     "dist_p[21]"     "dist_p[23]"    
- [9] "dist_p[24]"     "dist_p[40]"     "dist_p[70]"     "dist_p[91]"    
-[13] "dist_p[92]"     "dist_p[93]"     "dist_p[94]"     "dist_p[95]"    
-[17] "dist_p[96]"     "dist_p[97]"     "dist_p[98]"     "dist_p[99]"    
-[21] "dist_p[100]"    "dist_p[101]"    "dist_p[102]"    "mu_lambda"     
-[25] "sigma_lambda"   "lambda_p[12]"   "lambda_p[13]"   "lambda_p[18]"  
-[29] "lambda_p[20]"   "lambda_p[21]"   "lambda_p[23]"   "lambda_p[24]"  
-[33] "lambda_p[40]"   "lambda_p[70]"   "lambda_p[93]"   "lambda_p[96]"  
-[37] "lambda_p[97]"   "lambda_p[98]"   "lambda_p[100]"  "thetaInf_s[2]" 
-[41] "thetaInf_s[3]"  "thetaInf_s[9]"  "thetaInf_s[10]" "mu_delta"      
-[45] "delta_p[10]"    "delta_p[12]"    "delta_p[13]"    "delta_p[18]"   
-[49] "delta_p[20]"    "delta_p[21]"    "delta_p[23]"    "delta_p[24]"   
-[53] "delta_p[40]"    "delta_p[91]"    "delta_p[96]"    "delta_p[97]"   
-[57] "delta_p[98]"    "delta_p[100]"   "delta_p[102]"   "sigma_delta"   
-[61] "tau_s[2]"       "tau_s[7]"       "tau_s[9]"       "sigma_old"     
-[65] "sigma_rec"     </code></pre>
+<pre><code>character(0)</code></pre>
 </div>
 </div>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fit_stp<span class="sc">$</span><span class="fu">draws</span>(t<span class="sc">$</span>variable[<span class="fu">grepl</span>(<span class="st">"dist_p"</span>, t<span class="sc">$</span>variable)]) <span class="sc">%&gt;%</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_trace</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>pars <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"mu_dist"</span>, <span class="st">"sigma_dist"</span>, <span class="st">"mu_lambda"</span>, <span class="st">"sigma_lambda"</span>, <span class="st">"mu_thetaInf"</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"sigma_thetaInf"</span>, <span class="st">"sigma_old"</span>, <span class="st">"sigma_pre"</span>, <span class="st">"sigma_rec"</span>, <span class="st">"mu_delta"</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"sigma_delta"</span>, <span class="st">"mu_tau"</span>, <span class="st">"sigma_tau"</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>fit_stp<span class="sc">$</span><span class="fu">draws</span>(pars) <span class="sc">%&gt;%</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_dens</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="31_stem_files/figure-html/trace_dist_stp-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">dist traces.</figcaption>
+<p><img src="31_stem_files/figure-html/dist_other_stp-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Posteriors generals pars.</figcaption>
 </figure>
 </div>
 </div>
@@ -599,701 +579,16 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fit_stp<span class="sc">$</span><span class="fu">draws</span>(t<span class="sc">$</span>variable[<span class="fu">grepl</span>(<span class="st">"lambda_p"</span>, t<span class="sc">$</span>variable)]) <span class="sc">%&gt;%</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_trace</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fit_stp<span class="sc">$</span><span class="fu">draws</span>(<span class="st">"delta_p"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_intervals</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="31_stem_files/figure-html/trace_lambda_stp-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">lambda traces.</figcaption>
+<p><img src="31_stem_files/figure-html/dist_delta_stp-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Posteriors delta_p.</figcaption>
 </figure>
 </div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fit_stp<span class="sc">$</span><span class="fu">draws</span>(t<span class="sc">$</span>variable[<span class="fu">grepl</span>(<span class="st">"delta_p"</span>, t<span class="sc">$</span>variable)]) <span class="sc">%&gt;%</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_trace</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="31_stem_files/figure-html/trace_delta_stp-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">delta traces.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fit_stp<span class="sc">$</span><span class="fu">draws</span>(t<span class="sc">$</span>variable[<span class="sc">!</span>(<span class="fu">grepl</span>(<span class="st">"lambda"</span>, t<span class="sc">$</span>variable) <span class="sc">|</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">grepl</span>(<span class="st">"dist_p"</span>, t<span class="sc">$</span>variable) <span class="sc">|</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">grepl</span>(<span class="st">"delta_p"</span>, t<span class="sc">$</span>variable))]) <span class="sc">%&gt;%</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_trace</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="31_stem_files/figure-html/trace_other_stp-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">other traces.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="stp-normal" class="level2">
-<h2 class="anchored" data-anchor-id="stp-normal">STP normal</h2>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>stp_norm <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"models/stp_norm.stan"</span>)</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unlink</span>(<span class="st">"data/derived_data/stp_norm"</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"data/derived_data/stp_norm"</span>)</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>fit_stp_norm <span class="ot">&lt;-</span> stp_norm<span class="sc">$</span><span class="fu">sample</span>(</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mdata,</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>,</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_warmup =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">output_dir =</span> <span class="st">"data/derived_data/stp_norm"</span></span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fit_stp_norm <span class="ot">&lt;-</span> <span class="fu">as_cmdstan_fit</span>(<span class="fu">list.files</span>(<span class="st">"data/derived_data/stp_norm"</span>,</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">full.names =</span> <span class="cn">TRUE</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>))</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>fit_stp_norm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>   variable    mean  median    sd    mad      q5     q95 rhat ess_bulk ess_tail
- lp__       1793.44 1789.68 75.85 106.65 1694.14 1896.07 1.87        5       55
- mu_dist       0.85    0.84  0.04   0.04    0.79    0.91 1.53        7       58
- sigma_dist    0.26    0.26  0.02   0.02    0.22    0.29 1.02      199     2616
- dist_p[1]     0.74    0.73  0.06   0.06    0.64    0.84 1.00     3868     2170
- dist_p[2]     0.93    0.93  0.07   0.07    0.81    1.05 1.00     2931     2918
- dist_p[3]     0.78    0.78  0.06   0.06    0.69    0.88 1.00     3270     2890
- dist_p[4]     0.76    0.76  0.06   0.06    0.66    0.87 1.00     4377     2673
- dist_p[5]     0.78    0.78  0.06   0.06    0.68    0.89 1.00     3116     2471
- dist_p[6]     0.88    0.87  0.06   0.06    0.78    0.99 1.00     2928     2688
- dist_p[7]     0.81    0.81  0.07   0.07    0.70    0.93 1.00     3402     2566
-
- # showing 10 of 4397 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>data_rec<span class="sc">$</span>preds <span class="ot">&lt;-</span> fit_stp_norm<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"mu_rec"</span>), median)<span class="sc">$</span>median</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>rmse_rec <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((data_rec<span class="sc">$</span>preds <span class="sc">-</span> data_rec<span class="sc">$</span>stem)<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>g_rec <span class="ot">&lt;-</span> data_rec <span class="sc">%&gt;%</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(preds, stem)) <span class="sc">+</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">col =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Recovery"</span>, <span class="fu">paste</span>(<span class="st">"RMSE ="</span>, <span class="fu">round</span>(rmse_rec, <span class="dv">2</span>))) <span class="sc">+</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="fu">expression</span>(<span class="st">"Predicted [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>)) <span class="sc">+</span></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="st">"Observed [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>))</span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>data_pre<span class="sc">$</span>preds <span class="ot">&lt;-</span> fit_stp_norm<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"mu_pre"</span>), median)<span class="sc">$</span>median</span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>rmse_pre <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((data_pre<span class="sc">$</span>preds <span class="sc">-</span> data_pre<span class="sc">$</span>stem)<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>g_pre <span class="ot">&lt;-</span> data_pre <span class="sc">%&gt;%</span></span>
-<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(preds, stem, <span class="at">col =</span> site)) <span class="sc">+</span></span>
-<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">col =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Prelogging"</span>, <span class="fu">paste</span>(<span class="st">"RMSE ="</span>, <span class="fu">round</span>(rmse_pre, <span class="dv">2</span>))) <span class="sc">+</span></span>
-<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="fu">expression</span>(<span class="st">"Predicted [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>)) <span class="sc">+</span></span>
-<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="st">"Observed [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>))</span>
-<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>g_pre <span class="sc">+</span> g_rec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="31_stem_files/figure-html/pvo_stp_norm-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Predicted versus observed.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(data_pre, data_rec) <span class="sc">%&gt;%</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rel_year, <span class="at">group =</span> <span class="fu">paste</span>(site, plot), <span class="at">col =</span> plot)) <span class="sc">+</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> stem), <span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> preds)) <span class="sc">+</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>site, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="st">"Stem [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>)) <span class="sc">+</span></span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">guide =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="31_stem_files/figure-html/preds_stp_norm-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Predicted trajectories.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> fit_stp_norm<span class="sc">$</span><span class="fu">summary</span>(</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_dist"</span>, <span class="st">"dist_p"</span>, <span class="st">"sigma_dist"</span>,</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_lambda"</span>, <span class="st">"sigma_lambda"</span>, <span class="st">"lambda_p"</span>,</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_thetaInf"</span>, <span class="st">"sigma_thetaInf"</span>, <span class="st">"thetaInf_s"</span>,</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_delta"</span>, <span class="st">"delta_p"</span>, <span class="st">"sigma_delta"</span>,</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mu_tau"</span>, <span class="st">"tau_s"</span>, <span class="st">"sigma_tau"</span>,</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sigma_old"</span>, <span class="st">"sigma_pre"</span>, <span class="st">"sigma_rec"</span></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rhat"</span></span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(rhat <span class="sc">&gt;</span> <span class="fl">1.2</span>)</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>t<span class="sc">$</span>variable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code> [1] "mu_dist"        "dist_p[10]"     "dist_p[12]"     "dist_p[13]"    
- [5] "dist_p[15]"     "dist_p[21]"     "dist_p[23]"     "dist_p[40]"    
- [9] "dist_p[42]"     "dist_p[43]"     "dist_p[97]"     "dist_p[98]"    
-[13] "dist_p[99]"     "dist_p[100]"    "dist_p[101]"    "dist_p[102]"   
-[17] "mu_lambda"      "lambda_p[12]"   "lambda_p[13]"   "lambda_p[15]"  
-[21] "lambda_p[21]"   "lambda_p[23]"   "lambda_p[40]"   "lambda_p[42]"  
-[25] "lambda_p[97]"   "lambda_p[98]"   "lambda_p[100]"  "thetaInf_s[2]" 
-[29] "thetaInf_s[3]"  "thetaInf_s[5]"  "thetaInf_s[9]"  "thetaInf_s[10]"
-[33] "mu_delta"       "delta_p[10]"    "delta_p[12]"    "delta_p[13]"   
-[37] "delta_p[15]"    "delta_p[21]"    "delta_p[23]"    "delta_p[40]"   
-[41] "delta_p[42]"    "delta_p[97]"    "delta_p[98]"    "delta_p[99]"   
-[45] "delta_p[100]"   "delta_p[102]"   "sigma_delta"    "tau_s[10]"     
-[49] "sigma_old"      "sigma_rec"     </code></pre>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fit_stp_norm<span class="sc">$</span><span class="fu">draws</span>(t<span class="sc">$</span>variable[<span class="fu">grepl</span>(<span class="st">"dist_p"</span>, t<span class="sc">$</span>variable)]) <span class="sc">%&gt;%</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_trace</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="31_stem_files/figure-html/trace_dist_stp_norm-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">dist traces.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>fit_stp_norm<span class="sc">$</span><span class="fu">draws</span>(t<span class="sc">$</span>variable[<span class="fu">grepl</span>(<span class="st">"lambda_p"</span>, t<span class="sc">$</span>variable)]) <span class="sc">%&gt;%</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_trace</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="31_stem_files/figure-html/trace_lambda_stp_norm-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">lambda traces.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>fit_stp_norm<span class="sc">$</span><span class="fu">draws</span>(t<span class="sc">$</span>variable[<span class="fu">grepl</span>(<span class="st">"delta_p"</span>, t<span class="sc">$</span>variable)]) <span class="sc">%&gt;%</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_trace</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="31_stem_files/figure-html/trace_delta_stp_norm-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">delta traces.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fit_stp_norm<span class="sc">$</span><span class="fu">draws</span>(t<span class="sc">$</span>variable[<span class="sc">!</span>(<span class="fu">grepl</span>(<span class="st">"lambda"</span>, t<span class="sc">$</span>variable) <span class="sc">|</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">grepl</span>(<span class="st">"dist_p"</span>, t<span class="sc">$</span>variable) <span class="sc">|</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">grepl</span>(<span class="st">"delta_p"</span>, t<span class="sc">$</span>variable))]) <span class="sc">%&gt;%</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_trace</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="31_stem_files/figure-html/trace_other_stp_norm-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">other traces.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="stp-normal-false" class="level2">
-<h2 class="anchored" data-anchor-id="stp-normal-false">STP normal false</h2>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>stp_norm_false <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"models/stp_norm_false.stan"</span>)</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unlink</span>(<span class="st">"data/derived_data/stp_norm_false"</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"data/derived_data/stp_norm_false"</span>)</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>fit_stp_norm_false <span class="ot">&lt;-</span> stp_norm_false<span class="sc">$</span><span class="fu">sample</span>(</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mdata,</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>,</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_warmup =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">output_dir =</span> <span class="st">"data/derived_data/stp_norm_false"</span></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>fit_stp_norm_false <span class="ot">&lt;-</span> <span class="fu">as_cmdstan_fit</span>(<span class="fu">list.files</span>(<span class="st">"data/derived_data/stp_norm_false"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)) <span class="co">#nolint</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>fit_stp_norm_false</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>   variable    mean  median    sd    mad      q5     q95 rhat ess_bulk ess_tail
- lp__       2097.50 2068.32 95.72 109.25 1982.39 2248.01 2.16        5       27
- mu_dist       0.97    0.97  0.01   0.01    0.95    0.99 1.54        7       27
- sigma_dist    0.06    0.06  0.01   0.01    0.05    0.07 1.14       19      235
- dist_p[1]     0.94    0.94  0.01   0.01    0.92    0.97 1.00     2787     2257
- dist_p[2]     0.99    0.99  0.01   0.01    0.96    1.01 1.00     2291     2752
- dist_p[3]     0.95    0.96  0.01   0.01    0.93    0.98 1.00     2272     2473
- dist_p[4]     0.95    0.95  0.01   0.01    0.93    0.97 1.00     2562     2673
- dist_p[5]     0.95    0.95  0.01   0.01    0.93    0.98 1.00     2028     2832
- dist_p[6]     0.98    0.98  0.01   0.01    0.96    1.00 1.00     1547     1665
- dist_p[7]     0.96    0.96  0.01   0.01    0.94    0.98 1.00     3104     3079
-
- # showing 10 of 4397 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>data_rec<span class="sc">$</span>preds <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_stp_norm_false<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"mu_rec"</span>), median)<span class="sc">$</span>median)</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>rmse_rec <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((data_rec<span class="sc">$</span>preds <span class="sc">-</span> data_rec<span class="sc">$</span>stem)<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>g_rec <span class="ot">&lt;-</span> data_rec <span class="sc">%&gt;%</span></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(preds, stem)) <span class="sc">+</span></span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">col =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Recovery"</span>, <span class="fu">paste</span>(<span class="st">"RMSE ="</span>, <span class="fu">round</span>(rmse_rec, <span class="dv">2</span>))) <span class="sc">+</span></span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="fu">expression</span>(<span class="st">"Predicted [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>)) <span class="sc">+</span></span>
-<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="st">"Observed [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>))</span>
-<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>data_pre<span class="sc">$</span>preds <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_stp_norm_false<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"mu_pre"</span>), median)<span class="sc">$</span>median)</span>
-<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>rmse_pre <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((data_pre<span class="sc">$</span>preds <span class="sc">-</span> data_pre<span class="sc">$</span>stem)<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>g_pre <span class="ot">&lt;-</span> data_pre <span class="sc">%&gt;%</span></span>
-<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(preds, stem, <span class="at">col =</span> site)) <span class="sc">+</span></span>
-<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">col =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Prelogging"</span>, <span class="fu">paste</span>(<span class="st">"RMSE ="</span>, <span class="fu">round</span>(rmse_pre, <span class="dv">2</span>))) <span class="sc">+</span></span>
-<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="fu">expression</span>(<span class="st">"Predicted [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>)) <span class="sc">+</span></span>
-<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="st">"Observed [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>))</span>
-<span id="cb34-31"><a href="#cb34-31" aria-hidden="true" tabindex="-1"></a>g_pre <span class="sc">+</span> g_rec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="31_stem_files/figure-html/pvo_stp_norm_false-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Predicted versus observed.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(data_pre, data_rec) <span class="sc">%&gt;%</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rel_year, <span class="at">group =</span> <span class="fu">paste</span>(site, plot), <span class="at">col =</span> plot)) <span class="sc">+</span></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> stem), <span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> preds)) <span class="sc">+</span></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>site, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="st">"Stem [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>)) <span class="sc">+</span></span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">guide =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="31_stem_files/figure-html/preds_stp_norm_false-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Predicted trajectories.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="stp-normal-false-2" class="level2">
-<h2 class="anchored" data-anchor-id="stp-normal-false-2">STP normal false 2</h2>
-<blockquote class="blockquote">
-<p>La belle trajectoire d’hier était pour Ulu muda était un coup de bol, cf réplicat ici.</p>
-</blockquote>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>stp_norm_false2 <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"models/stp_norm_false2.stan"</span>)</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unlink</span>(<span class="st">"data/derived_data/stp_norm_false2"</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"data/derived_data/stp_norm_false2"</span>)</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>fit_stp_norm_false2 <span class="ot">&lt;-</span> stp_norm_false<span class="sc">$</span><span class="fu">sample</span>(</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mdata,</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>,</span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_warmup =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">output_dir =</span> <span class="st">"data/derived_data/stp_norm_false2"</span></span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>fit_stp_norm_false2 <span class="ot">&lt;-</span> <span class="fu">as_cmdstan_fit</span>(<span class="fu">list.files</span>(<span class="st">"data/derived_data/stp_norm_false2"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)) <span class="co">#nolint</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>fit_stp_norm_false2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>   variable    mean  median    sd    mad      q5     q95 rhat ess_bulk ess_tail
- lp__       2110.65 2106.57 88.14 119.90 1986.32 2236.32 2.64        4       30
- mu_dist       0.97    0.96  0.01   0.01    0.95    0.98 1.59        6       31
- sigma_dist    0.06    0.06  0.01   0.01    0.05    0.07 1.08       33      682
- dist_p[1]     0.94    0.94  0.01   0.01    0.92    0.96 1.01     3192     2319
- dist_p[2]     0.98    0.98  0.01   0.01    0.96    1.01 1.01     2141     2987
- dist_p[3]     0.95    0.95  0.01   0.01    0.93    0.97 1.02      332     2879
- dist_p[4]     0.95    0.95  0.01   0.01    0.93    0.97 1.01     3590     2798
- dist_p[5]     0.95    0.95  0.01   0.01    0.93    0.97 1.02      432     2614
- dist_p[6]     0.97    0.97  0.01   0.01    0.96    0.99 1.03      176     1994
- dist_p[7]     0.96    0.96  0.01   0.01    0.94    0.98 1.01     3537     2643
-
- # showing 10 of 4397 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>data_rec<span class="sc">$</span>preds <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_stp_norm_false2<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"mu_rec"</span>), median)<span class="sc">$</span>median)</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>rmse_rec <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((data_rec<span class="sc">$</span>preds <span class="sc">-</span> data_rec<span class="sc">$</span>stem)<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>g_rec <span class="ot">&lt;-</span> data_rec <span class="sc">%&gt;%</span></span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(preds, stem)) <span class="sc">+</span></span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">col =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Recovery"</span>, <span class="fu">paste</span>(<span class="st">"RMSE ="</span>, <span class="fu">round</span>(rmse_rec, <span class="dv">2</span>))) <span class="sc">+</span></span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="fu">expression</span>(<span class="st">"Predicted [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>)) <span class="sc">+</span></span>
-<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="st">"Observed [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>))</span>
-<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>data_pre<span class="sc">$</span>preds <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_stp_norm_false2<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"mu_pre"</span>), median)<span class="sc">$</span>median)</span>
-<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>rmse_pre <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((data_pre<span class="sc">$</span>preds <span class="sc">-</span> data_pre<span class="sc">$</span>stem)<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>g_pre <span class="ot">&lt;-</span> data_pre <span class="sc">%&gt;%</span></span>
-<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(preds, stem, <span class="at">col =</span> site)) <span class="sc">+</span></span>
-<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">col =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Prelogging"</span>, <span class="fu">paste</span>(<span class="st">"RMSE ="</span>, <span class="fu">round</span>(rmse_pre, <span class="dv">2</span>))) <span class="sc">+</span></span>
-<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="fu">expression</span>(<span class="st">"Predicted [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>)) <span class="sc">+</span></span>
-<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="st">"Observed [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>))</span>
-<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a>g_pre <span class="sc">+</span> g_rec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="31_stem_files/figure-html/pvo_stp_norm_false2-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Predicted versus observed.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(data_pre, data_rec) <span class="sc">%&gt;%</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rel_year, <span class="at">group =</span> <span class="fu">paste</span>(site, plot), <span class="at">col =</span> plot)) <span class="sc">+</span></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> stem), <span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> preds)) <span class="sc">+</span></span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>site, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="st">"Stem [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>)) <span class="sc">+</span></span>
-<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">guide =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="31_stem_files/figure-html/preds_stp_norm_false2-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Predicted trajectories.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="ulu-muda" class="level2">
-<h2 class="anchored" data-anchor-id="ulu-muda">Ulu Muda</h2>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">include_graphics</span>(<span class="st">"figures/preds_stp_norm-1.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="figures/preds_stp_norm-1.png" class="img-fluid"></p>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>data_rec<span class="sc">$</span>preds <span class="ot">&lt;-</span> fit_stp_norm<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"mu_rec"</span>), median)<span class="sc">$</span>median</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>data_pre<span class="sc">$</span>preds <span class="ot">&lt;-</span> fit_stp_norm<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"mu_pre"</span>), median)<span class="sc">$</span>median</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>g_norm <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(data_pre, data_rec) <span class="sc">%&gt;%</span></span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(site <span class="sc">==</span> <span class="st">"Ulu Muda"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rel_year, <span class="at">group =</span> <span class="fu">paste</span>(site, plot), <span class="at">col =</span> plot)) <span class="sc">+</span></span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> stem), <span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> preds)) <span class="sc">+</span></span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>site, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
-<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="st">"Stem [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>)) <span class="sc">+</span></span>
-<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"STP normal"</span>)</span>
-<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>data_rec<span class="sc">$</span>preds <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_stp_norm_false<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"mu_rec"</span>), median)<span class="sc">$</span>median)</span>
-<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>data_pre<span class="sc">$</span>preds <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_stp_norm_false<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"mu_pre"</span>), median)<span class="sc">$</span>median)</span>
-<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>g_false <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(data_pre, data_rec) <span class="sc">%&gt;%</span></span>
-<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(site <span class="sc">==</span> <span class="st">"Ulu Muda"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rel_year, <span class="at">group =</span> <span class="fu">paste</span>(site, plot), <span class="at">col =</span> plot)) <span class="sc">+</span></span>
-<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> stem), <span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
-<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> preds)) <span class="sc">+</span></span>
-<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>site, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
-<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="st">"Stem [ trees"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb42-29"><a href="#cb42-29" aria-hidden="true" tabindex="-1"></a>  } <span class="sc">~</span> <span class="st">"]"</span>)) <span class="sc">+</span></span>
-<span id="cb42-30"><a href="#cb42-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"STP normal false"</span>)</span>
-<span id="cb42-31"><a href="#cb42-31" aria-hidden="true" tabindex="-1"></a>g_norm <span class="sc">+</span> g_false</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="31_stem_files/figure-html/ulu_comp-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Starting point.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>site <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="dv">97</span><span class="sc">:</span><span class="dv">102</span></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="dv">100</span></span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>pars_s <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="fu">c</span>(<span class="st">"tau_s"</span>, <span class="st">"thetaInf_s"</span>), <span class="st">"["</span>, site, <span class="st">"]"</span>)</span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>pars_p <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">c</span>(<span class="st">"dist_p"</span>, <span class="st">"lambda_p"</span>, <span class="st">"delta_p"</span>),</span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(x) <span class="fu">paste0</span>(x, <span class="st">"["</span>, plot, <span class="st">"]"</span>),</span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">simplify =</span> <span class="cn">FALSE</span></span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlist</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unname</span>()</span>
-<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>pars <span class="ot">&lt;-</span> <span class="fu">c</span>(pars_s, pars_p)</span>
-<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>data_rec <span class="sc">%&gt;%</span></span>
-<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(site <span class="sc">==</span> <span class="st">"Ulu Muda"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(site, plot, sitenum, plotnum) <span class="sc">%&gt;%</span></span>
-<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<table class="table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;">site</th>
-<th style="text-align: left;">plot</th>
-<th style="text-align: right;">sitenum</th>
-<th style="text-align: right;">plotnum</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Ulu Muda</td>
-<td style="text-align: left;">25</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">97</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Ulu Muda</td>
-<td style="text-align: left;">26</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">98</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Ulu Muda</td>
-<td style="text-align: left;">27</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">99</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Ulu Muda</td>
-<td style="text-align: left;">28</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">100</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Ulu Muda</td>
-<td style="text-align: left;">29</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">101</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Ulu Muda</td>
-<td style="text-align: left;">30</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">102</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>fit_stp_norm<span class="sc">$</span><span class="fu">draws</span>(pars) <span class="sc">%&gt;%</span></span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_trace</span>() <span class="sc">+</span></span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"STP normal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="31_stem_files/figure-html/ulu_trace_norm-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>fit_stp_norm_false<span class="sc">$</span><span class="fu">draws</span>(pars) <span class="sc">%&gt;%</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_trace</span>() <span class="sc">+</span></span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"STP normal false"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="31_stem_files/figure-html/ulu_trace_false-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>fit_stp_norm<span class="sc">$</span><span class="fu">draws</span>(pars) <span class="sc">%&gt;%</span></span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_pairs</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="31_stem_files/figure-html/ulu_pairs_norm-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>fit_stp_norm_false<span class="sc">$</span><span class="fu">draws</span>(pars) <span class="sc">%&gt;%</span></span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_pairs</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="31_stem_files/figure-html/ulu_pairs_false-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  fit_stp_norm<span class="sc">$</span><span class="fu">draws</span>(pars) <span class="sc">%&gt;%</span></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gather</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">separate</span>(key, <span class="fu">c</span>(<span class="st">"chain"</span>, <span class="st">"parameter"</span>, <span class="st">"index"</span>, <span class="st">"ind_value"</span>),</span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">convert =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">"STP normal"</span>),</span>
-<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>  fit_stp_norm_false<span class="sc">$</span><span class="fu">draws</span>(pars) <span class="sc">%&gt;%</span></span>
-<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gather</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">separate</span>(key, <span class="fu">c</span>(<span class="st">"chain"</span>, <span class="st">"parameter"</span>, <span class="st">"index"</span>, <span class="st">"ind_value"</span>),</span>
-<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">convert =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">"STP false"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">value =</span> <span class="fu">ifelse</span>(parameter <span class="sc">==</span> <span class="st">"thetaInf"</span>, <span class="fu">exp</span>(value), value))</span>
-<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(value, <span class="at">fill =</span> model)) <span class="sc">+</span></span>
-<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> .<span class="dv">5</span>, <span class="at">col =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
-<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>parameter, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
-<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="31_stem_files/figure-html/ulu_pars-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>pars <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"mu_dist"</span>, <span class="st">"sigma_dist"</span>, <span class="st">"mu_lambda"</span>, <span class="st">"sigma_lambda"</span>, <span class="st">"mu_thetaInf"</span>,</span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"sigma_thetaInf"</span>, <span class="st">"sigma_old"</span>, <span class="st">"sigma_pre"</span>, <span class="st">"sigma_rec"</span>, <span class="st">"mu_delta"</span>,</span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"sigma_delta"</span>, <span class="st">"mu_tau"</span>, <span class="st">"sigma_tau"</span></span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(</span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>  fit_stp_norm<span class="sc">$</span><span class="fu">draws</span>(pars) <span class="sc">%&gt;%</span></span>
-<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gather</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">separate</span>(key, <span class="fu">c</span>(<span class="st">"chain"</span>, <span class="st">"parameter"</span>), <span class="at">sep =</span> <span class="st">"</span><span class="sc">\\</span><span class="st">."</span>, <span class="at">convert =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">"STP normal"</span>),</span>
-<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>  fit_stp_norm_false<span class="sc">$</span><span class="fu">draws</span>(pars) <span class="sc">%&gt;%</span></span>
-<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gather</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">separate</span>(key, <span class="fu">c</span>(<span class="st">"chain"</span>, <span class="st">"parameter"</span>), <span class="at">sep =</span> <span class="st">"</span><span class="sc">\\</span><span class="st">."</span>, <span class="at">convert =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">"STP false"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">value =</span> <span class="fu">ifelse</span>(parameter <span class="sc">==</span> <span class="st">"mu_thetaInf"</span>, <span class="fu">exp</span>(value), value))</span>
-<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(value, <span class="at">fill =</span> model)) <span class="sc">+</span></span>
-<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> .<span class="dv">5</span>, <span class="at">col =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
-<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>parameter, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
-<span id="cb49-22"><a href="#cb49-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="31_stem_files/figure-html/ulu_pars2-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -1302,26 +597,25 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">loo_compare</span>(</span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  fit_ltp<span class="sc">$</span><span class="fu">loo</span>(),</span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  fit_stp<span class="sc">$</span><span class="fu">loo</span>(),</span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  fit_stp_norm<span class="sc">$</span><span class="fu">loo</span>(),</span>
-<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  fit_stp_norm_false<span class="sc">$</span><span class="fu">loo</span>(),</span>
-<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  fit_stp_norm_false2<span class="sc">$</span><span class="fu">loo</span>()</span>
-<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">loo_compare</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">ltp =</span> fit_ltp<span class="sc">$</span><span class="fu">loo</span>(),</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">stp =</span> fit_stp<span class="sc">$</span><span class="fu">loo</span>()</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <colgroup>
-<col style="width: 8%">
+<col style="width: 4%">
 <col style="width: 12%">
 <col style="width: 10%">
 <col style="width: 10%">
-<col style="width: 13%">
+<col style="width: 14%">
 <col style="width: 10%">
-<col style="width: 11%">
-<col style="width: 11%">
+<col style="width: 12%">
+<col style="width: 12%">
 <col style="width: 10%">
 </colgroup>
 <thead>
@@ -1339,59 +633,26 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">model1</td>
+<td style="text-align: left;">ltp</td>
 <td style="text-align: right;">0.00000</td>
 <td style="text-align: right;">0.000000</td>
-<td style="text-align: right;">442.8946</td>
-<td style="text-align: right;">6.934509</td>
-<td style="text-align: right;">12.96416</td>
-<td style="text-align: right;">0.4308176</td>
-<td style="text-align: right;">-885.7892</td>
-<td style="text-align: right;">13.86902</td>
+<td style="text-align: right;">453.0664</td>
+<td style="text-align: right;">7.088091</td>
+<td style="text-align: right;">10.73106</td>
+<td style="text-align: right;">0.3127058</td>
+<td style="text-align: right;">-906.1329</td>
+<td style="text-align: right;">14.17618</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">model5</td>
-<td style="text-align: right;">-23.82376</td>
-<td style="text-align: right;">5.155572</td>
-<td style="text-align: right;">419.0709</td>
-<td style="text-align: right;">5.820989</td>
-<td style="text-align: right;">22.94321</td>
-<td style="text-align: right;">0.6520849</td>
-<td style="text-align: right;">-838.1417</td>
-<td style="text-align: right;">11.64198</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">model4</td>
-<td style="text-align: right;">-25.30076</td>
-<td style="text-align: right;">5.334448</td>
-<td style="text-align: right;">417.5939</td>
-<td style="text-align: right;">5.804517</td>
-<td style="text-align: right;">22.95866</td>
-<td style="text-align: right;">0.6675872</td>
-<td style="text-align: right;">-835.1877</td>
-<td style="text-align: right;">11.60903</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">model2</td>
-<td style="text-align: right;">-26.23735</td>
-<td style="text-align: right;">5.454391</td>
-<td style="text-align: right;">416.6573</td>
-<td style="text-align: right;">5.806459</td>
-<td style="text-align: right;">19.56450</td>
-<td style="text-align: right;">0.5204955</td>
-<td style="text-align: right;">-833.3145</td>
-<td style="text-align: right;">11.61292</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">model3</td>
-<td style="text-align: right;">-442.89462</td>
-<td style="text-align: right;">6.934509</td>
-<td style="text-align: right;">0.0000</td>
-<td style="text-align: right;">0.000000</td>
-<td style="text-align: right;">0.00000</td>
-<td style="text-align: right;">0.0000000</td>
-<td style="text-align: right;">0.0000</td>
-<td style="text-align: right;">0.00000</td>
+<td style="text-align: left;">stp</td>
+<td style="text-align: right;">-22.48864</td>
+<td style="text-align: right;">5.909868</td>
+<td style="text-align: right;">430.5778</td>
+<td style="text-align: right;">6.234222</td>
+<td style="text-align: right;">17.11137</td>
+<td style="text-align: right;">0.4121705</td>
+<td style="text-align: right;">-861.1556</td>
+<td style="text-align: right;">12.46844</td>
 </tr>
 </tbody>
 </table>
@@ -1637,13 +898,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./21_dummy_model.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Dummy models</span>
+      <a href="./21_models.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Models</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./91_stp_negative.html" class="pagination-link">
-        <span class="nav-page-text">STP negatives</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./32_wd.html" class="pagination-link">
+        <span class="nav-page-text">WD</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

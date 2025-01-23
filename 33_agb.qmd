@@ -1,0 +1,189 @@
+```{r setup}
+#| message: false
+#| include: false
+library(tidyverse)
+library(knitr)
+library(cmdstanr)
+library(bayesplot)
+library(loo)
+library(patchwork)
+```
+
+# AGB {.unnumbered}
+
+Test of modelling with stem density.
+
+## Data
+
+> We need use random effect for control plots (plotoldnum).
+
+```{r data}
+#| message: false
+#| warning: false
+data <- read_tsv("data/derived_data/data.tsv") %>%
+  filter(variable == "agb", site != "Kibale") %>%
+  unique() %>%
+  rename(stem = value) %>%
+  select(-env, -env_value, -variable) %>%
+  unique() %>%
+  filter(!is.infinite(harvest_year_min)) %>%
+  mutate(sitenum = as.numeric(as.factor(site)))
+data_rec <- data %>%
+  filter(treatment == "logged", rel_year > 2) %>%
+  mutate(plotnum = as.numeric(as.factor(paste0(site, "_", plot))))
+data_old <- data %>% filter(treatment == "control") %>%
+  mutate(plotoldnum = as.numeric(as.factor(paste0(site, "_", plot))))
+data_pre <- data %>% filter(rel_year <= 0)
+ind_rec <- data_rec %>%
+  select(site, plot, sitenum, plotnum) %>%
+  unique() %>%
+  arrange(plotnum)
+mdata <- list(
+  n_rec = nrow(data_rec),
+  n_old = nrow(data_old),
+  n_pre = nrow(data_pre),
+  n_site = max(data_rec$sitenum),
+  n_plot_rec = max(data_rec$plotnum),
+  stem_rec = data_rec$stem,
+  stem_old = data_old$stem,
+  stem_pre = data_pre$stem,
+  time = data_rec$rel_year - 3,
+  site_rec = data_rec$sitenum,
+  site_old = data_old$sitenum,
+  site_pre = data_pre$sitenum,
+  plot_rec = data_rec$plotnum,
+  site_plot_rec = ind_rec$sitenum,
+  dist_bounds = c(0.1, 1),
+  delta_bounds = c(0, 5),
+  mu_thetaInf_bounds = c(100, 500),
+  thetaInf_s_bounds = c(50, 1000)
+)
+```
+
+```{r fig}
+#| fig-cap: "Modelled trajectories."
+ggplot(data, aes(rel_year, stem, group = paste(site, plot), col = treatment)) +
+  geom_line() +
+  facet_wrap(~site) +
+  theme_bw() +
+  xlab("") +
+  ylab(expression("Stems [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  theme(legend.position = "bottom") +
+  scale_color_discrete("")
+```
+
+## STP normal
+
+```{r stp_norm_fit}
+#| eval: false
+stp_norm <- cmdstan_model("models/stp_norm.stan")
+unlink("data/derived_data/agb/stp_norm", recursive = TRUE)
+dir.create("data/derived_data/agb/stp_norm")
+fit_stp_norm <- stp_norm$sample(
+  data = mdata,
+  chains = 4,
+  parallel_chains = 4,
+  save_warmup = FALSE,
+  output_dir = "data/derived_data/agb/stp_norm"
+)
+```
+
+```{r load_stp_norm}
+#| message: false
+#| warning: false
+fit_stp_norm <- as_cmdstan_fit(list.files("data/derived_data/agb/stp_norm",
+  full.names = TRUE
+))
+fit_stp_norm
+```
+
+```{r pvo_stp_norm}
+#| message: false
+#| warning: false
+#| fig-cap: "Predicted versus observed."
+data_rec$preds <- fit_stp_norm$summary(c("mu_rec"), median)$median
+rmse_rec <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
+g_rec <- data_rec %>%
+  ggplot(aes(preds, stem)) +
+  geom_point(alpha = 0.25) +
+  geom_abline(col = "red", linetype = "dashed") +
+  ggtitle("Recovery", paste("RMSE =", round(rmse_rec, 2))) +
+  theme_bw() +
+  xlab(expression("Predicted [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  ylab(expression("Observed [ trees" ~ ha^{
+    -1
+  } ~ "]"))
+data_pre$preds <- fit_stp_norm$summary(c("mu_pre"), median)$median
+rmse_pre <- sqrt(mean((data_pre$preds - data_pre$stem)^2, na.rm = TRUE))
+g_pre <- data_pre %>%
+  ggplot(aes(preds, stem, col = site)) +
+  geom_point(alpha = 0.25) +
+  geom_abline(col = "red", linetype = "dashed") +
+  ggtitle("Prelogging", paste("RMSE =", round(rmse_pre, 2))) +
+  theme_bw() +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression("Predicted [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  ylab(expression("Observed [ trees" ~ ha^{
+    -1
+  } ~ "]"))
+g_pre + g_rec
+```
+
+```{r preds_stp_norm}
+#| fig-cap: "Predicted trajectories."
+bind_rows(data_pre, data_rec, mutate(data_old, rel_year = Inf)) %>%
+  ggplot(aes(rel_year, group = paste(site, plot), col = plot)) +
+  geom_point(aes(y = stem), alpha = .5) +
+  geom_line(aes(y = preds)) +
+  facet_wrap(~site, scales = "free") +
+  theme_bw() +
+  xlab("") +
+  theme(legend.position = "bottom") +
+  ylab(expression("Stem [ trees" ~ ha^{
+    -1
+  } ~ "]")) +
+  scale_color_discrete(guide = "none")
+```
+
+```{r}
+pars <- c(
+  "mu_dist", "sigma_dist", "mu_lambda", "sigma_lambda", "mu_thetaInf",
+  "sigma_thetaInf", "sigma_old", "sigma_pre", "sigma_rec", "mu_delta",
+  "sigma_delta", "mu_tau", "sigma_tau"
+)
+fit_stp_norm$draws(pars) %>%
+  mcmc_dens()
+```
+
+```{r}
+fit_stp_norm$draws("dist_p") %>% 
+  mcmc_intervals() +
+  geom_vline(xintercept = 1)
+```
+
+```{r}
+fit_stp_norm$draws("delta_p") %>% 
+  mcmc_intervals()
+```
+
+```{r}
+fit_stp_norm$draws("lambda_p") %>% 
+  mcmc_intervals() +
+  scale_x_log10()
+```
+
+```{r}
+fit_stp_norm$summary("lambda_p", "mean") %>% 
+  mutate(t95 = log(20)/mean) %>% 
+  ggplot(aes(t95)) +
+  geom_histogram() +
+  theme_bw() +
+  scale_x_log10()
+```

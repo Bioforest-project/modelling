@@ -1,0 +1,97 @@
+```{r setup}
+#| message: false
+#| include: false
+library(tidyverse)
+library(knitr)
+library(cmdstanr)
+library(bayesplot)
+library(loo)
+```
+
+# Models {.unnumbered}
+
+To do:
+
+-   Add schemes of LTP & STP trajs with pars on it.
+
+## LTP
+
+Long term process only model:
+
+$$
+\begin{align}
+\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times LTP \\
+LTP = 1 - e^{-\lambda_p \times time}
+\end{align}
+$$
+
+## STP
+
+Long term and short term processes model based on disturbance index $dist$:
+
+$$
+\begin{align}
+\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times (LTP+STP) \\
+LTP = 1 - e^{-\lambda_p \times time} \\
+STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \\
+\theta_{0,p} = \theta_{\infty,s} \times dist_p
+\end{align}
+$$
+
+Choices:
+
+-   Using the log of y and a normal distribution centred on log(mu)
+-   Cauchy hyperdist
+-   Forced dist_p\<1
+-   Bounds of theta
+-   Free tau
+-   Free delta
+
+⚠️ Hump is mathematically opposed to the sign of dist_p-1.
+
+## Old
+
+### STP sum
+
+`models/stp_sum.stan`
+
+$$
+\begin{align}
+\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times (LTP+STP) \\
+LTP = 1 - e^{-\lambda_p \times time} \\
+STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \\
+\theta_{0,p} = \theta_{\infty,s} \times dist_p
+\end{align}
+$$
+
+### STP lognormal
+
+`models/stp.stan`
+
+$$
+\begin{align}
+\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times (LTP+STP) \\
+LTP = 1 - e^{-\lambda_p \times time} \\
+STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \\
+\theta_{0,p} = \theta_{\infty,s} \times dist_p
+\end{align}
+$$
+
+### STP correlated
+
+`models/stp_cor.stan`
+
+Imposed variance-covariance matrix on dist_p and delta_p.
+
+$$
+\begin{align}
+\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times (LTP+STP) \\
+LTP = 1 - e^{-\lambda_p \times time} \\
+STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \\
+\theta_{0,p} = \theta_{\infty,s} \times dist_p
+\end{align}
+$$
+
+## Parrallel
+
+`dummy_par.stan`

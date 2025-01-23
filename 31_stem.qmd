@@ -15,15 +15,26 @@ Test of modelling with stem density.
 
 ToDo:
 
--   ...
+-   LTP
+-   loo
+-   boxplot control infini
+-   coverage 0.8 sp 0.9 gen
+-   gini and dbh mean
+-   n_fixation, dispersal
+-   log sla log la
+
+> compo flux instead of div flux
 
 ## Data
 
 ```{r data}
 #| message: false
 #| warning: false
+var <- "nstem"
+if(!exists(file.path("chains", var)))
+  dir.create(file.path("chains", var))
 data <- read_tsv("data/derived_data/data.tsv") %>%
-  filter(variable == "nstem") %>%
+  filter(variable == var) %>%
   unique() %>%
   rename(stem = value) %>%
   select(-env, -env_value, -variable) %>%
@@ -77,35 +88,26 @@ ggplot(data, aes(rel_year, stem, group = paste(site, plot), col = treatment)) +
 
 ## LTP
 
-Long term process only model:
-
-$$
-\begin{align}
-\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times LTP \\
-LTP = 1 - e^{-\lambda_p \times time}
-\end{align}
-$$
-
 ```{r ltp_fit}
 #| eval: false
 ltp <- cmdstan_model("models/ltp.stan")
-unlink("data/derived_data/ltp", recursive = TRUE)
-dir.create("data/derived_data/ltp")
+path <- file.path("chains", var, "ltp")
+unlink(path, recursive = TRUE)
+dir.create(path)
 fit_ltp <- ltp$sample(
   data = mdata,
   chains = 4,
   parallel_chains = 4,
   save_warmup = FALSE,
-  output_dir = "data/derived_data/ltp"
+  output_dir = path
 )
 ```
 
 ```{r load_ltp}
 #| message: false
 #| warning: false
-fit_ltp <- as_cmdstan_fit(list.files("data/derived_data/ltp",
-  full.names = TRUE
-))
+path <- file.path("chains", var, "ltp")
+fit_ltp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
 fit_ltp
 ```
 
@@ -164,37 +166,26 @@ bind_rows(data_pre, data_rec) %>%
 
 ## STP
 
-Long term and short term processes model based on disturbance index $dist$:
-
-$$
-\begin{align}
-\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times (LTP+STP) \\
-LTP = 1 - e^{-\lambda_p \times time} \\
-STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \\
-\theta_{0,p} = \theta_{\infty,s} \times dist_p
-\end{align}
-$$
-
 ```{r stp_fit}
 #| eval: false
 stp <- cmdstan_model("models/stp.stan")
-unlink("data/derived_data/stp", recursive = TRUE)
-dir.create("data/derived_data/stp")
+path <- file.path("chains", var, "stp")
+unlink(path, recursive = TRUE)
+dir.create(path)
 fit_stp <- stp$sample(
   data = mdata,
   chains = 4,
   parallel_chains = 4,
   save_warmup = FALSE,
-  output_dir = "data/derived_data/stp"
+  output_dir = path
 )
 ```
 
 ```{r load_stp}
 #| message: false
 #| warning: false
-fit_stp <- as_cmdstan_fit(list.files("data/derived_data/stp",
-  full.names = TRUE
-))
+path <- file.path("chains", var, "stp")
+fit_stp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
 fit_stp
 ```
 
@@ -251,146 +242,8 @@ bind_rows(data_pre, data_rec) %>%
   scale_color_discrete(guide = "none")
 ```
 
-```{r dist_stp}
-#| fig-cap: "Disturbance parameters posteriors."
-fit_stp$draws("dist_p") %>%
-  mcmc_intervals()
-```
-
 ```{r rhat_stp}
 t <- fit_stp$summary(
-  c(
-    "mu_dist", "dist_p", "sigma_dist",
-    "mu_lambda", "sigma_lambda", "lambda_p",
-    "mu_thetaInf", "sigma_thetaInf", "thetaInf_s",
-    "mu_delta", "delta_p", "sigma_delta",
-    "mu_tau", "tau_s", "sigma_tau",
-    "sigma_old", "sigma_pre", "sigma_rec"
-  ),
-  "rhat"
-) %>%
-  filter(rhat > 1.2)
-t$variable
-```
-
-```{r trace_dist_stp}
-#| fig-cap: "dist traces."
-fit_stp$draws(t$variable[grepl("dist_p", t$variable)]) %>%
-  mcmc_trace()
-```
-
-```{r trace_lambda_stp}
-#| fig-cap: "lambda traces."
-fit_stp$draws(t$variable[grepl("lambda_p", t$variable)]) %>%
-  mcmc_trace()
-```
-
-```{r trace_delta_stp}
-#| fig-cap: "delta traces."
-fit_stp$draws(t$variable[grepl("delta_p", t$variable)]) %>%
-  mcmc_trace()
-```
-
-```{r trace_other_stp}
-#| fig-cap: "other traces."
-fit_stp$draws(t$variable[!(grepl("lambda", t$variable) |
-                             grepl("dist_p", t$variable) |
-                             grepl("delta_p", t$variable))]) %>%
-  mcmc_trace()
-```
-
-## STP normal
-
-Done:
-
--   Cauchy hyperdist
--   Forced dist_p\<1
--   Bounds of theta
--   Free tau
--   Free delta
-
-⚠️ Hump is mathematically opposed to the sign of dist_p-1.
-
-```{r stp_norm_fit}
-#| eval: false
-stp_norm <- cmdstan_model("models/stp_norm.stan")
-unlink("data/derived_data/stp_norm", recursive = TRUE)
-dir.create("data/derived_data/stp_norm")
-fit_stp_norm <- stp_norm$sample(
-  data = mdata,
-  chains = 4,
-  parallel_chains = 4,
-  save_warmup = FALSE,
-  output_dir = "data/derived_data/stp_norm"
-)
-```
-
-```{r load_stp_norm}
-#| message: false
-#| warning: false
-fit_stp_norm <- as_cmdstan_fit(list.files("data/derived_data/stp_norm",
-  full.names = TRUE
-))
-fit_stp_norm
-```
-
-```{r pvo_stp_norm}
-#| message: false
-#| warning: false
-#| fig-cap: "Predicted versus observed."
-data_rec$preds <- fit_stp_norm$summary(c("mu_rec"), median)$median
-rmse_rec <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
-g_rec <- data_rec %>%
-  ggplot(aes(preds, stem)) +
-  geom_point(alpha = 0.25) +
-  geom_abline(col = "red", linetype = "dashed") +
-  ggtitle("Recovery", paste("RMSE =", round(rmse_rec, 2))) +
-  theme_bw() +
-  xlab(expression("Predicted [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  ylab(expression("Observed [ trees" ~ ha^{
-    -1
-  } ~ "]"))
-data_pre$preds <- fit_stp_norm$summary(c("mu_pre"), median)$median
-rmse_pre <- sqrt(mean((data_pre$preds - data_pre$stem)^2, na.rm = TRUE))
-g_pre <- data_pre %>%
-  ggplot(aes(preds, stem, col = site)) +
-  geom_point(alpha = 0.25) +
-  geom_abline(col = "red", linetype = "dashed") +
-  ggtitle("Prelogging", paste("RMSE =", round(rmse_pre, 2))) +
-  theme_bw() +
-  scale_color_discrete("") +
-  theme(legend.position = "bottom") +
-  xlab(expression("Predicted [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  ylab(expression("Observed [ trees" ~ ha^{
-    -1
-  } ~ "]"))
-g_pre + g_rec
-```
-
-```{r preds_stp_norm}
-#| fig-cap: "Predicted trajectories."
-bind_rows(data_pre, data_rec) %>%
-  ggplot(aes(rel_year, group = paste(site, plot), col = plot)) +
-  geom_point(aes(y = stem), alpha = .5) +
-  geom_line(aes(y = preds)) +
-  facet_wrap(~site, scales = "free") +
-  theme_bw() +
-  xlab("") +
-  theme(legend.position = "bottom") +
-  ylab(expression("Stem [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  scale_color_discrete(guide = "none")
-```
-
-![](http://127.0.0.1:29207/chunk_output/s/4168CD99/cwhdm0kym6f4f/00001c.png)
-
-```{r rhat_stp_norm}
-t <- fit_stp_norm$summary(
   c(
     "mu_dist", "dist_p", "sigma_dist",
     "mu_lambda", "sigma_lambda", "lambda_p",
@@ -405,361 +258,21 @@ t <- fit_stp_norm$summary(
 t$variable
 ```
 
-```{r trace_dist_stp_norm}
-#| fig-cap: "dist traces."
-fit_stp_norm$draws(t$variable[grepl("dist_p", t$variable)]) %>%
-  mcmc_trace()
-```
-
-```{r trace_lambda_stp_norm}
-#| fig-cap: "lambda traces."
-fit_stp_norm$draws(t$variable[grepl("lambda_p", t$variable)]) %>%
-  mcmc_trace()
-```
-
-```{r trace_delta_stp_norm}
-#| fig-cap: "delta traces."
-fit_stp_norm$draws(t$variable[grepl("delta_p", t$variable)]) %>%
-  mcmc_trace()
-```
-
-```{r}
-fit_stp_norm$draws(c("mu_thetaInf", "lp__")) %>%
-  mcmc_trace() +
-  scale_colour_viridis_d()
-```
-
-```{r trace_other_stp_norm}
-#| fig-cap: "other traces."
-fit_stp_norm$draws(t$variable[!(grepl("lambda", t$variable) |
-                                  grepl("dist_p", t$variable) |
-                                  grepl("delta_p", t$variable))]) %>%
-  mcmc_trace()
-```
-
-```{r}
+```{r dist_other_stp}
+#| fig-cap: "Posteriors generals pars."
 pars <- c(
   "mu_dist", "sigma_dist", "mu_lambda", "sigma_lambda", "mu_thetaInf",
   "sigma_thetaInf", "sigma_old", "sigma_pre", "sigma_rec", "mu_delta",
   "sigma_delta", "mu_tau", "sigma_tau"
 )
-fit_stp_norm$draws(pars) %>%
+fit_stp$draws(pars) %>%
   mcmc_dens()
 ```
 
-```{r}
-site <- 10
-plot <- 97:102
-fit_stp_norm$draws(paste0("delta_p[", plot, "]")) %>%
-  mcmc_dens()
-site <- 10
-plot <- 97:102
-fit_stp_norm$draws(paste0("tau_s[", site, "]")) %>%
-  mcmc_dens()
-fit_stp_norm$draws(paste0("lambda_p[", plot, "]")) %>%
-  mcmc_dens()
-```
-
-```{r}
-data_rec %>% 
-  select(site, sitenum, plot, plotnum) %>% unique() %>% arrange()
-```
-
-```{r}
-fit_stp_norm$summary("delta_p", mean) %>% 
-  filter(mean > 2)
-```
-
-```{r}
-fit_stp_norm$draws("delta_p") %>% 
+```{r dist_delta_stp}
+#| fig-cap: "Posteriors delta_p."
+fit_stp$draws("delta_p") %>% 
   mcmc_intervals()
-```
-
-## STP normal false
-
-```{r stp_norm_false_fit}
-#| eval: false
-stp_norm_false <- cmdstan_model("models/stp_norm_false.stan")
-unlink("data/derived_data/stp_norm_false", recursive = TRUE)
-dir.create("data/derived_data/stp_norm_false")
-fit_stp_norm_false <- stp_norm_false$sample(
-  data = mdata,
-  chains = 4,
-  parallel_chains = 4,
-  save_warmup = FALSE,
-  output_dir = "data/derived_data/stp_norm_false"
-)
-```
-
-```{r load_stp_norm_false}
-#| message: false
-#| warning: false
-fit_stp_norm_false <- as_cmdstan_fit(list.files("data/derived_data/stp_norm_false", full.names = TRUE)) #nolint
-fit_stp_norm_false
-```
-
-```{r pvo_stp_norm_false}
-#| message: false
-#| warning: false
-#| fig-cap: "Predicted versus observed."
-data_rec$preds <- exp(fit_stp_norm_false$summary(c("mu_rec"), median)$median)
-rmse_rec <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
-g_rec <- data_rec %>%
-  ggplot(aes(preds, stem)) +
-  geom_point(alpha = 0.25) +
-  geom_abline(col = "red", linetype = "dashed") +
-  ggtitle("Recovery", paste("RMSE =", round(rmse_rec, 2))) +
-  theme_bw() +
-  xlab(expression("Predicted [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  ylab(expression("Observed [ trees" ~ ha^{
-    -1
-  } ~ "]"))
-data_pre$preds <- exp(fit_stp_norm_false$summary(c("mu_pre"), median)$median)
-rmse_pre <- sqrt(mean((data_pre$preds - data_pre$stem)^2, na.rm = TRUE))
-g_pre <- data_pre %>%
-  ggplot(aes(preds, stem, col = site)) +
-  geom_point(alpha = 0.25) +
-  geom_abline(col = "red", linetype = "dashed") +
-  ggtitle("Prelogging", paste("RMSE =", round(rmse_pre, 2))) +
-  theme_bw() +
-  scale_color_discrete("") +
-  theme(legend.position = "bottom") +
-  xlab(expression("Predicted [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  ylab(expression("Observed [ trees" ~ ha^{
-    -1
-  } ~ "]"))
-g_pre + g_rec
-```
-
-```{r preds_stp_norm_false}
-#| fig-cap: "Predicted trajectories."
-bind_rows(data_pre, data_rec) %>%
-  ggplot(aes(rel_year, group = paste(site, plot), col = plot)) +
-  geom_point(aes(y = stem), alpha = .5) +
-  geom_line(aes(y = preds)) +
-  facet_wrap(~site, scales = "free") +
-  theme_bw() +
-  xlab("") +
-  theme(legend.position = "bottom") +
-  ylab(expression("Stem [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  scale_color_discrete(guide = "none")
-```
-
-## STP normal false 2
-
-> La belle trajectoire d'hier était pour Ulu muda était un coup de bol, cf réplicat ici.
-
-```{r stp_norm_false2_fit}
-#| eval: false
-stp_norm_false2 <- cmdstan_model("models/stp_norm_false2.stan")
-unlink("data/derived_data/stp_norm_false2", recursive = TRUE)
-dir.create("data/derived_data/stp_norm_false2")
-fit_stp_norm_false2 <- stp_norm_false$sample(
-  data = mdata,
-  chains = 4,
-  parallel_chains = 4,
-  save_warmup = FALSE,
-  output_dir = "data/derived_data/stp_norm_false2"
-)
-```
-
-```{r load_stp_norm_false2}
-#| message: false
-#| warning: false
-fit_stp_norm_false2 <- as_cmdstan_fit(list.files("data/derived_data/stp_norm_false2", full.names = TRUE)) #nolint
-fit_stp_norm_false2
-```
-
-```{r pvo_stp_norm_false2}
-#| message: false
-#| warning: false
-#| fig-cap: "Predicted versus observed."
-data_rec$preds <- exp(fit_stp_norm_false2$summary(c("mu_rec"), median)$median)
-rmse_rec <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
-g_rec <- data_rec %>%
-  ggplot(aes(preds, stem)) +
-  geom_point(alpha = 0.25) +
-  geom_abline(col = "red", linetype = "dashed") +
-  ggtitle("Recovery", paste("RMSE =", round(rmse_rec, 2))) +
-  theme_bw() +
-  xlab(expression("Predicted [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  ylab(expression("Observed [ trees" ~ ha^{
-    -1
-  } ~ "]"))
-data_pre$preds <- exp(fit_stp_norm_false2$summary(c("mu_pre"), median)$median)
-rmse_pre <- sqrt(mean((data_pre$preds - data_pre$stem)^2, na.rm = TRUE))
-g_pre <- data_pre %>%
-  ggplot(aes(preds, stem, col = site)) +
-  geom_point(alpha = 0.25) +
-  geom_abline(col = "red", linetype = "dashed") +
-  ggtitle("Prelogging", paste("RMSE =", round(rmse_pre, 2))) +
-  theme_bw() +
-  scale_color_discrete("") +
-  theme(legend.position = "bottom") +
-  xlab(expression("Predicted [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  ylab(expression("Observed [ trees" ~ ha^{
-    -1
-  } ~ "]"))
-g_pre + g_rec
-```
-
-```{r preds_stp_norm_false2}
-#| fig-cap: "Predicted trajectories."
-bind_rows(data_pre, data_rec) %>%
-  ggplot(aes(rel_year, group = paste(site, plot), col = plot)) +
-  geom_point(aes(y = stem), alpha = .5) +
-  geom_line(aes(y = preds)) +
-  facet_wrap(~site, scales = "free") +
-  theme_bw() +
-  xlab("") +
-  theme(legend.position = "bottom") +
-  ylab(expression("Stem [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  scale_color_discrete(guide = "none")
-```
-
-## Ulu Muda
-
-```{r}
-include_graphics("figures/preds_stp_norm-1.png")
-```
-
-```{r ulu_comp}
-#| fig-cap: "Starting point."
-data_rec$preds <- fit_stp_norm$summary(c("mu_rec"), median)$median
-data_pre$preds <- fit_stp_norm$summary(c("mu_pre"), median)$median
-g_norm <- bind_rows(data_pre, data_rec) %>%
-  filter(site == "Ulu Muda") %>%
-  ggplot(aes(rel_year, group = paste(site, plot), col = plot)) +
-  geom_point(aes(y = stem), alpha = .5) +
-  geom_line(aes(y = preds)) +
-  facet_wrap(~site, scales = "free") +
-  theme_bw() +
-  xlab("") +
-  theme(legend.position = "bottom") +
-  ylab(expression("Stem [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  ggtitle("STP normal")
-data_rec$preds <- exp(fit_stp_norm_false$summary(c("mu_rec"), median)$median)
-data_pre$preds <- exp(fit_stp_norm_false$summary(c("mu_pre"), median)$median)
-g_false <- bind_rows(data_pre, data_rec) %>%
-  filter(site == "Ulu Muda") %>%
-  ggplot(aes(rel_year, group = paste(site, plot), col = plot)) +
-  geom_point(aes(y = stem), alpha = .5) +
-  geom_line(aes(y = preds)) +
-  facet_wrap(~site, scales = "free") +
-  theme_bw() +
-  xlab("") +
-  theme(legend.position = "bottom") +
-  ylab(expression("Stem [ trees" ~ ha^{
-    -1
-  } ~ "]")) +
-  ggtitle("STP normal false")
-g_norm + g_false
-```
-
-```{r ulu_inds}
-site <- 10
-plot <- 97:102
-plot <- 100
-pars_s <- paste0(c("tau_s", "thetaInf_s"), "[", site, "]")
-pars_p <- sapply(c("dist_p", "lambda_p", "delta_p"),
-  function(x) paste0(x, "[", plot, "]"),
-  simplify = FALSE
-) %>%
-  unlist() %>%
-  unname()
-pars <- c(pars_s, pars_p)
-data_rec %>%
-  filter(site == "Ulu Muda") %>%
-  select(site, plot, sitenum, plotnum) %>%
-  unique() %>%
-  kable()
-```
-
-```{r ulu_trace_norm}
-fit_stp_norm$draws(pars) %>%
-  mcmc_trace() +
-  ggtitle("STP normal")
-```
-
-```{r ulu_trace_false}
-fit_stp_norm_false$draws(pars) %>%
-  mcmc_trace() +
-  ggtitle("STP normal false")
-```
-
-```{r ulu_pairs_norm}
-fit_stp_norm$draws(pars) %>%
-  mcmc_pairs()
-```
-
-```{r ulu_pairs_false}
-fit_stp_norm_false$draws(pars) %>%
-  mcmc_pairs()
-```
-
-```{r ulu_pars}
-#| warning: false
-#| message: false
-bind_rows(
-  fit_stp_norm$draws(pars) %>%
-    as_tibble() %>%
-    gather() %>%
-    separate(key, c("chain", "parameter", "index", "ind_value"),
-             convert = TRUE) %>%
-    mutate(model = "STP normal"),
-  fit_stp_norm_false$draws(pars) %>%
-    as_tibble() %>%
-    gather() %>%
-    separate(key, c("chain", "parameter", "index", "ind_value"),
-             convert = TRUE) %>%
-    mutate(model = "STP false") %>%
-    mutate(value = ifelse(parameter == "thetaInf", exp(value), value))
-) %>%
-  ggplot(aes(value, fill = model)) +
-  geom_density(alpha = .5, col = NA) +
-  facet_wrap(~parameter, scales = "free") +
-  theme_bw()
-```
-
-```{r ulu_pars2}
-#| warning: false
-#| message: false
-pars <- c(
-  "mu_dist", "sigma_dist", "mu_lambda", "sigma_lambda", "mu_thetaInf",
-  "sigma_thetaInf", "sigma_old", "sigma_pre", "sigma_rec", "mu_delta",
-  "sigma_delta", "mu_tau", "sigma_tau"
-)
-bind_rows(
-  fit_stp_norm$draws(pars) %>%
-    as_tibble() %>%
-    gather() %>%
-    separate(key, c("chain", "parameter"), sep = "\\.", convert = TRUE) %>%
-    mutate(model = "STP normal"),
-  fit_stp_norm_false$draws(pars) %>%
-    as_tibble() %>%
-    gather() %>%
-    separate(key, c("chain", "parameter"), sep = "\\.", convert = TRUE) %>%
-    mutate(model = "STP false") %>%
-    mutate(value = ifelse(parameter == "mu_thetaInf", exp(value), value))
-) %>%
-  ggplot(aes(value, fill = model)) +
-  geom_density(alpha = .5, col = NA) +
-  facet_wrap(~parameter, scales = "free") +
-  theme_bw()
 ```
 
 ## Comparison
@@ -768,11 +281,10 @@ bind_rows(
 #| warning: false
 #| message: false
 loo_compare(
-  fit_ltp$loo(),
-  fit_stp$loo(),
-  fit_stp_norm$loo(),
-  fit_stp_norm_false$loo(),
-  fit_stp_norm_false2$loo()
+  list(
+    ltp = fit_ltp$loo(),
+    stp = fit_stp$loo()
+  )
 ) %>%
   kable()
 ```

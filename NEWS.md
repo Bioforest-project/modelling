@@ -1,3 +1,4 @@
+-   modelling 0.1.0.9012: nstem cleaned
 -   modelling 0.1.0.9011: wd is ok!
 -   modelling 0.1.0.9010: stem is good!
 -   modelling 0.1.0.9009: linting
