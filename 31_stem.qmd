@@ -297,6 +297,14 @@ fit_stp$draws(t$variable[!(grepl("lambda", t$variable) |
 
 ## STP normal
 
+Done:
+
+-   Cauchy hyperdist
+-   Forced dist_p\<1
+-   Bounds of theta
+-   Free tau
+-   Free delta
+
 ```{r stp_norm_fit}
 #| eval: false
 stp_norm <- cmdstan_model("models/stp_norm.stan")
@@ -373,6 +381,8 @@ bind_rows(data_pre, data_rec) %>%
   scale_color_discrete(guide = "none")
 ```
 
+![](http://127.0.0.1:29207/chunk_output/s/4168CD99/cwhdm0kym6f4f/00001c.png)
+
 ```{r rhat_stp_norm}
 t <- fit_stp_norm$summary(
   c(
@@ -385,7 +395,7 @@ t <- fit_stp_norm$summary(
   ),
   "rhat"
 ) %>%
-  filter(rhat > 1.2)
+  filter(rhat > 1.1)
 t$variable
 ```
 
@@ -407,12 +417,56 @@ fit_stp_norm$draws(t$variable[grepl("delta_p", t$variable)]) %>%
   mcmc_trace()
 ```
 
+```{r}
+fit_stp_norm$draws(c("mu_thetaInf", "lp__")) %>%
+  mcmc_trace() +
+  scale_colour_viridis_d()
+```
+
 ```{r trace_other_stp_norm}
 #| fig-cap: "other traces."
 fit_stp_norm$draws(t$variable[!(grepl("lambda", t$variable) |
                                   grepl("dist_p", t$variable) |
                                   grepl("delta_p", t$variable))]) %>%
   mcmc_trace()
+```
+
+```{r}
+pars <- c(
+  "mu_dist", "sigma_dist", "mu_lambda", "sigma_lambda", "mu_thetaInf",
+  "sigma_thetaInf", "sigma_old", "sigma_pre", "sigma_rec", "mu_delta",
+  "sigma_delta", "mu_tau", "sigma_tau"
+)
+fit_stp_norm$draws(pars) %>%
+  mcmc_dens()
+```
+
+```{r}
+site <- 10
+plot <- 97:102
+fit_stp_norm$draws(paste0("delta_p[", plot, "]")) %>%
+  mcmc_dens()
+site <- 10
+plot <- 97:102
+fit_stp_norm$draws(paste0("tau_s[", site, "]")) %>%
+  mcmc_dens()
+fit_stp_norm$draws(paste0("lambda_p[", plot, "]")) %>%
+  mcmc_dens()
+```
+
+```{r}
+data_rec %>% 
+  select(site, sitenum, plot, plotnum) %>% unique() %>% arrange()
+```
+
+```{r}
+fit_stp_norm$summary("delta_p", mean) %>% 
+  filter(mean > 2)
+```
+
+```{r}
+fit_stp_norm$draws("delta_p") %>% 
+  mcmc_intervals()
 ```
 
 ## STP normal false

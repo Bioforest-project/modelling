@@ -15,23 +15,23 @@ data {
   array[n_plot_rec] int<lower=0, upper=n_site> site_plot_rec;
 }
 parameters {
-  real<lower=0.5, upper=1.49> mu_dist ; // starting point
+  real<lower=0.1, upper=1> mu_dist ; // starting point
   real<lower=0> sigma_dist ;
-  vector<lower=0.5, upper=1.49>[n_plot_rec] dist_p ;
+  vector<lower=0.1, upper=1>[n_plot_rec] dist_p ;
   real<lower=0, upper=0.5> mu_lambda ; // recovery rate
   real<lower=0> sigma_lambda ;
   vector<lower=0, upper=0.5>[n_plot_rec] lambda_p ;
-  real<lower=1, upper=2000> mu_thetaInf ; // ending point
+  real<lower=100, upper=1000> mu_thetaInf ; // ending point
   real<lower=0> sigma_thetaInf ;
-  vector<lower=1, upper=2000>[n_site] thetaInf_s ;
+  vector<lower=50, upper=2000>[n_site] thetaInf_s ;
   real<lower=0> sigma_old ;
   real<lower=0> sigma_pre ;
   real<lower=0> sigma_rec ;
-  real<lower=0, upper=2> mu_delta ; // str var
-  vector<lower=0, upper=2>[n_plot_rec] delta_p ;
+  real<lower=0, upper=5> mu_delta ; // str var
+  vector<lower=0, upper=5>[n_plot_rec] delta_p ;
   real<lower=0> sigma_delta ;
-  real<lower=5, upper=30> mu_tau ; //str time
-  vector<lower=5, upper=30>[n_site] tau_s ;
+  real<lower=2, upper=30> mu_tau ; //str time
+  vector<lower=2, upper=30>[n_site] tau_s ;
   real<lower=0> sigma_tau ;
 }
 transformed parameters {
@@ -50,11 +50,11 @@ model {
   log(stem_old) ~ normal(log(mu_old), sigma_old) ;
   log(stem_pre) ~ normal(log(mu_pre), sigma_pre) ;
   log(stem_rec) ~ normal(log(mu_rec), sigma_rec) ;
-  dist_p ~ lognormal(log(mu_dist), sigma_dist) ;
-  thetaInf_s ~ lognormal(log(mu_thetaInf), sigma_thetaInf) ;
-  lambda_p ~ lognormal(log(mu_lambda), sigma_lambda) ;
-  delta_p ~ lognormal(log(mu_delta), sigma_delta) ;
-  tau_s ~ lognormal(log(mu_tau), sigma_tau) ;
+  dist_p ~ cauchy(mu_dist, sigma_dist) ;
+  thetaInf_s ~ cauchy(mu_thetaInf, sigma_thetaInf) ;
+  lambda_p ~ cauchy(mu_lambda, sigma_lambda) ;
+  delta_p ~ cauchy(mu_delta, sigma_delta) ;
+  tau_s ~ cauchy(mu_tau, sigma_tau) ;
   sigma_old ~ std_normal();
   sigma_pre ~ std_normal();
   sigma_rec ~ std_normal();
