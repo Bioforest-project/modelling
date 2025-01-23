@@ -47,12 +47,18 @@ model <- function(time, dist, thetainf, lambda, tau, delta) {
   return(theta0 + (thetainf - theta0) * (ltp + stp))
 }
 data.frame(time = 1:50) %>%
-  mutate(y = model(time, dist = 2, thetainf = 20,
-                   lambda = 0.5, tau = 30, delta = 0.5)) %>%
-  mutate(y2 = model(time, dist = 2, thetainf = 20,
-                    lambda = 0.5, tau = 30, delta = 2)) %>%
-  mutate(y3 = model(time, dist = 2, thetainf = 20,
-                    lambda = 0.5, tau = 30, delta = 1)) %>%
+  mutate(y = model(time,
+    dist = 2, thetainf = 20,
+    lambda = 0.5, tau = 30, delta = 0.5
+  )) %>%
+  mutate(y2 = model(time,
+    dist = 2, thetainf = 20,
+    lambda = 0.5, tau = 30, delta = 2
+  )) %>%
+  mutate(y3 = model(time,
+    dist = 2, thetainf = 20,
+    lambda = 0.5, tau = 30, delta = 1
+  )) %>%
   ggplot(aes(time)) +
   geom_line(aes(y = y, col = "dist=2, delta=.5")) +
   geom_line(aes(y = y2, col = "dist=2, delta=2")) +

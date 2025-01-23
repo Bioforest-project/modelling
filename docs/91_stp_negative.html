@@ -65,7 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./99_references.html" rel="next">
-<link href="./33_agb.html" rel="prev">
+<link href="./36_agb_mort.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -171,6 +171,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">AGB</span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./34_fdiv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">FDiv</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./35_div_q1_gen.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Genus diversity 1</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./36_agb_mort.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">AGB mortality</span></a>
+  </div>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
@@ -257,17 +275,23 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(theta0 <span class="sc">+</span> (thetainf <span class="sc">-</span> theta0) <span class="sc">*</span> (ltp <span class="sc">+</span> stp))</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fu">model</span>(time, <span class="at">dist =</span> <span class="dv">2</span>, <span class="at">thetainf =</span> <span class="dv">20</span>,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lambda =</span> <span class="fl">0.5</span>, <span class="at">tau =</span> <span class="dv">30</span>, <span class="at">delta =</span> <span class="fl">0.5</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y2 =</span> <span class="fu">model</span>(time, <span class="at">dist =</span> <span class="dv">2</span>, <span class="at">thetainf =</span> <span class="dv">20</span>,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                    <span class="at">lambda =</span> <span class="fl">0.5</span>, <span class="at">tau =</span> <span class="dv">30</span>, <span class="at">delta =</span> <span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y3 =</span> <span class="fu">model</span>(time, <span class="at">dist =</span> <span class="dv">2</span>, <span class="at">thetainf =</span> <span class="dv">20</span>,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                    <span class="at">lambda =</span> <span class="fl">0.5</span>, <span class="at">tau =</span> <span class="dv">30</span>, <span class="at">delta =</span> <span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(time)) <span class="sc">+</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> y, <span class="at">col =</span> <span class="st">"dist=2, delta=.5"</span>)) <span class="sc">+</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> y2, <span class="at">col =</span> <span class="st">"dist=2, delta=2"</span>)) <span class="sc">+</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> y3, <span class="at">col =</span> <span class="st">"dist=2, delta=1"</span>)) <span class="sc">+</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fu">model</span>(time,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">dist =</span> <span class="dv">2</span>, <span class="at">thetainf =</span> <span class="dv">20</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">lambda =</span> <span class="fl">0.5</span>, <span class="at">tau =</span> <span class="dv">30</span>, <span class="at">delta =</span> <span class="fl">0.5</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y2 =</span> <span class="fu">model</span>(time,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">dist =</span> <span class="dv">2</span>, <span class="at">thetainf =</span> <span class="dv">20</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">lambda =</span> <span class="fl">0.5</span>, <span class="at">tau =</span> <span class="dv">30</span>, <span class="at">delta =</span> <span class="dv">2</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y3 =</span> <span class="fu">model</span>(time,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">dist =</span> <span class="dv">2</span>, <span class="at">thetainf =</span> <span class="dv">20</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">lambda =</span> <span class="fl">0.5</span>, <span class="at">tau =</span> <span class="dv">30</span>, <span class="at">delta =</span> <span class="dv">1</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(time)) <span class="sc">+</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> y, <span class="at">col =</span> <span class="st">"dist=2, delta=.5"</span>)) <span class="sc">+</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> y2, <span class="at">col =</span> <span class="st">"dist=2, delta=2"</span>)) <span class="sc">+</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> y3, <span class="at">col =</span> <span class="st">"dist=2, delta=1"</span>)) <span class="sc">+</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -535,8 +559,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./33_agb.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">AGB</span>
+      <a href="./36_agb_mort.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">AGB mortality</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

@@ -9,9 +9,7 @@ format:
     toc-depth: 2
 ---
 
-This folder will contains the data for all anlayses. In particular:
-
--   `...`
+This folder will contains the data for all anlayses.
 
 ```{r, comment=""}
 fs::dir_tree()

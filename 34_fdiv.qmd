@@ -9,26 +9,22 @@ library(loo)
 library(patchwork)
 ```
 
-# AGB {.unnumbered}
+# FDiv {.unnumbered}
 
-Test of modelling with aboveground biomass.
+Test of modelling with functional diversity.
 
 ## Data
-
-> We removed Kibale for now.
 
 ```{r data}
 #| message: false
 #| warning: false
-var <- "agb"
+var <- "FDiv"
 if (!exists(file.path("chains", var))) {
   dir.create(file.path("chains", var))
 }
-lab <- expression("AGB [ t" ~ ha^{
-  -1
-} ~ "]")
+lab <- expression("FDiv")
 data <- read_tsv("data/derived_data/data.tsv") %>%
-  filter(variable == var, site != "Kibale") %>%
+  filter(variable == var) %>%
   unique() %>%
   rename(stem = value) %>%
   select(-env, -env_value, -variable) %>%
@@ -61,10 +57,10 @@ mdata <- list(
   site_pre = data_pre$sitenum,
   plot_rec = data_rec$plotnum,
   site_plot_rec = ind_rec$sitenum,
-  dist_bounds = c(0.1, 1),
-  delta_bounds = c(0, 5),
-  mu_thetaInf_bounds = c(100, 500),
-  thetaInf_s_bounds = c(50, 1000)
+  dist_bounds = c(0.1, 1.5),
+  delta_bounds = c(0, 2),
+  mu_thetaInf_bounds = c(0, 1),
+  thetaInf_s_bounds = c(0, 1)
 )
 ```
 
@@ -224,45 +220,6 @@ bind_rows(data_pre, data_rec, data_old) %>%
   theme(legend.position = "bottom") +
   ylab(lab) +
   scale_color_discrete(guide = "none")
-```
-
-```{r rhat_stp}
-t <- fit_stp$summary(
-  c(
-    "mu_dist", "dist_p", "sigma_dist",
-    "mu_lambda", "sigma_lambda", "lambda_p",
-    "mu_thetaInf", "sigma_thetaInf", "thetaInf_s",
-    "mu_delta", "delta_p", "sigma_delta",
-    "mu_tau", "tau_s", "sigma_tau",
-    "sigma_old", "sigma_pre", "sigma_rec"
-  ),
-  "rhat"
-) %>%
-  filter(rhat > 1.1)
-t$variable
-```
-
-```{r dist_other_stp}
-#| fig-cap: "Posteriors generals pars."
-pars <- c(
-  "mu_dist", "sigma_dist", "mu_lambda", "sigma_lambda", "mu_thetaInf",
-  "sigma_thetaInf", "sigma_old", "sigma_pre", "sigma_rec", "mu_delta",
-  "sigma_delta", "mu_tau", "sigma_tau"
-)
-fit_stp$draws(pars) %>%
-  mcmc_dens()
-```
-
-```{r rec_time}
-#| message: false
-#| warning: false
-#| fig-cap: "95% recovery time."
-fit_stp$summary("lambda_p", "mean") %>%
-  mutate(t95 = log(20) / mean) %>%
-  ggplot(aes(t95)) +
-  geom_histogram() +
-  theme_bw() +
-  scale_x_log10()
 ```
 
 ## Comparison

@@ -19,9 +19,12 @@ Test of modelling with stem density.
 #| message: false
 #| warning: false
 var <- "nstem"
-if(!exists(file.path("chains", var)))
+if (!exists(file.path("chains", var))) {
   dir.create(file.path("chains", var))
-lab <- expression("Stem [ trees" ~ ha^{-1} ~ "]")
+}
+lab <- expression("Stem [ trees" ~ ha^{
+  -1
+} ~ "]")
 data <- read_tsv("data/derived_data/data.tsv") %>%
   filter(variable == var) %>%
   unique() %>%
@@ -102,9 +105,9 @@ fit_ltp
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted versus observed."
-data_old <- data_old %>% 
-  group_by(site) %>% 
-  mutate(rel_year = max(rel_year+2))
+data_old <- data_old %>%
+  group_by(site) %>%
+  mutate(rel_year = max(rel_year + 2))
 data_rec$preds <- fit_ltp$summary(c("mu_rec"), median)$median
 rmse_rec <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
 g_rec <- data_rec %>%
@@ -173,9 +176,9 @@ fit_stp
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted versus observed."
-data_old <- data_old %>% 
-  group_by(site) %>% 
-  mutate(rel_year = max(rel_year+2))
+data_old <- data_old %>%
+  group_by(site) %>%
+  mutate(rel_year = max(rel_year + 2))
 data_rec$preds <- fit_stp$summary(c("mu_rec"), median)$median
 rmse_rec <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
 g_rec <- data_rec %>%
@@ -244,7 +247,7 @@ fit_stp$draws(pars) %>%
 
 ```{r dist_delta_stp}
 #| fig-cap: "Posteriors delta_p."
-fit_stp$draws("delta_p") %>% 
+fit_stp$draws("delta_p") %>%
   mcmc_intervals()
 ```
 

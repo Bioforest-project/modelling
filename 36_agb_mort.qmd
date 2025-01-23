@@ -9,27 +9,28 @@ library(loo)
 library(patchwork)
 ```
 
-# AGB {.unnumbered}
+# AGB mortality {.unnumbered}
 
-Test of modelling with aboveground biomass.
+Test of modelling with AGB mortality.
 
 ## Data
 
-> We removed Kibale for now.
+> We removed Uppangala for now.
 
 ```{r data}
 #| message: false
 #| warning: false
-var <- "agb"
+var <- "agb_mort"
 if (!exists(file.path("chains", var))) {
   dir.create(file.path("chains", var))
 }
-lab <- expression("AGB [ t" ~ ha^{
+lab <- expression("AGB mort [ t" ~ ha^{
   -1
 } ~ "]")
 data <- read_tsv("data/derived_data/data.tsv") %>%
-  filter(variable == var, site != "Kibale") %>%
+  filter(variable == var, site != "Uppangala") %>%
   unique() %>%
+  mutate(value = value + 1) %>%
   rename(stem = value) %>%
   select(-env, -env_value, -variable) %>%
   unique() %>%
@@ -61,10 +62,10 @@ mdata <- list(
   site_pre = data_pre$sitenum,
   plot_rec = data_rec$plotnum,
   site_plot_rec = ind_rec$sitenum,
-  dist_bounds = c(0.1, 1),
-  delta_bounds = c(0, 5),
-  mu_thetaInf_bounds = c(100, 500),
-  thetaInf_s_bounds = c(50, 1000)
+  dist_bounds = c(0.1, 1.5),
+  delta_bounds = c(0, 2),
+  mu_thetaInf_bounds = c(1, 250),
+  thetaInf_s_bounds = c(1, 250)
 )
 ```
 
@@ -77,7 +78,8 @@ ggplot(data, aes(rel_year, stem, group = paste(site, plot), col = treatment)) +
   xlab("") +
   ylab(lab) +
   theme(legend.position = "bottom") +
-  scale_color_discrete("")
+  scale_color_discrete("") +
+  scale_y_log10()
 ```
 
 ## LTP
@@ -121,7 +123,9 @@ g_rec <- data_rec %>%
   ggtitle("Recovery", paste("RMSE =", round(rmse_rec, 2))) +
   theme_bw() +
   xlab("Predicted") +
-  ylab("Observed")
+  ylab("Observed") +
+  scale_y_log10() +
+  scale_x_log10()
 data_pre$preds <- fit_ltp$summary(c("mu_pre"), median)$median
 rmse_pre <- sqrt(mean((data_pre$preds - data_pre$stem)^2, na.rm = TRUE))
 g_pre <- data_pre %>%
@@ -133,7 +137,9 @@ g_pre <- data_pre %>%
   scale_color_discrete("") +
   theme(legend.position = "bottom") +
   xlab("Predicted") +
-  ylab("Observed")
+  ylab("Observed") +
+  scale_y_log10() +
+  scale_x_log10()
 g_pre + g_rec
 ```
 
@@ -150,7 +156,8 @@ bind_rows(data_pre, data_rec, data_old) %>%
   xlab("") +
   theme(legend.position = "bottom") +
   ylab(lab) +
-  scale_color_discrete(guide = "none")
+  scale_color_discrete(guide = "none") +
+  scale_y_log10()
 ```
 
 ## STP
@@ -194,7 +201,9 @@ g_rec <- data_rec %>%
   ggtitle("Recovery", paste("RMSE =", round(rmse_rec, 2))) +
   theme_bw() +
   xlab("Predicted") +
-  ylab("Observed")
+  ylab("Observed") +
+  scale_y_log10() +
+  scale_x_log10()
 data_pre$preds <- fit_stp$summary(c("mu_pre"), median)$median
 rmse_pre <- sqrt(mean((data_pre$preds - data_pre$stem)^2, na.rm = TRUE))
 g_pre <- data_pre %>%
@@ -206,7 +215,9 @@ g_pre <- data_pre %>%
   scale_color_discrete("") +
   theme(legend.position = "bottom") +
   xlab("Predicted") +
-  ylab("Observed")
+  ylab("Observed") +
+  scale_y_log10() +
+  scale_x_log10()
 g_pre + g_rec
 ```
 
@@ -223,46 +234,8 @@ bind_rows(data_pre, data_rec, data_old) %>%
   xlab("") +
   theme(legend.position = "bottom") +
   ylab(lab) +
-  scale_color_discrete(guide = "none")
-```
-
-```{r rhat_stp}
-t <- fit_stp$summary(
-  c(
-    "mu_dist", "dist_p", "sigma_dist",
-    "mu_lambda", "sigma_lambda", "lambda_p",
-    "mu_thetaInf", "sigma_thetaInf", "thetaInf_s",
-    "mu_delta", "delta_p", "sigma_delta",
-    "mu_tau", "tau_s", "sigma_tau",
-    "sigma_old", "sigma_pre", "sigma_rec"
-  ),
-  "rhat"
-) %>%
-  filter(rhat > 1.1)
-t$variable
-```
-
-```{r dist_other_stp}
-#| fig-cap: "Posteriors generals pars."
-pars <- c(
-  "mu_dist", "sigma_dist", "mu_lambda", "sigma_lambda", "mu_thetaInf",
-  "sigma_thetaInf", "sigma_old", "sigma_pre", "sigma_rec", "mu_delta",
-  "sigma_delta", "mu_tau", "sigma_tau"
-)
-fit_stp$draws(pars) %>%
-  mcmc_dens()
-```
-
-```{r rec_time}
-#| message: false
-#| warning: false
-#| fig-cap: "95% recovery time."
-fit_stp$summary("lambda_p", "mean") %>%
-  mutate(t95 = log(20) / mean) %>%
-  ggplot(aes(t95)) +
-  geom_histogram() +
-  theme_bw() +
-  scale_x_log10()
+  scale_color_discrete(guide = "none") +
+  scale_y_log10()
 ```
 
 ## Comparison

@@ -12,6 +12,9 @@ book:
     - 31_stem.qmd
     - 32_wd.qmd
     - 33_agb.qmd
+    - 34_fdiv.qmd
+    - 35_div_q1_gen.qmd
+    - 36_agb_mort.qmd
   appendices:
     - 91_stp_negative.qmd
     - 99_references.qmd
