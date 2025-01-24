@@ -7,8 +7,8 @@ library(cmdstanr)
 library(bayesplot)
 library(loo)
 library(patchwork)
-list.files("r", full.names = TRUE, pattern = ".R") %>% 
-         lapply(source)
+list.files("r", full.names = TRUE, pattern = ".R") %>%
+  lapply(source)
 ```
 
 # Stem {.unnumbered}
@@ -217,14 +217,14 @@ loo_compare(
 #| message: false
 #| warning: false
 #| fig-cap: "Posteriors generals pars."
-fit_ltp$summary("lambda_p", "mean") %>% 
-  rename(ltp = mean) %>% 
+fit_ltp$summary("lambda_p", "mean") %>%
+  rename(ltp = mean) %>%
   left_join(
-    fit_stp$summary("lambda_p", "mean") %>% 
+    fit_stp$summary("lambda_p", "mean") %>%
       rename(stp = mean)
-  ) %>% 
-  separate(variable, c("lambda", "p", "plotnum"), convert = T) %>% 
-  left_join(ind_rec) %>% 
+  ) %>%
+  separate(variable, c("lambda", "p", "plotnum"), convert = TRUE) %>%
+  left_join(ind_rec) %>%
   ggplot(aes(ltp, stp, col = site)) +
   geom_abline(linetype = "dashed") +
   geom_point() +

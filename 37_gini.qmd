@@ -7,8 +7,8 @@ library(cmdstanr)
 library(bayesplot)
 library(loo)
 library(patchwork)
-list.files("r", full.names = TRUE, pattern = ".R") %>% 
-         lapply(source)
+list.files("r", full.names = TRUE, pattern = ".R") %>%
+  lapply(source)
 ```
 
 # Gini {.unnumbered}

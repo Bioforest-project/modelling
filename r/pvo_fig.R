@@ -1,7 +1,6 @@
 pvo_fig <- function(
     data_rec,
-    data_pre
-    ){
+    data_pre) {
   rmse_rec <- sqrt(mean((data_rec$preds - data_rec$stem)^2, na.rm = TRUE))
   g_rec <- data_rec %>%
     ggplot(aes(preds, stem)) +
