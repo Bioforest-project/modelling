@@ -7,4 +7,3 @@
 /.quarto/
 .snakemake
 report.html
-*_files/
