@@ -1,3 +1,4 @@
+-   modelling 0.1.0.9019: gini, ba, feve, sla, n, hmax, & cache
 -   modelling 0.1.0.9018: updated trajs figs with associated funs in r/
 -   modelling 0.1.0.9017: post meeting cleaning, attr updates, & notes
 -   modelling 0.1.0.9016: models fig 2
