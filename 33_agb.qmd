@@ -1,4 +1,4 @@
-```{r setup}
+```{r set}
 #| message: false
 #| include: false
 library(tidyverse)
@@ -277,4 +277,23 @@ loo_compare(
   )
 ) %>%
   kable()
+```
+
+```{r lambda_comp}
+#| fig-cap: "Posteriors generals pars."
+fit_ltp$summary("lambda_p", "mean") %>% 
+  rename(ltp = mean) %>% 
+  left_join(
+    fit_stp$summary("lambda_p", "mean") %>% 
+      rename(stp = mean)
+  ) %>% 
+  separate(variable, c("lambda", "p", "plotnum"), convert = T) %>% 
+  left_join(ind_rec) %>% 
+  ggplot(aes(ltp, stp, col = site)) +
+  geom_abline(linetype = "dashed") +
+  geom_point() +
+  theme_bw() +
+  scale_y_log10() +
+  scale_x_log10() +
+  ggpubr::stat_cor() 
 ```

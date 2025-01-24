@@ -1,4 +1,4 @@
-```{r setup}
+```{r set}
 #| message: false
 #| include: false
 library(tidyverse)
@@ -150,6 +150,8 @@ bind_rows(data_pre, data_rec, data_old) %>%
 ```
 
 ## STP
+
+> ⚠️ Caution $\tau$ limited to 30 for Paracou limits hump
 
 ```{r stp_fit}
 #| eval: false

@@ -96,6 +96,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -108,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./35_div_q1_gen.html">Genus diversity 1</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_trajectories.html">Trajectories</a></li><li class="breadcrumb-item"><a href="./35_div_q1_gen.html">Genus diversity 1</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -151,46 +153,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Models</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./31_stem.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Stem</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./32_wd.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">WD</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./33_agb.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">AGB</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./34_fdiv.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">FDiv</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./35_div_q1_gen.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Genus diversity 1</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./36_agb_mort.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">AGB mortality</span></a>
-  </div>
-</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
- <span class="menu-text">Appendices</span></a>
+            <a href="./30_trajectories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Trajectories</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -198,8 +164,67 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./31_stem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./32_wd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WD</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./33_agb.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">AGB</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./34_fdiv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">FDiv</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./35_div_q1_gen.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Genus diversity 1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./36_agb_mort.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">AGB mortality</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./91_stp_negative.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">STP negatives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./92_model_devs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Models devs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./93_notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -348,18 +373,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>   variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
- lp__       2259.28 2257.61 26.89 25.41 2218.09 2304.94 1.07       42       73
- mu_dist       0.99    1.00  0.03  0.03    0.94    1.04 1.06       55      513
- sigma_dist    0.14    0.14  0.02  0.02    0.11    0.18 1.01     1528     2091
- dist_p[1]     1.08    1.08  0.08  0.08    0.96    1.22 1.00     1050     1078
- dist_p[2]     0.76    0.76  0.06  0.06    0.67    0.87 1.00     1130     1405
- dist_p[3]     1.25    1.24  0.09  0.09    1.10    1.41 1.00     1004     1044
- dist_p[4]     0.83    0.83  0.06  0.06    0.74    0.94 1.00     1083     1689
- dist_p[5]     1.08    1.07  0.08  0.07    0.96    1.22 1.00     1148     1462
- dist_p[6]     0.91    0.91  0.07  0.07    0.81    1.03 1.00     1068     1343
- dist_p[7]     0.68    0.68  0.06  0.07    0.57    0.78 1.02      893     1244
+ lp__       2469.28 2466.50 31.45 30.98 2422.87 2526.42 1.09       45       61
+ mu_dist       1.02    1.02  0.03  0.03    0.98    1.06 1.03       97     2472
+ sigma_dist    0.14    0.14  0.02  0.02    0.11    0.18 1.03      132     1915
+ dist_p[1]     1.07    1.07  0.07  0.07    0.96    1.19 1.01     1432     1625
+ dist_p[2]     0.76    0.76  0.06  0.06    0.67    0.86 1.01     1070     1881
+ dist_p[3]     1.23    1.23  0.09  0.09    1.09    1.37 1.00     1689     1358
+ dist_p[4]     0.83    0.83  0.06  0.06    0.73    0.93 1.01     1659     2154
+ dist_p[5]     1.07    1.07  0.07  0.07    0.96    1.19 1.01     1767     1418
+ dist_p[6]     0.91    0.91  0.07  0.06    0.81    1.02 1.01      923     1410
+ dist_p[7]     0.69    0.69  0.06  0.06    0.59    0.79 1.02      174     1148
 
- # showing 10 of 3425 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
+ # showing 10 of 3545 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -427,6 +452,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="stp" class="level2">
 <h2 class="anchored" data-anchor-id="stp">STP</h2>
+<blockquote class="blockquote">
+<p>⚠️ Caution <span class="math inline">\(\tau\)</span> limited to 30 for Paracou limits hump</p>
+</blockquote>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -451,19 +479,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>fit_stp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>   variable    mean  median     sd   mad      q5     q95 rhat ess_bulk ess_tail
- lp__       1922.53 1862.30 131.73 54.28 1799.66 2173.04 1.87        5       36
- mu_dist       1.01    1.03   0.07  0.07    0.89    1.11 1.80        5       30
- sigma_dist    0.16    0.16   0.03  0.02    0.12    0.20 1.08       31      516
- dist_p[1]     1.15    1.14   0.11  0.10    0.99    1.34 1.01     1218      934
- dist_p[2]     0.77    0.77   0.08  0.08    0.64    0.90 1.01      782     1889
- dist_p[3]     1.30    1.30   0.10  0.11    1.13    1.47 1.01      862     1230
- dist_p[4]     0.86    0.86   0.08  0.08    0.73    1.00 1.01      908     2272
- dist_p[5]     1.13    1.12   0.10  0.10    0.97    1.30 1.02     1610     1429
- dist_p[6]     0.94    0.94   0.09  0.08    0.80    1.08 1.02      279     2247
- dist_p[7]     0.66    0.66   0.09  0.08    0.51    0.79 1.08       36      143
+<pre><code>   variable    mean  median    sd    mad      q5     q95 rhat ess_bulk ess_tail
+ lp__       2085.22 2082.27 73.95 100.81 1980.54 2191.37 1.77        6       95
+ mu_dist       0.99    0.99  0.05   0.05    0.91    1.07 1.28       10       69
+ sigma_dist    0.17    0.17  0.02   0.03    0.13    0.21 1.05       54      707
+ dist_p[1]     1.12    1.11  0.11   0.10    0.97    1.32 1.01     2029     1709
+ dist_p[2]     0.74    0.74  0.08   0.08    0.62    0.88 1.01     2145     2410
+ dist_p[3]     1.28    1.28  0.11   0.12    1.10    1.46 1.01     1651     1737
+ dist_p[4]     0.84    0.83  0.08   0.08    0.71    0.98 1.01     1623     2146
+ dist_p[5]     1.10    1.10  0.10   0.09    0.95    1.27 1.00     1966     1436
+ dist_p[6]     0.91    0.91  0.09   0.08    0.77    1.05 1.00     2524     2366
+ dist_p[7]     0.63    0.63  0.08   0.08    0.51    0.76 1.02      275     2498
 
- # showing 10 of 4397 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
+ # showing 10 of 4517 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -573,23 +601,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">ltp</td>
 <td style="text-align: right;">0.000000</td>
 <td style="text-align: right;">0.000000</td>
-<td style="text-align: right;">434.7305</td>
-<td style="text-align: right;">6.806855</td>
-<td style="text-align: right;">11.57686</td>
-<td style="text-align: right;">0.3631973</td>
-<td style="text-align: right;">-869.4610</td>
-<td style="text-align: right;">13.61371</td>
+<td style="text-align: right;">433.3360</td>
+<td style="text-align: right;">6.886086</td>
+<td style="text-align: right;">11.08126</td>
+<td style="text-align: right;">0.3638875</td>
+<td style="text-align: right;">-866.6721</td>
+<td style="text-align: right;">13.77217</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">stp</td>
-<td style="text-align: right;">-8.649223</td>
-<td style="text-align: right;">3.621125</td>
-<td style="text-align: right;">426.0813</td>
-<td style="text-align: right;">5.880643</td>
-<td style="text-align: right;">19.52708</td>
-<td style="text-align: right;">0.6992297</td>
-<td style="text-align: right;">-852.1625</td>
-<td style="text-align: right;">11.76129</td>
+<td style="text-align: right;">-2.552911</td>
+<td style="text-align: right;">4.701578</td>
+<td style="text-align: right;">430.7831</td>
+<td style="text-align: right;">5.887430</td>
+<td style="text-align: right;">16.55624</td>
+<td style="text-align: right;">0.5339010</td>
+<td style="text-align: right;">-861.5662</td>
+<td style="text-align: right;">11.77486</td>
 </tr>
 </tbody>
 </table>

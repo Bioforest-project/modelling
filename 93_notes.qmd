@@ -1,0 +1,53 @@
+# Notes {.unnumbered}
+
+Meetings notes.
+
+## 24/01/24
+
+Sections are randomly ordered.
+
+### Data preparation
+
+SLA and LA should be logged in species functional trait preparation and SLA inverted in LMA. The N fixation and dispersal still needs to be cleaned.
+
+### Models structure
+
+We must use the random effect for control plots by adding thetaInf_p for controls and pre-inventories with only a hyperdistribution on mu_thetaInf and sigma_thetaInf_p (either concatenating or with two likelihoods) and by modifying thetaInfp in the equation (l. 43 & 44 on mu_old and mu_rec).
+
+### Trajectories
+
+Add box plots for prelogging and controls, and plot longer time series from 1 to 60 years with scale transformation for time. The diversity trajectories are not that bad, but may require better data preparation rather than tweaking the model.
+
+### Model selection
+
+LOO model selection fails and does not take into account parsimony with the number of parameters. However, the results show that $\lambda$ is highly correlated between STP and LTP models (e.g. AGB) and the choice may not be necessary or may be made post hoc.
+
+### Disturbance intensity
+
+$dist_p$ can represent the intensity of disturbance for attributes where it is well modelled (to be verified with data where possible) to provide information after the HDI on diversity trajectories. Sequential inference problem (uncertainty transmission?) or joint but with influence of diversity trajectory back on $dist_p$. Camille proposes to use a hyperdistribution on $dist_p$, informed with harvested volumes if available.
+
+### Online workshop
+
+3-4 sessions with :
+
+-   General session on Thursday, a quick introduction to data preparation including environment and species, model development, re-introduction to the model with a quick focus on the constrained disturbance index.
+
+-   Subgroup session on Thursday, where subgroups make a first exploration of preliminary parameters for their question of interest with associated covariates.
+
+-   General session on Friday where sub-groups present their results.
+
+-   Optional subgroup session on Friday if they wish.
+
+We need to prepare for this:
+
+-   Trajectory attributes: agb, gini, stem, ba, hill q1 genus index, FDiv, Feve, CWM wd, lma, n, hmax.
+
+-   Automatic rmarkdown pdf report for PIs (no pages yet): agb, gini, stem, ba, hill q1 genus index, FDiv, CWM wd, lma, hmax.
+
+-   Update Mithila Monday afternoon
+
+-   Prepare subgroup data and figures for Wednesday (all parameters with fifth usual quantiles, derived parameter $t_{95}$, associated environmental data with description, maybe some graphs).
+
+### Subgroup 3
+
+Much remains to be explored, Sylvain's offers punctual help on theoretical development in sessions with Géraldine and Camille.

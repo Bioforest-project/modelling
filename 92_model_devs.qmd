@@ -1,0 +1,46 @@
+# Models devs {.unnumbered}
+
+## STP sum
+
+`models/stp_sum.stan`
+
+$$
+\begin{align}
+\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times (LTP+STP) \\
+LTP = 1 - e^{-\lambda_p \times time} \\
+STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \\
+\theta_{0,p} = \theta_{\infty,s} \times dist_p
+\end{align}
+$$
+
+## STP lognormal
+
+`models/stp.stan`
+
+$$
+\begin{align}
+\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times (LTP+STP) \\
+LTP = 1 - e^{-\lambda_p \times time} \\
+STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \\
+\theta_{0,p} = \theta_{\infty,s} \times dist_p
+\end{align}
+$$
+
+## STP correlated
+
+`models/stp_cor.stan`
+
+Imposed variance-covariance matrix on dist_p and delta_p.
+
+$$
+\begin{align}
+\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times (LTP+STP) \\
+LTP = 1 - e^{-\lambda_p \times time} \\
+STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \\
+\theta_{0,p} = \theta_{\infty,s} \times dist_p
+\end{align}
+$$
+
+## Parrallel
+
+`dummy_par.stan`

@@ -10,11 +10,6 @@ library(googlesheets4)
 
 Data exploration.
 
-To do:
-
--   n_fixation, dispersal
--   log sla log la
-
 ```{r data}
 #| message: false
 #| warning: false
@@ -108,7 +103,7 @@ unique(read_tsv("data/derived_data/data.tsv")$variable) %>%
 #| warning: false
 #| fig-cap: "Dummy figure 3 - treatment."
 read_tsv("data/derived_data/data.tsv") %>%
-  filter(variable == "agb_mort") %>%
+  filter(variable == "agb") %>%
   ggplot(aes(year, log(value), group = paste(site, plot), col = treatment)) +
   geom_line() +
   theme_bw() +

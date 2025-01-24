@@ -65,7 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./32_wd.html" rel="next">
-<link href="./21_models.html" rel="prev">
+<link href="./30_trajectories.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -108,7 +108,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./31_stem.html">Stem</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_trajectories.html">Trajectories</a></li><li class="breadcrumb-item"><a href="./31_stem.html">Stem</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -151,46 +151,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Models</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./31_stem.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Stem</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./32_wd.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">WD</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./33_agb.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">AGB</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./34_fdiv.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">FDiv</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./35_div_q1_gen.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Genus diversity 1</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./36_agb_mort.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">AGB mortality</span></a>
-  </div>
-</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
- <span class="menu-text">Appendices</span></a>
+            <a href="./30_trajectories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Trajectories</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -198,8 +162,67 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./31_stem.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Stem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./32_wd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WD</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./33_agb.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">AGB</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./34_fdiv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">FDiv</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./35_div_q1_gen.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Genus diversity 1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./36_agb_mort.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">AGB mortality</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./91_stp_negative.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">STP negatives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./92_model_devs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Models devs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./93_notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -348,18 +371,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>   variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
- lp__       2114.75 2114.28 20.29 20.04 2083.79 2149.27 1.01      265      361
- mu_dist       0.79    0.79  0.02  0.02    0.76    0.82 1.01      565      886
- sigma_dist    0.08    0.08  0.01  0.01    0.06    0.10 1.00     1279     2686
- dist_p[1]     0.79    0.79  0.06  0.06    0.68    0.88 1.01     1779     1647
- dist_p[2]     0.87    0.87  0.06  0.06    0.77    0.97 1.00     1580     1260
- dist_p[3]     0.77    0.77  0.05  0.05    0.68    0.85 1.00     2104     2457
- dist_p[4]     0.80    0.80  0.06  0.06    0.70    0.90 1.00     1744     1982
- dist_p[5]     0.77    0.77  0.05  0.05    0.69    0.85 1.00     2095     2713
- dist_p[6]     0.81    0.81  0.05  0.05    0.73    0.90 1.00     1951     1425
- dist_p[7]     0.82    0.82  0.06  0.06    0.72    0.92 1.00     1676     1701
+ lp__       2277.02 2277.14 18.94 18.18 2246.31 2308.91 1.00      441      933
+ mu_dist       0.80    0.80  0.02  0.02    0.76    0.84 1.01      483      996
+ sigma_dist    0.09    0.08  0.01  0.01    0.07    0.11 1.00     2493     2697
+ dist_p[1]     0.80    0.80  0.06  0.06    0.69    0.90 1.00     1628     1505
+ dist_p[2]     0.87    0.88  0.06  0.06    0.77    0.97 1.00     2248     2281
+ dist_p[3]     0.78    0.78  0.05  0.05    0.69    0.86 1.00     2076     2233
+ dist_p[4]     0.81    0.81  0.07  0.07    0.70    0.92 1.00     1427     1453
+ dist_p[5]     0.78    0.79  0.06  0.05    0.69    0.87 1.00     2037     2207
+ dist_p[6]     0.83    0.83  0.05  0.05    0.75    0.92 1.00     2736     1723
+ dist_p[7]     0.83    0.83  0.06  0.06    0.72    0.94 1.00     1412     1110
 
- # showing 10 of 3425 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
+ # showing 10 of 3545 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -416,7 +439,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">guide =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 414 rows containing missing values or values outside the scale range
+<pre><code>Warning: Removed 519 rows containing missing values or values outside the scale range
 (`geom_line()`).</code></pre>
 </div>
 <div class="cell-output-display">
@@ -456,18 +479,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>   variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
- lp__       2512.30 2512.06 24.54 23.85 2472.42 2552.69 1.01      375      506
- mu_dist       0.73    0.73  0.02  0.02    0.70    0.77 1.00     1462     2387
- sigma_dist    0.09    0.09  0.01  0.01    0.07    0.11 1.00     2585     2677
- dist_p[1]     0.70    0.70  0.04  0.04    0.63    0.77 1.00     3538     2868
- dist_p[2]     0.85    0.85  0.05  0.06    0.76    0.94 1.00     2715     2234
- dist_p[3]     0.72    0.72  0.04  0.04    0.65    0.79 1.00     3503     2657
- dist_p[4]     0.72    0.72  0.04  0.04    0.65    0.79 1.00     3709     2584
- dist_p[5]     0.73    0.73  0.04  0.04    0.66    0.80 1.00     3328     2682
- dist_p[6]     0.80    0.80  0.04  0.04    0.73    0.87 1.00     2368     2258
- dist_p[7]     0.76    0.76  0.05  0.04    0.69    0.84 1.00     3595     2389
+ lp__       2689.57 2689.44 25.38 24.43 2648.15 2732.80 1.01      378      379
+ mu_dist       0.74    0.74  0.02  0.02    0.71    0.78 1.00     1232     2301
+ sigma_dist    0.10    0.09  0.01  0.01    0.07    0.12 1.00     3070     2910
+ dist_p[1]     0.71    0.71  0.04  0.04    0.64    0.78 1.00     4599     2851
+ dist_p[2]     0.87    0.87  0.06  0.06    0.78    0.96 1.00     2844     1928
+ dist_p[3]     0.73    0.73  0.04  0.04    0.66    0.80 1.00     3529     3009
+ dist_p[4]     0.73    0.73  0.05  0.04    0.66    0.81 1.00     3966     2553
+ dist_p[5]     0.74    0.74  0.04  0.04    0.67    0.81 1.00     2478     1826
+ dist_p[6]     0.81    0.81  0.05  0.04    0.74    0.89 1.00     3413     2679
+ dist_p[7]     0.77    0.77  0.05  0.05    0.69    0.85 1.00     3758     2619
 
- # showing 10 of 4397 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
+ # showing 10 of 4517 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -524,7 +547,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">guide =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 414 rows containing missing values or values outside the scale range
+<pre><code>Warning: Removed 519 rows containing missing values or values outside the scale range
 (`geom_line()`).</code></pre>
 </div>
 <div class="cell-output-display">
@@ -554,7 +577,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>t<span class="sc">$</span>variable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>character(0)</code></pre>
+<pre><code>[1] "mu_thetaInf"   "thetaInf_s[9]"</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -637,26 +660,64 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">ltp</td>
 <td style="text-align: right;">0.00000</td>
 <td style="text-align: right;">0.000000</td>
-<td style="text-align: right;">453.0664</td>
-<td style="text-align: right;">7.088091</td>
-<td style="text-align: right;">10.73106</td>
-<td style="text-align: right;">0.3127058</td>
-<td style="text-align: right;">-906.1329</td>
-<td style="text-align: right;">14.17618</td>
+<td style="text-align: right;">466.6706</td>
+<td style="text-align: right;">7.163501</td>
+<td style="text-align: right;">10.42177</td>
+<td style="text-align: right;">0.3226248</td>
+<td style="text-align: right;">-933.3412</td>
+<td style="text-align: right;">14.32700</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">stp</td>
-<td style="text-align: right;">-22.48864</td>
-<td style="text-align: right;">5.909868</td>
-<td style="text-align: right;">430.5778</td>
-<td style="text-align: right;">6.234222</td>
-<td style="text-align: right;">17.11137</td>
-<td style="text-align: right;">0.4121705</td>
-<td style="text-align: right;">-861.1556</td>
-<td style="text-align: right;">12.46844</td>
+<td style="text-align: right;">-30.64659</td>
+<td style="text-align: right;">6.064659</td>
+<td style="text-align: right;">436.0240</td>
+<td style="text-align: right;">6.346220</td>
+<td style="text-align: right;">16.69313</td>
+<td style="text-align: right;">0.4123609</td>
+<td style="text-align: right;">-872.0480</td>
+<td style="text-align: right;">12.69244</td>
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>fit_ltp<span class="sc">$</span><span class="fu">summary</span>(<span class="st">"lambda_p"</span>, <span class="st">"mean"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">ltp =</span> mean) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    fit_stp<span class="sc">$</span><span class="fu">summary</span>(<span class="st">"lambda_p"</span>, <span class="st">"mean"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rename</span>(<span class="at">stp =</span> mean)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(variable, <span class="fu">c</span>(<span class="st">"lambda"</span>, <span class="st">"p"</span>, <span class="st">"plotnum"</span>), <span class="at">convert =</span> T) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ind_rec) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(ltp, stp, <span class="at">col =</span> site)) <span class="sc">+</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  ggpubr<span class="sc">::</span><span class="fu">stat_cor</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(variable)`</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Expected 3 pieces. Additional pieces discarded in 106 rows [1, 2, 3, 4, 5, 6,
+7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...].</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(plotnum)`</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="31_stem_files/figure-html/lambda_comp-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Posteriors generals pars.</figcaption>
+</figure>
+</div>
 </div>
 </div>
 
@@ -899,8 +960,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./21_models.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Models</span>
+      <a href="./30_trajectories.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Trajectories</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
