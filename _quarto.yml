@@ -32,3 +32,6 @@ format:
     number-depth: -1
 
 editor: visual
+
+execute:
+  cache: true
