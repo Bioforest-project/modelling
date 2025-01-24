@@ -127,8 +127,10 @@ read_tsv("../data/derived_data/data.tsv") %>%
   group_by(site, plot, treatment, harvest_year) %>%
   summarise(year_min = min(year), year_max = max(year)) %>%
   arrange(plot) %>%
-  kable(col.names = c("Site", "Plot", "Treatment", "Harvest year",
-                      "First inventory", "Last inventory"))
+  kable(col.names = c(
+    "Site", "Plot", "Treatment", "Harvest year",
+    "First inventory", "Last inventory"
+  ))
 ```
 
 ## Aboveground Biomass - AGB
@@ -158,7 +160,7 @@ figs$nstem +
   theme(legend.position = "right")
 ```
 
-## Gini index 
+## Gini index
 
 ```{r gini}
 #| message: false
