@@ -1,3 +1,4 @@
+-   modelling 0.1.0.9021: R scripts
 -   modelling 0.1.0.9020: adding figs from cache (should be cleaned later on)
 -   modelling 0.1.0.9019: gini, ba, feve, sla, n, hmax, & cache
 -   modelling 0.1.0.9018: updated trajs figs with associated funs in r/
