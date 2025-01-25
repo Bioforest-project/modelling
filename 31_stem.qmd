@@ -5,7 +5,6 @@ library(tidyverse)
 library(knitr)
 library(cmdstanr)
 library(bayesplot)
-library(loo)
 library(patchwork)
 list.files("r", full.names = TRUE, pattern = ".R") %>%
   lapply(source)
@@ -30,7 +29,7 @@ lab <- expression("Stem [ trees" ~ ha^{
 data <- read_tsv("data/derived_data/data.tsv") %>%
   filter(variable == var) %>%
   unique() %>%
-  rename(stem = value) %>%
+  rename(y = value) %>%
   select(-env, -env_value, -variable) %>%
   unique() %>%
   filter(!is.infinite(harvest_year_min)) %>%
@@ -50,15 +49,16 @@ mdata <- list(
   n_pre = nrow(data_pre),
   n_site = max(data_rec$sitenum),
   n_plot_rec = max(data_rec$plotnum),
-  stem_rec = data_rec$stem,
-  stem_old = data_old$stem,
-  stem_pre = data_pre$stem,
+  y_rec = data_rec$y,
+  y_old = data_old$y,
+  y_pre = data_pre$y,
   time = data_rec$rel_year - 3,
   site_rec = data_rec$sitenum,
   site_old = data_old$sitenum,
   site_pre = data_pre$sitenum,
   plot_rec = data_rec$plotnum,
   site_plot_rec = ind_rec$sitenum,
+  time_max = 60,
   dist_bounds = c(0.1, 1),
   delta_bounds = c(0, 5),
   mu_thetaInf_bounds = c(100, 1000),
@@ -68,7 +68,7 @@ mdata <- list(
 
 ```{r fig}
 #| fig-cap: "Modelled trajectories."
-ggplot(data, aes(rel_year, stem, group = paste(site, plot), col = treatment)) +
+ggplot(data, aes(rel_year, y, group = paste(site, plot), col = treatment)) +
   geom_line() +
   facet_wrap(~site) +
   theme_bw() +
@@ -100,11 +100,6 @@ fit_ltp <- ltp$sample(
 #| warning: false
 path <- file.path("chains", var, "ltp")
 fit_ltp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
-data_old <- data_old %>%
-  group_by(site) %>%
-  mutate(rel_year = max(rel_year + 2))
-data_rec$preds <- fit_ltp$summary(c("mu_rec"), median)$median
-data_pre$preds <- fit_ltp$summary(c("mu_pre"), median)$median
 fit_ltp
 ```
 
@@ -112,14 +107,14 @@ fit_ltp
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted versus observed."
-pvo_fig(data_rec, data_pre)
+pvo_fig(data_rec, data_pre, fit_ltp)
 ```
 
 ```{r preds_ltp}
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted trajectories."
-ltp_fig(data_rec, data_pre, data_old, fit_ltp, lab)
+proj_fig(data_rec, data_pre, data_old, fit_ltp, lab)
 ```
 
 ## STP
@@ -144,11 +139,6 @@ fit_stp <- stp$sample(
 #| warning: false
 path <- file.path("chains", var, "stp")
 fit_stp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
-data_old <- data_old %>%
-  group_by(site) %>%
-  mutate(rel_year = max(rel_year + 2))
-data_rec$preds <- fit_stp$summary(c("mu_rec"), median)$median
-data_pre$preds <- fit_stp$summary(c("mu_pre"), median)$median
 fit_stp
 ```
 
@@ -156,67 +146,22 @@ fit_stp
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted versus observed."
-pvo_fig(data_rec, data_pre)
+pvo_fig(data_rec, data_pre, fit_stp)
 ```
 
 ```{r preds_stp}
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted trajectories."
-stp_fig(data_rec, data_pre, data_old, fit_stp, lab)
-```
-
-```{r rhat_stp}
-t <- fit_stp$summary(
-  c(
-    "mu_dist", "dist_p", "sigma_dist",
-    "mu_lambda", "sigma_lambda", "lambda_p",
-    "mu_thetaInf", "sigma_thetaInf", "thetaInf_s",
-    "mu_delta", "delta_p", "sigma_delta",
-    "mu_tau", "tau_s", "sigma_tau",
-    "sigma_old", "sigma_pre", "sigma_rec"
-  ),
-  "rhat"
-) %>%
-  filter(rhat > 1.1)
-t$variable
-```
-
-```{r dist_other_stp}
-#| fig-cap: "Posteriors generals pars."
-pars <- c(
-  "mu_dist", "sigma_dist", "mu_lambda", "sigma_lambda", "mu_thetaInf",
-  "sigma_thetaInf", "sigma_old", "sigma_pre", "sigma_rec", "mu_delta",
-  "sigma_delta", "mu_tau", "sigma_tau"
-)
-fit_stp$draws(pars) %>%
-  mcmc_dens()
-```
-
-```{r dist_delta_stp}
-#| fig-cap: "Posteriors delta_p."
-fit_stp$draws("delta_p") %>%
-  mcmc_intervals()
+proj_fig(data_rec, data_pre, data_old, fit_stp, lab)
 ```
 
 ## Comparison
 
-```{r loo_compare}
-#| warning: false
-#| message: false
-loo_compare(
-  list(
-    ltp = fit_ltp$loo(),
-    stp = fit_stp$loo()
-  )
-) %>%
-  kable()
-```
-
 ```{r lambda_comp}
 #| message: false
 #| warning: false
-#| fig-cap: "Posteriors generals pars."
+#| fig-cap: "lambda comparison across models."
 fit_ltp$summary("lambda_p", "mean") %>%
   rename(ltp = mean) %>%
   left_join(
@@ -231,5 +176,7 @@ fit_ltp$summary("lambda_p", "mean") %>%
   theme_bw() +
   scale_y_log10() +
   scale_x_log10() +
-  ggpubr::stat_cor()
+  ggpubr::stat_cor(aes(group = NA)) +
+  scale_color_discrete("") +
+  xlab("LTP") + ylab("STP")
 ```
