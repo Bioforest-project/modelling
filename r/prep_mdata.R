@@ -1,17 +1,18 @@
 prep_mdata <- function(
-    data_rec,
-    data_pre,
-    data_old,
-    dist_bounds,
-    delta_bounds,
-    mu_thetaInf_bounds,
-    thetaInf_s_bounds,
-    time_max = 60
-  ) {
+    var,
+    time_max = 60) {
+  data_rec <- read_tsv("data/derived_data/data_rec.tsv") %>%
+    filter(variable == var)
+  data_pre <- read_tsv("data/derived_data/data_pre.tsv") %>%
+    filter(variable == var)
+  data_old <- read_tsv("data/derived_data/data_old.tsv") %>%
+    filter(variable == var)
   ind_rec <- data_rec %>%
     select(site, plot, sitenum, plotnum_rec) %>%
     unique() %>%
     arrange(plotnum_rec)
+  bounds <- read_tsv("data/derived_data/bounds.tsv") %>%
+    filter(attribute == var)
   mdata <- list(
     n_rec = nrow(data_rec),
     n_old = nrow(data_old),
@@ -28,10 +29,30 @@ prep_mdata <- function(
     plot_rec = data_rec$plotnum_rec,
     site_plot_rec = ind_rec$sitenum,
     time_max = time_max,
-    dist_bounds = dist_bounds,
-    delta_bounds = delta_bounds,
-    mu_thetaInf_bounds = mu_thetaInf_bounds,
-    thetaInf_s_bounds = thetaInf_s_bounds
+    mu_thetaInf_bounds = c(
+      bounds$mu_thetaInf_min,
+      bounds$mu_thetaInf_max
+    ),
+    thetaInf_bounds = c(
+      bounds$thetaInf_min,
+      bounds$thetaInf_max
+    ),
+    lambda_bounds = c(
+      bounds$lambda_min,
+      bounds$lambda_max
+    ),
+    dist_bounds = c(
+      bounds$dist_min,
+      bounds$dist_max
+    ),
+    delta_bounds = c(
+      bounds$delta_min,
+      bounds$delta_max
+    ),
+    tau_bounds = c(
+      bounds$tau_min,
+      bounds$tau_max
+    )
   )
   return(mdata)
 }

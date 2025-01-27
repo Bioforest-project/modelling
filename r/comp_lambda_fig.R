@@ -1,8 +1,7 @@
 comp_lambda_fig <- function(
     data_rec,
     fit_stp,
-    fit_ltp
-    ) {
+    fit_ltp) {
   ind_rec <- data_rec %>%
     select(site, plot, sitenum, plotnum_rec) %>%
     unique() %>%
@@ -23,6 +22,7 @@ comp_lambda_fig <- function(
     scale_x_log10() +
     ggpubr::stat_cor(aes(group = NA)) +
     scale_color_discrete("") +
-    xlab("LTP") + ylab("STP")
+    xlab("LTP") +
+    ylab("STP")
   return(g)
 }

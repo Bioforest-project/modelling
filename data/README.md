@@ -1,6 +1,6 @@
 # All data
 Sylvain Schmitt -
-Jan 23, 2025
+Jan 27, 2025
 
 This folder will contains the data for all anlayses.
 
@@ -15,7 +15,11 @@ fs::dir_tree()
     ├── derived_data
     │   ├── README.md
     │   ├── README.qmd
-    │   └── data.tsv
+    │   ├── bounds.tsv
+    │   ├── data.tsv
+    │   ├── data_old.tsv
+    │   ├── data_pre.tsv
+    │   └── data_rec.tsv
     └── raw_data
         ├── README.md
         ├── README.qmd

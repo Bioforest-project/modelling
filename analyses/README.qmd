@@ -9,9 +9,10 @@ format:
     toc-depth: 2
 ---
 
-Folder with the data aggregation script.
+Folder with the automatic reports for PIs.
 
--   `...`
+-   **trajectories.qmd:** model for sites trajectories automatic report
+-   **auto_compil.R**: script to compile reports for all sites
 
 ```{r, comment=""}
 fs::dir_tree()

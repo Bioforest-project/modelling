@@ -31,24 +31,27 @@ metadata <- read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcd
 data <- read_csv("data/raw_data/aggregated_data.csv") %>%
   rename_all(tolower) %>%
   left_join(metadata) %>%
-  filter(!(site %in% c("Peteco", "Bafog", "Tene", "Montagne_Tortue", "Manare"))) %>%
+  filter(!(site %in% c("Peteco", "Bafog", "Tene",
+                       "Montagne_Tortue", "Manare"))) %>%
   filter(!(site == "Kabo" & year < 1980)) %>%
   mutate(rel_year = ifelse(treatment == "control",
     year - harvest_year_min,
     year - harvest_year
-  )) %>% 
+  )) %>%
   mutate(sitenum = as.numeric(as.factor(site))) %>%
-  group_by(site) %>% 
-  mutate(y = ifelse(variable == "agb" & site == "Kibale", 
-                    300, value)) %>% 
+  group_by(site) %>%
+  mutate(y = ifelse(variable == "agb" & site == "Kibale",
+    300, value
+  )) %>%
   ungroup()
 data_rec <- data %>%
   filter(treatment == "logged", rel_year > 2) %>%
   mutate(plotnum_rec = as.numeric(as.factor(paste0(site, "_", plot))))
-data_pre <- data %>% 
+data_pre <- data %>%
   filter(rel_year <= 0) %>%
   mutate(plotnum_pre = as.numeric(as.factor(paste0(site, "_", plot))))
-data_old <- data %>% filter(treatment == "control") %>%
+data_old <- data %>%
+  filter(treatment == "control") %>%
   mutate(plotnum_old = as.numeric(as.factor(paste0(site, "_", plot))))
 write_tsv(data, "data/derived_data/data.tsv")
 write_tsv(data_rec, "data/derived_data/data_rec.tsv")

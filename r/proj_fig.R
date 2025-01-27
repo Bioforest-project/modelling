@@ -4,17 +4,18 @@ proj_fig <- function(
     data_old,
     fit,
     lab,
-    sit = NA
-    ) {
-  projs <- fit$summary("y_pred", "median") %>% 
-    separate(variable, 
-             c("y", "pred", "rel_year", "plotnum_rec"), convert = TRUE) %>% 
-    select(-y, -pred) %>% 
-    rename(y = median) %>% 
-    left_join(data_rec %>% 
-                select(site, plot, plotnum_rec) %>% 
+    sit = NA) {
+  projs <- fit$summary("y_pred", "median") %>%
+    separate(variable,
+      c("y", "pred", "rel_year", "plotnum_rec"),
+      convert = TRUE
+    ) %>%
+    select(-y, -pred) %>%
+    rename(y = median) %>%
+    left_join(data_rec %>%
+                select(site, plot, plotnum_rec) %>%
                 unique())
-  if(!is.na(sit)){
+  if (!is.na(sit)) {
     projs <- filter(projs, site == sit)
     data_pre <- filter(data_pre, site == sit)
     data_rec <- filter(data_rec, site == sit)
@@ -39,8 +40,13 @@ proj_fig <- function(
     xlab("") +
     theme(legend.position = "bottom") +
     ylab(lab)
-  if(is.na(sit))
+  if (is.na(sit)) {
     g <- g +
-    scale_color_discrete(guide = "none")
+      scale_color_discrete(guide = "none")
+  } else {
+    g <- g +
+      scale_color_discrete("Plot") +
+      theme(legend.position = "right")
+  }
   return(g)
 }

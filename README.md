@@ -1,8 +1,8 @@
 # modelling
-Jan 17, 2025
+Jan 27, 2025
 
 [![](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![lint](https://github.com/Bioforest-project/species/workflows/lint/badge.svg)](https://github.com/Bioforest-project/species/actions?query=workflow%3Alint)
+[![lint](https://github.com/Bioforest-project/modelling/workflows/lint/badge.svg)](https://github.com/Bioforest-project/modelling/actions?query=workflow%3Alint)
 
 **modelling** is a sub-project of the
 [**BioForest**](https://github.com/Bioforest-project) project aimed at
@@ -24,10 +24,12 @@ that can be run with R and associated environment defined with
   - Reproductive analyses in `files.qmd`
   - Resulting pages in `docs/`
   - Document structure definition in `_quarto.yml`
+- Automatic per site reports for PIs `analyses/`
 - Data in `data/` with:
   - All raw data in `raw_data/`
   - All derived data in `derived_sata/`
 - Stan Bayesian models in `models/`
+- Stan Bayesian models outputs in `chains/`
 - R scripts with funtions in `r/`
 - Intermediary files in `outputs/`
 - Figures in `figures/`

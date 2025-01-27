@@ -16,10 +16,12 @@ All **modelling** analyses rely on the quarto documents (`files.qmd`) that can b
     -   Reproductive analyses in `files.qmd`
     -   Resulting pages in `docs/`
     -   Document structure definition in `_quarto.yml`
+-   Automatic per site reports for PIs `analyses/`
 -   Data in `data/` with:
     -   All raw data in `raw_data/`
     -   All derived data in `derived_sata/`
 -   Stan Bayesian models in `models/`
+-   Stan Bayesian models outputs in `chains/`
 -   R scripts with funtions in `r/`
 -   Intermediary files in `outputs/`
 -   Figures in `figures/`

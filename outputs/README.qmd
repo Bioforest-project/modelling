@@ -10,7 +10,7 @@ format:
 
 All outputs of the analyses:
 
--   ...
+-   **trajectories/**: automatic reports on site trajectories for PIs
 
 ```{r, comment=""}
 fs::dir_tree()

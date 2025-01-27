@@ -1,11 +1,9 @@
 # R
 Sylvain Schmitt -
-Oct 16, 2024
+Jan 27, 2025
 
 This folder will contains all R scriptswith R functions for all analyses
-. In particular:
-
-- `...`
+.
 
 ``` r
 fs::dir_tree()
@@ -14,4 +12,9 @@ fs::dir_tree()
     .
     ├── README.md
     ├── README.qmd
-    └── README.rmarkdown
+    ├── README.rmarkdown
+    ├── comp_lambda_fig.R
+    ├── prep_mdata.R
+    ├── proj_fig.R
+    ├── pvo_fig.R
+    └── sample_model.R

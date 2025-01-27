@@ -1,3 +1,40 @@
+```{r set}
+#| message: false
+#| include: false
+library(tidyverse)
+library(knitr)
+library(cmdstanr)
+list.files("r", full.names = TRUE, pattern = ".R") %>%
+  lapply(source)
+```
+
 # Trajectories
 
 This section develop trajectories per attributes.
+
+```{r data}
+#| eval: false
+bounds <- read_sheet("https://docs.google.com/spreadsheets/d/1rZZ_dKebVp1RnxI0ZawaSQws72FhubuPZ8O27DzJtFE/edit?usp=sharing") # nolint
+write_tsv(bounds, "data/derived_data/bounds.tsv")
+```
+
+```{r bounds}
+read_tsv("data/derived_data/bounds.tsv") %>%
+  kable(caption = "Parameters boundaries per attribute.")
+```
+
+```{r fit_all}
+#| eval: false
+ltp <- cmdstan_model("models/ltp.stan")
+stp <- cmdstan_model("models/stp.stan")
+vars <- c(
+  "nstem", "agb", "WD_cwm_ba", "FDiv", "diversity_q1_gen", "gini",
+  "ba", "FEve", "SLA_cwm_ba", "N_cwm_ba", "hmax_cwm_ba"
+)
+for (var in vars) {
+  sample_model(var, "ltp")
+}
+for (var in vars) {
+  sample_model(var, "stp")
+}
+```

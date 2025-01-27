@@ -1,0 +1,147 @@
+---
+title: "Site trajectory"
+format:
+  pdf:
+    number-sections: false
+params:
+  site: Mbaiki
+execute:
+  echo: false
+---
+
+```{r set}
+#| include: false
+library(tidyverse)
+library(cmdstanr)
+library(knitr)
+options(knitr.kable.NA = "")
+```
+
+```{r functions}
+#| include: false
+list.files("../r", full.names = TRUE, pattern = ".R") %>%
+  lapply(source)
+site_fig <- function(
+    var,
+    site) {
+  lab <- switch(var,
+    agb = expression("AGB [ t" ~ ha^{
+      -1
+    } ~ "]"),
+    ba = expression("BA [" ~ m^2 ~ m^{
+      -2
+    } ~ "]"),
+    nstem = expression("Stem [ trees" ~ ha^{
+      -1
+    } ~ "]"),
+    gini = "Gini index",
+    diversity_q1_gen = expression("Genus diversity" ~ q == 1),
+    FDiv = "FDiv",
+    SLA_cwm_ba = expression("SLA [" ~ mm^2 ~ mg^{
+      -1
+    } ~ "]"),
+    WD_cwm_ba = expression("WD [ g" ~ cm^{
+      -3
+    } ~ "]"),
+    hmax_cwm_ba = expression("hmax [" ~ m ~ "]")
+  )
+  data_rec <- read_tsv("../data/derived_data/data_rec.tsv") %>%
+    filter(variable == var)
+  data_pre <- read_tsv("../data/derived_data/data_pre.tsv") %>%
+    filter(variable == var)
+  data_old <- read_tsv("../data/derived_data/data_old.tsv") %>%
+    filter(variable == var)
+  path <- file.path("..", "chains", var, "stp")
+  fit_stp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
+  g <- proj_fig(data_rec, data_pre, data_old, fit_stp, lab, sit = site)
+  return(g)
+}
+```
+
+## Site
+
+```{r site}
+#| message: false
+read_tsv("../data/derived_data/data.tsv") %>%
+  filter(site == params$site) %>%
+  group_by(site, plot, treatment, harvest_year) %>%
+  summarise(year_min = min(year), year_max = max(year)) %>%
+  arrange(plot) %>%
+  kable(col.names = c(
+    "Site", "Plot", "Treatment", "Harvest year",
+    "First inventory", "Last inventory"
+  ))
+```
+
+## Aboveground Biomass - AGB
+
+```{r agb}
+#| message: false
+site_fig("agb", params$site)
+```
+
+## Basal area - BA
+
+```{r ba}
+#| message: false
+site_fig("ba", params$site)
+```
+
+## Stem density
+
+```{r nstem}
+#| message: false
+site_fig("nstem", params$site)
+```
+
+## Gini index
+
+```{r gini}
+#| message: false
+site_fig("gini", params$site)
+```
+
+## Genus diversity
+
+Using the Hill number of order 1 with genus richness per hectare for a coverage of 80%.
+
+```{r diversity_q1_gen}
+#| message: false
+site_fig("diversity_q1_gen", params$site)
+```
+
+## Functional diversity - FDiv
+
+FDiv indicce (ref).
+
+```{r FDiv}
+#| message: false
+site_fig("FDiv", params$site)
+```
+
+## Wood Density - WD
+
+Community Weighted Mean (CWM) of Wood Density (WD) per Basal Area (BA).
+
+```{r WD_cwm_ba}
+#| message: false
+site_fig("WD_cwm_ba", params$site)
+```
+
+## Specific Leaf Area - SLA
+
+Community Weighted Mean (CWM) of Specific Leaf Area (SLA) per Basal Area (BA).
+
+```{r SLA_cwm_ba}
+#| message: false
+site_fig("SLA_cwm_ba", params$site)
+```
+
+## Asymptotic height - hmax
+
+Community Weighted Mean (CWM) of asymptotic height hmax per Basal Area (BA).
+
+```{r hmax_cwm_ba}
+#| message: false
+site_fig("hmax_cwm_ba", params$site)
+```

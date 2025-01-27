@@ -1,10 +1,11 @@
 # Analyses
 Sylvain Schmitt -
-Oct 16, 2024
+Jan 27, 2025
 
-Folder with the data aggregation script.
+Folder with the automatic reports for PIs.
 
-- `...`
+- **trajectories.qmd:** model for sites trajectories automatic report
+- **auto_compil.R**: script to compile reports for all sites
 
 ``` r
 fs::dir_tree()
@@ -13,4 +14,6 @@ fs::dir_tree()
     .
     ├── README.md
     ├── README.qmd
-    └── README.rmarkdown
+    ├── README.rmarkdown
+    ├── auto_compil.R
+    └── trajectories.qmd

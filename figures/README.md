@@ -1,9 +1,9 @@
 # Figures
-Jan 23, 2025
+Jan 27, 2025
 
 All figures (.png, .pdf, etc.):
 
-- …
+- **obs**: observed trajectories per attribute.
 
 ``` r
 fs::dir_tree()
@@ -40,6 +40,7 @@ fs::dir_tree()
         ├── ba_recr.png
         ├── coverage_gen.png
         ├── coverage_sp.png
+        ├── dbh_median.png
         ├── diversity_q0_gen.png
         ├── diversity_q0_sp.png
         ├── diversity_q1_gen.png
@@ -48,6 +49,7 @@ fs::dir_tree()
         ├── diversity_q2_sp.png
         ├── evenness_gen.png
         ├── evenness_sp.png
+        ├── gini.png
         ├── hmax_cwm_ba.png
         ├── hmax_cwm_n.png
         ├── hmax_cwv_n.png
@@ -60,4 +62,6 @@ fs::dir_tree()
         ├── p_imputed_WD.png
         ├── p_imputed_hmax.png
         ├── p_undet_gen.png
-        └── p_undet_spp.png
+        ├── p_undet_spp.png
+        ├── richness_gen.png
+        └── richness_sp.png

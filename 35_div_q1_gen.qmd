@@ -24,25 +24,18 @@ var <- "diversity_q1_gen"
 if (!exists(file.path("chains", var))) {
   dir.create(file.path("chains", var))
 }
-lab <- expression("Genus diversity"~q==1)
+lab <- expression("Genus diversity" ~ q == 1)
 data_rec <- read_tsv("data/derived_data/data_rec.tsv") %>%
   filter(variable == var)
 data_pre <- read_tsv("data/derived_data/data_pre.tsv") %>%
   filter(variable == var)
 data_old <- read_tsv("data/derived_data/data_old.tsv") %>%
   filter(variable == var)
-mdata <- prep_mdata(
-  data_rec, data_pre, data_old,
-  dist_bounds = c(0.1, 1.5),
-  delta_bounds = c(0, 2),
-  mu_thetaInf_bounds = c(10, 100),
-  thetaInf_s_bounds = c(10, 100)
-)
 ```
 
 ```{r fig}
 #| fig-cap: "Modelled trajectories."
-bind_rows(data_rec, data_pre, data_old) %>% 
+bind_rows(data_rec, data_pre, data_old) %>%
   ggplot(aes(rel_year, y, group = paste(site, plot), col = treatment)) +
   geom_line() +
   facet_wrap(~site) +
@@ -54,21 +47,6 @@ bind_rows(data_rec, data_pre, data_old) %>%
 ```
 
 ## LTP
-
-```{r ltp_fit}
-#| eval: false
-ltp <- cmdstan_model("models/ltp.stan")
-path <- file.path("chains", var, "ltp")
-unlink(path, recursive = TRUE)
-dir.create(path)
-fit_ltp <- ltp$sample(
-  data = mdata,
-  chains = 4,
-  parallel_chains = 4,
-  save_warmup = FALSE,
-  output_dir = path
-)
-```
 
 ```{r load_ltp}
 #| message: false
@@ -93,21 +71,6 @@ proj_fig(data_rec, data_pre, data_old, fit_ltp, lab)
 ```
 
 ## STP
-
-```{r stp_fit}
-#| eval: false
-stp <- cmdstan_model("models/stp.stan")
-path <- file.path("chains", var, "stp")
-unlink(path, recursive = TRUE)
-dir.create(path)
-fit_stp <- stp$sample(
-  data = mdata,
-  chains = 4,
-  parallel_chains = 4,
-  save_warmup = FALSE,
-  output_dir = path
-)
-```
 
 ```{r load_stp}
 #| message: false

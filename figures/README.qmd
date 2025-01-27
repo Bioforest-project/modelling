@@ -10,7 +10,7 @@ format:
 
 All figures (.png, .pdf, etc.):
 
--   ...
+-   **obs/**: observed trajectories per attribute.
 
 ```{r, comment=""}
 fs::dir_tree()
