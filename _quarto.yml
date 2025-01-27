@@ -16,7 +16,6 @@ book:
         - 33_agb.qmd
         - 34_fdiv.qmd
         - 35_div_q1_gen.qmd
-        - 36_agb_mort.qmd
         - 37_gini.qmd
         - 38_ba.qmd
         - 39_feve.qmd
@@ -39,5 +38,5 @@ format:
 
 editor: visual
 
-execute:
-  cache: true
+# execute:
+#   cache: true

@@ -15,6 +15,8 @@ library(tidyverse)
 library(cmdstanr)
 library(knitr)
 options(knitr.kable.NA = "")
+list.files("../r", full.names = TRUE, pattern = ".R") %>%
+  lapply(source)
 ```
 
 ```{r functions}

@@ -13,7 +13,7 @@ list.files("r", full.names = TRUE, pattern = ".R") %>%
 
 # hmax {.unnumbered}
 
-Test of modelling with CWM hmax BA.
+Modelling of asymptotic height trajectories.
 
 ## Data
 
@@ -25,41 +25,14 @@ if (!exists(file.path("chains", var))) {
   dir.create(file.path("chains", var))
 }
 lab <- expression("hmax [" ~ m ~ "]")
-data <- read_tsv("data/derived_data/data.tsv") %>%
-  filter(variable == var) %>%
-  unique() %>%
-  mutate(value = value + 1) %>%
-  rename(stem = value) %>%
-  select(-env, -env_value, -variable) %>%
-  unique() %>%
-  filter(!is.infinite(harvest_year_min)) %>%
-  mutate(sitenum = as.numeric(as.factor(site)))
-data_rec <- data %>%
-  filter(treatment == "logged", rel_year > 2) %>%
-  mutate(plotnum = as.numeric(as.factor(paste0(site, "_", plot))))
-data_old <- data %>%
-  filter(treatment == "control") %>%
-  mutate(plotoldnum = as.numeric(as.factor(paste0(site, "_", plot))))
-data_pre <- data %>% filter(rel_year <= 0)
-ind_rec <- data_rec %>%
-  select(site, plot, sitenum, plotnum) %>%
-  unique() %>%
-  arrange(plotnum)
-mdata <- list(
-  n_rec = nrow(data_rec),
-  n_old = nrow(data_old),
-  n_pre = nrow(data_pre),
-  n_site = max(data_rec$sitenum),
-  n_plot_rec = max(data_rec$plotnum),
-  stem_rec = data_rec$stem,
-  stem_old = data_old$stem,
-  stem_pre = data_pre$stem,
-  time = data_rec$rel_year - 3,
-  site_rec = data_rec$sitenum,
-  site_old = data_old$sitenum,
-  site_pre = data_pre$sitenum,
-  plot_rec = data_rec$plotnum,
-  site_plot_rec = ind_rec$sitenum,
+data_rec <- read_tsv("data/derived_data/data_rec.tsv") %>%
+  filter(variable == var)
+data_pre <- read_tsv("data/derived_data/data_pre.tsv") %>%
+  filter(variable == var)
+data_old <- read_tsv("data/derived_data/data_old.tsv") %>%
+  filter(variable == var)
+mdata <- prep_mdata(
+  data_rec, data_pre, data_old,
   dist_bounds = c(0.1, 1.5),
   delta_bounds = c(0, 2),
   mu_thetaInf_bounds = c(30, 60),
@@ -69,7 +42,8 @@ mdata <- list(
 
 ```{r fig}
 #| fig-cap: "Modelled trajectories."
-ggplot(data, aes(rel_year, stem, group = paste(site, plot), col = treatment)) +
+bind_rows(data_rec, data_pre, data_old) %>% 
+  ggplot(aes(rel_year, y, group = paste(site, plot), col = treatment)) +
   geom_line() +
   facet_wrap(~site) +
   theme_bw() +
@@ -101,11 +75,6 @@ fit_ltp <- ltp$sample(
 #| warning: false
 path <- file.path("chains", var, "ltp")
 fit_ltp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
-data_old <- data_old %>%
-  group_by(site) %>%
-  mutate(rel_year = max(rel_year + 2))
-data_rec$preds <- fit_ltp$summary(c("mu_rec"), median)$median
-data_pre$preds <- fit_ltp$summary(c("mu_pre"), median)$median
 fit_ltp
 ```
 
@@ -113,14 +82,14 @@ fit_ltp
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted versus observed."
-pvo_fig(data_rec, data_pre)
+pvo_fig(data_rec, data_pre, fit_ltp)
 ```
 
 ```{r preds_ltp}
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted trajectories."
-ltp_fig(data_rec, data_pre, data_old, fit_ltp, lab)
+proj_fig(data_rec, data_pre, data_old, fit_ltp, lab)
 ```
 
 ## STP
@@ -145,11 +114,6 @@ fit_stp <- stp$sample(
 #| warning: false
 path <- file.path("chains", var, "stp")
 fit_stp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
-data_old <- data_old %>%
-  group_by(site) %>%
-  mutate(rel_year = max(rel_year + 2))
-data_rec$preds <- fit_stp$summary(c("mu_rec"), median)$median
-data_pre$preds <- fit_stp$summary(c("mu_pre"), median)$median
 fit_stp
 ```
 
@@ -157,12 +121,21 @@ fit_stp
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted versus observed."
-pvo_fig(data_rec, data_pre)
+pvo_fig(data_rec, data_pre, fit_stp)
 ```
 
 ```{r preds_stp}
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted trajectories."
-stp_fig(data_rec, data_pre, data_old, fit_stp, lab)
+proj_fig(data_rec, data_pre, data_old, fit_stp, lab)
+```
+
+## Comparison
+
+```{r lambda_comp}
+#| message: false
+#| warning: false
+#| fig-cap: "lambda comparison across models."
+comp_lambda_fig(data_rec, fit_ltp, fit_stp)
 ```

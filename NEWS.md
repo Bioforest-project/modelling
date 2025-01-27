@@ -1,3 +1,4 @@
+-   modelling 0.1.0.9025: simplified traj code & projs with stan, analyses to be updated, trajs fits to be gathered in a single code to ease update, thethaInf_p to be added
 -   modelling 0.1.0.9024: issue fixed for nstem with y_pred in stan, model renamed, controls random to be added, all others vars to be updated
 -   modelling 0.1.0.9023: stp.R option for max lp\_
 -   modelling 0.1.0.9022: sites_trajectories.qmd v1 & linting

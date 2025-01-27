@@ -194,12 +194,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./36_agb_mort.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">AGB mortality</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./37_gini.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Gini</span></a>
   </div>
@@ -324,7 +318,7 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2
 \end{align}
 \]</span></p>
 <p>We could thus use this inequality to constrain <span class="math inline">\(\delta_p\)</span> on <span class="math inline">\(dist_p\)</span> knowing that <code>stan</code> now accepts parameters bounds to depend on another parameter. However, this is complicated as it depends on the sign in the division above, <span class="math inline">\(dist=1\)</span> is no possible, and near 1 values results in positive or negative infinite values. Thus we simply bounded <span class="math inline">\(dist_p\)</span> to 1.5 for now (50% gain of attribute post-disturbance).</p>
-<div class="cell" data-hash="91_stp_negative_cache/html/fig1_be8349b3e00f3b13b3de518d1fa4b832">
+<div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="cf">function</span>(time, dist, thetainf, lambda, tau, delta) {</span>
@@ -361,7 +355,7 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2
 </div>
 </div>
 </div>
-<div class="cell" data-hash="91_stp_negative_cache/html/fig2_245ec2ec221adbc79e9b1e4fd511eaa0">
+<div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">dist =</span> <span class="fu">seq</span>(.<span class="dv">5</span>, <span class="dv">2</span>, <span class="at">length.out =</span> <span class="dv">100</span>)) <span class="sc">%&gt;%</span></span>

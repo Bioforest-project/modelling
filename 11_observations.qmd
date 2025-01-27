@@ -30,26 +30,36 @@ metadata <- read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcd
   mutate(harvest_year_min = ifelse(site == "Paracou", 1986, harvest_year_min))
 data <- read_csv("data/raw_data/aggregated_data.csv") %>%
   rename_all(tolower) %>%
-  left_join(read_tsv("data/raw_data/environment.tsv") %>%
-              gather(env, env_value, -site, -plot)) %>%
-  left_join(read_csv("data/raw_data/plot_area.csv") %>%
-              rename_all(tolower) %>%
-              select(site, plot, plotarea) %>%
-              unique()) %>%
   left_join(metadata) %>%
-  filter(!(site %in% c("Peteco", "Bafog", "Tene", "Montagne_Tortue"))) %>%
+  filter(!(site %in% c("Peteco", "Bafog", "Tene", "Montagne_Tortue", "Manare"))) %>%
   filter(!(site == "Kabo" & year < 1980)) %>%
   mutate(rel_year = ifelse(treatment == "control",
     year - harvest_year_min,
     year - harvest_year
-  ))
+  )) %>% 
+  mutate(sitenum = as.numeric(as.factor(site))) %>%
+  group_by(site) %>% 
+  mutate(y = ifelse(variable == "agb" & site == "Kibale", 
+                    300, value)) %>% 
+  ungroup()
+data_rec <- data %>%
+  filter(treatment == "logged", rel_year > 2) %>%
+  mutate(plotnum_rec = as.numeric(as.factor(paste0(site, "_", plot))))
+data_pre <- data %>% 
+  filter(rel_year <= 0) %>%
+  mutate(plotnum_pre = as.numeric(as.factor(paste0(site, "_", plot))))
+data_old <- data %>% filter(treatment == "control") %>%
+  mutate(plotnum_old = as.numeric(as.factor(paste0(site, "_", plot))))
 write_tsv(data, "data/derived_data/data.tsv")
+write_tsv(data_rec, "data/derived_data/data_rec.tsv")
+write_tsv(data_pre, "data/derived_data/data_pre.tsv")
+write_tsv(data_old, "data/derived_data/data_old.tsv")
 ```
 
 ```{r fig1}
 #| message: false
 #| warning: false
-#| fig-cap: "Dummy figure 1 - traj."
+#| fig-cap: "All attributes trajectories."
 read_tsv("data/derived_data/data.tsv") %>%
   ggplot(aes(year, value, group = paste(site, plot))) +
   geom_line() +
@@ -59,23 +69,6 @@ read_tsv("data/derived_data/data.tsv") %>%
     axis.title = element_blank(),
     strip.text = element_text(size = 6)
   )
-```
-
-```{r fig2}
-#| message: false
-#| warning: false
-#| fig-cap: "Dummy figure 2 - env."
-read_tsv("data/derived_data/data.tsv") %>%
-  filter(variable == "agb", env == "cwd") %>%
-  na.omit() %>%
-  ggplot(aes(year, value, group = paste(site, plot), col = env_value)) +
-  geom_line() +
-  theme_bw() +
-  scale_color_viridis_c("Climate\nwater\ndeficit\n[ mm ]") +
-  xlab("") +
-  ylab(expression("AGB [" ~ Mg ~ ha^{
-    -1
-  } ~ "]"))
 ```
 
 ```{r figs_out}
@@ -101,10 +94,10 @@ unique(read_tsv("data/derived_data/data.tsv")$variable) %>%
 ```{r fig3}
 #| message: false
 #| warning: false
-#| fig-cap: "Dummy figure 3 - treatment."
+#| fig-cap: "AGB trajectories across sites and treatments."
 read_tsv("data/derived_data/data.tsv") %>%
   filter(variable == "agb") %>%
-  ggplot(aes(year, log(value), group = paste(site, plot), col = treatment)) +
+  ggplot(aes(year, value, group = paste(site, plot), col = treatment)) +
   geom_line() +
   theme_bw() +
   xlab("") +
