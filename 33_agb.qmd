@@ -13,7 +13,7 @@ list.files("r", full.names = TRUE, pattern = ".R") %>%
 
 # AGB {.unnumbered}
 
-Modelling of aboveground biomass trajectories.
+Aboveground biomass recovery in tons per hectare derived from censuses using species names to derive first wood density and the biomass with the R package BIOMASS [@réjou-méchain2017].
 
 ## Data
 

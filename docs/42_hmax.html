@@ -54,7 +54,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -300,7 +319,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<p>Modelling of asymptotic height trajectories.</p>
+<p>Asymptotic height trajectories have been quantified using the community weighted mean, the average of the local distribution of a trait in a community. The trait value is weighted by tree basal area to better represent their biomass contribution in the community. Asymptotic height is seldom derived for each species of a Michaelis Menten model linking tree diameter to tree height <span class="citation" data-cites="molto2014">(<a href="99_references.html#ref-molto2014" role="doc-biblioref">Molto et al. 2014</a>)</span>.</p>
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data">Data</h2>
 <div class="cell">
@@ -479,6 +498,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-molto2014" class="csl-entry" role="listitem">
+Molto, Q., B. Hérault, J.-J. Boreux, M. Daullet, A. Rousteau, and V. Rossi. 2014. <span>“Predicting Tree Heights for Biomass Estimates in Tropical Forests <span></span> a Test from French Guiana.”</span> <em>Biogeosciences</em> 11 (12): 3121–30. <a href="https://doi.org/10.5194/bg-11-3121-2014">https://doi.org/10.5194/bg-11-3121-2014</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

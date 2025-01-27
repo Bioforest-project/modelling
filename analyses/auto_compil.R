@@ -1,6 +1,7 @@
-sites <- "Mbaiki"
-# sites <- unique(readr::read_tsv("data/derived_data/data.tsv")$site) #nolint
+# sites <- "Mbaiki"
+sites <- unique(readr::read_tsv("data/derived_data/data.tsv")$site) #nolint
 for (site in sites) {
+  print(site)
   file_name <- paste0(site, "_trajectories.pdf")
   quarto::quarto_render(
     input = "analyses/trajectories.qmd",

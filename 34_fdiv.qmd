@@ -13,7 +13,7 @@ list.files("r", full.names = TRUE, pattern = ".R") %>%
 
 # FDiv {.unnumbered}
 
-Modelling of functional diversity trajectories.
+Functional diversity is measured through functional divergence Fdiv, the "Species deviance from the mean distance to the centre of gravity weighted by relative abundance" [@mouchet2010].
 
 ## Data
 

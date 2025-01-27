@@ -13,7 +13,7 @@ list.files("r", full.names = TRUE, pattern = ".R") %>%
 
 # Genus diversity 1 {.unnumbered}
 
-Modelling of genus diversity trajectories.
+Genus diversity is measured using Hill's number with order $q=1$. Hill's numbers are parameterised by a diversity order $q$, which determines the sensitivity of the measures to the relative abundances of species. Hill's numbers include the three most commonly used measures of species diversity as special cases: species richness (q = 0), Shannon diversity (q = 1) and Simpson diversity (q = 2). The indices were derived from taxonomic censuses and cleaned taxonomies using the R package entropart [@marcon2015]. Finally, to account for differences in species identification, the indices have been corrected by a rarefaction curve, taking into account the value at 80% coverage.
 
 ## Data
 

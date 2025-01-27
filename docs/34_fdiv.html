@@ -54,7 +54,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -300,7 +319,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<p>Modelling of functional diversity trajectories.</p>
+<p>Functional diversity is measured through functional divergence Fdiv, the “Species deviance from the mean distance to the centre of gravity weighted by relative abundance” <span class="citation" data-cites="mouchet2010">(<a href="99_references.html#ref-mouchet2010" role="doc-biblioref">Mouchet et al. 2010</a>)</span>.</p>
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data">Data</h2>
 <div class="cell">
@@ -479,6 +498,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-mouchet2010" class="csl-entry" role="listitem">
+Mouchet, Maud A., Sébastien Villéger, Norman W. H. Mason, and David Mouillot. 2010. <span>“Functional Diversity Measures: An Overview of Their Redundancy and Their Ability to Discriminate Community Assembly Rules.”</span> <em>Functional Ecology</em> 24 (4): 867–76. <a href="https://doi.org/10.1111/j.1365-2435.2010.01695.x">https://doi.org/10.1111/j.1365-2435.2010.01695.x</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

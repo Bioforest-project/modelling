@@ -13,7 +13,7 @@ list.files("r", full.names = TRUE, pattern = ".R") %>%
 
 # hmax {.unnumbered}
 
-Modelling of asymptotic height trajectories.
+Asymptotic height trajectories have been quantified using the community weighted mean, the average of the local distribution of a trait in a community. The trait value is weighted by tree basal area to better represent their biomass contribution in the community. Asymptotic height is seldom derived for each species of a Michaelis Menten model linking tree diameter to tree height [@molto2014].
 
 ## Data
 

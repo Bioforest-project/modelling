@@ -54,7 +54,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -300,7 +319,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<p>Modelling of aboveground biomass trajectories.</p>
+<p>Aboveground biomass recovery in tons per hectare derived from censuses using species names to derive first wood density and the biomass with the R package BIOMASS <span class="citation" data-cites="réjou-méchain2017">(<a href="99_references.html#ref-réjou-méchain2017" role="doc-biblioref">Réjou-Méchain et al. 2017</a>)</span>.</p>
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data">Data</h2>
 <blockquote class="blockquote">
@@ -492,6 +511,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-réjou-méchain2017" class="csl-entry" role="listitem">
+Réjou-Méchain, Maxime, Ariane Tanguy, Camille Piponiot, Jérôme Chave, and Bruno Hérault. 2017. <span>“Biomass: An r Package for Estimating Above<span>-</span>Ground Biomass and Its Uncertainty in Tropical Forests.”</span> Edited by Sarah Goslee. <em>Methods in Ecology and Evolution</em> 8 (9): 1163–67. <a href="https://doi.org/10.1111/2041-210x.12753">https://doi.org/10.1111/2041-210x.12753</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

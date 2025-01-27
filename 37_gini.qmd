@@ -13,7 +13,7 @@ list.files("r", full.names = TRUE, pattern = ".R") %>%
 
 # Gini {.unnumbered}
 
-Modelling of Gini index trajectories.
+The Gini coefficient measures the inequality among the values of a the diameter distribution in censuses. A Gini coefficient of 0 reflects perfect equality, where all diameter values are the same, while a Gini coefficient of 1 (or 100%) reflects maximal inequality among diameters. See <https://en.wikipedia.org/wiki/Gini_coefficient>.
 
 ## Data
 

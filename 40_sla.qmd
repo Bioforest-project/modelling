@@ -13,7 +13,7 @@ list.files("r", full.names = TRUE, pattern = ".R") %>%
 
 # SLA {.unnumbered}
 
-Modelling of specific leaf area trajectories.
+Specific Leaf Area trajectories have been quantified using the community weighted mean, the average of the local distribution of a trait in a community. The trait value is weighted by tree basal area to better represent their biomass contribution in the community.
 
 ## Data
 

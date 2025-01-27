@@ -77,6 +77,8 @@ data.frame(time = seq(0.1, 50, length.out = 100)) %>%
   theme(axis.title = element_blank())
 ```
 
+> The forest attribute is first disturbed at $t=0$ with either an increase or a decrease depending on the parameter $dist$. Then the attributes recover asymptotically in the long term to an equilibrium value $\theta_{Inf}$ with a recovery rate $\lambda$. But in this second version the recovery trajectory can also accommodate a short term increase of decrease of the attribute at a time $\tau$ with an intensity $\delta$.
+
 ```{r data}
 #| eval: false
 bounds <- read_sheet("https://docs.google.com/spreadsheets/d/1rZZ_dKebVp1RnxI0ZawaSQws72FhubuPZ8O27DzJtFE/edit?usp=sharing") # nolint
@@ -94,8 +96,8 @@ read_tsv("data/derived_data/bounds.tsv") %>%
     dist = paste0("[", dist_min, " ,", dist_max, "]"),
     delta = paste0("[", delta_min, " ,", delta_max, "]"),
     tau = paste0("[", tau_min, " ,", tau_max, "]")
-         ) %>% 
-  select(attribute, mu_thetaInf, thetaInf, lambda, dist, delta, tau) %>% 
+    ) %>%
+  select(attribute, mu_thetaInf, thetaInf, lambda, dist, delta, tau) %>%
   kable(caption = "Parameters boundaries per attribute.")
 ```
 

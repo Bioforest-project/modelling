@@ -54,7 +54,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -310,6 +329,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 LTP = 1 - e^{-\lambda_p \times time}
 \end{align}
 \]</span></p>
+<p>The model we use is derived from the common framework for modelling recovery in disturbed tropical forests <span class="citation" data-cites="maurent2023">(<a href="99_references.html#ref-maurent2023" role="doc-biblioref">Maurent et al. 2023</a>)</span>. The forest attribute is first disturbed at <span class="math inline">\(t=0\)</span> with either an increase or a decrease depending on the parameter <span class="math inline">\(dist\)</span>. Then the attributes recover asymptotically in the long term to an equilibrium value <span class="math inline">\(\theta_{Inf}\)</span> with a recovery rate <span class="math inline">\(\lambda\)</span>.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -365,6 +385,7 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \
 \theta_{0,p} = \theta_{\infty,s} \times dist_p
 \end{align}
 \]</span></p>
+<p>The model we use is derived from the common framework for modelling recovery in disturbed tropical forests <span class="citation" data-cites="maurent2023">(<a href="99_references.html#ref-maurent2023" role="doc-biblioref">Maurent et al. 2023</a>)</span>. The forest attribute is first disturbed at <span class="math inline">\(t=0\)</span> with either an increase or a decrease depending on the parameter <span class="math inline">\(dist\)</span>. Then the attributes recover asymptotically in the long term to an equilibrium value <span class="math inline">\(\theta_{Inf}\)</span> with a recovery rate <span class="math inline">\(\lambda\)</span>. But in this second version the recovery trajectory can also accommodate a short term increase of decrease of the attribute at a time <span class="math inline">\(\tau\)</span> with an intensity <span class="math inline">\(\delta\)</span>.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -432,7 +453,8 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \
 </div>
 </div>
 </div>
-<p>Choices:</p>
+<blockquote class="blockquote">
+<p>Choices (<strong>to be developed as text in an appendix</strong>):</p>
 <ul>
 <li>Using the log of y and a normal distribution centred on log(mu)</li>
 <li>Cauchy hyperdist</li>
@@ -442,8 +464,14 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \
 <li>Free delta</li>
 </ul>
 <p>⚠️ Hump is mathematically opposed to the sign of dist_p-1.</p>
+</blockquote>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-maurent2023" class="csl-entry" role="listitem">
+Maurent, Eliott, Bruno Hérault, Camille Piponiot, Géraldine Derroire, Diego Delgado, Bryan Finegan, Mélaine Aubry Kientz, Bienvenu H. K. Amani, and Marie Ange Ngo Bieng. 2023. <span>“A Common Framework to Model Recovery in Disturbed Tropical Forests.”</span> <em>Ecological Modelling</em> 483 (September): 110418. <a href="https://doi.org/10.1016/j.ecolmodel.2023.110418">https://doi.org/10.1016/j.ecolmodel.2023.110418</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

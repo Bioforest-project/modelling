@@ -12,11 +12,13 @@ list.files("r", full.names = TRUE, pattern = ".R") %>%
 
 # Stem {.unnumbered}
 
-Modelling of stem density trajectories.
+Stem density in trees per hectare directly derived from censuses.
 
 ## Data
 
-```{r}
+```{r data}
+#| message: false
+#| warning: false
 var <- "nstem"
 if (!exists(file.path("chains", var))) {
   dir.create(file.path("chains", var))

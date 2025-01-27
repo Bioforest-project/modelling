@@ -1,12 +1,18 @@
 ---
-title: "Site trajectory"
+title: "Site trajectories"
+author: "Schmitt, S., Herault, B., Piponiot, C."
+date: last-modified
 format:
   pdf:
     number-sections: false
+    link-citations: true
+    colorlinks: true
+    fig-pos: H
 params:
   site: Mbaiki
 execute:
   echo: false
+bibliography: ../references.bib
 ---
 
 ```{r set}
@@ -58,7 +64,13 @@ site_fig <- function(
 }
 ```
 
+The aim of this document is to help the principal investigator (PI) of each site to explore the modelled trajectories for several forest attributes in comparison with the forest attributes collected over time and across plots on the basis of the site's forest censuses.
+
+> **We therefore ask each PI to look at each plot trajectory for each attribute and consider the realism of the modelled curve, examining both the long term recovery and the short term bump, bearing in mind the limitations of the model and the data. Note that the presentation to the whole group will take approximately 5 minutes per PI.**
+
 ## Site
+
+This document summarises the forest attribute trajectories for the following sites, plots and treatments.
 
 ```{r site}
 #| message: false
@@ -73,75 +85,176 @@ read_tsv("../data/derived_data/data.tsv") %>%
   ))
 ```
 
+## Model
+
+The model we use is derived from the common framework for modelling recovery in disturbed tropical forests [@maurent2023]. The forest attribute is first disturbed at $t=0$ with either an increase or a decrease depending on the parameter $dist$. Then the attributes recover asymptotically in the long term to an equilibrium value $\theta_{Inf}$ with a recovery rate $\lambda$. But the recovery trajectory can also accommodate a short term increase of decrease of the attribute at a time $\tau$ with an intensity $\delta$.
+
+```{r model_fig}
+#| warning: false
+#| message: false
+#| fig-cap: "Modelled trajectories and associated parameters."
+#| fig-pos: '!htb'
+ltp <- function(time, dist, thetainf, lambda) {
+  theta0 <- thetainf * dist
+  ltp <- 1 - exp(-lambda * time)
+  return(theta0 + (thetainf - theta0) * (ltp))
+}
+stp <- function(time, dist, thetainf, lambda, tau, delta) {
+  theta0 <- thetainf * dist
+  ltp <- 1 - exp(-lambda * time)
+  stp <- delta * (time / tau * exp(1 - time / tau))^2
+  return(theta0 + (thetainf - theta0) * (ltp + stp))
+}
+data.frame(time = seq(0.1, 50, length.out = 100)) %>%
+  mutate(y_stp = stp(time,
+    dist = 0.5, thetainf = 20, lambda = 0.05,
+    tau = 5, delta = 1
+  )) %>%
+  mutate(y_ltp = ltp(time, dist = 0.5, thetainf = 20, lambda = 0.05)) %>%
+  bind_rows(data.frame(time = 0, y_stp = 20, y_ltp = 20)) %>%
+  ggplot(aes(time)) +
+  geom_line(aes(y = y_ltp), col = "grey") +
+  geom_line(aes(y = y_stp)) +
+  theme_bw() +
+  annotate("text",
+    x = 52, y = 19.5, label = "theta[Inf]",
+    col = "#9ea1d4", parse = TRUE, size = 5
+  ) +
+  annotate("text",
+    x = 20, y = 15, label = "lambda",
+    col = "#a8d2d1", parse = TRUE, size = 5
+  ) +
+  annotate("text",
+    x = -4, y = 15, label = "dist",
+    col = "#fc8a8a", parse = TRUE, size = 5
+  ) +
+  theme(axis.title = element_blank()) +
+  geom_segment(aes(x = -2, y = 10, xend = -2, yend = 20),
+    arrow = arrow(length = unit(0.2, "cm")), col = "#fc8a8a"
+  ) +
+  geom_segment(aes(x = -2, y = 20, xend = -2, yend = 10),
+    arrow = arrow(length = unit(0.2, "cm")), col = "#fc8a8a"
+  ) +
+  annotate("text",
+    x = 6, y = 11.3, label = "tau",
+    col = "#f2e5a9", parse = TRUE, size = 5
+  ) +
+  annotate("text",
+    x = 5, y = 17.5, label = "delta",
+    col = "#a7d6ac", parse = TRUE, size = 5
+  ) +
+  geom_segment(aes(x = 6, y = 13, xend = 6, yend = 22),
+    arrow = arrow(length = unit(0.2, "cm")), col = "#a7d6ac"
+  ) +
+  geom_segment(aes(x = 6, y = 22, xend = 6, yend = 13),
+    arrow = arrow(length = unit(0.2, "cm")), col = "#a7d6ac"
+  ) +
+  geom_segment(aes(x = 6, y = 11, xend = 6, yend = 10),
+    arrow = arrow(length = unit(0.2, "cm")), col = "#f2e5a9"
+  ) +
+  theme(axis.title = element_blank())
+```
+
 ## Aboveground Biomass - AGB
+
+Aboveground biomass recovery in tons per hectare derived from censuses using species names to derive first wood density and the biomass with the R package BIOMASS [@réjou-méchain2017].
 
 ```{r agb}
 #| message: false
+#| warning: false
+#| fig-cap: "Recovery trajectory of forest attributes. Lines represent inferred recovery trajectories using the above model. Points represent observed values from inventories. Colours correspond to the different plots. The box plot at year zero represents the attribute variation in the prelogging stands. The box plot at 60 years represents the attribute variation in the control stands." #nolint
 site_fig("agb", params$site)
 ```
 
 ## Basal area - BA
 
+Basal areas in square meter per square meter directly derived from diameter censuses.
+
 ```{r ba}
 #| message: false
+#| warning: false
+#| fig-cap: "Recovery trajectory of forest attributes. Lines represent inferred recovery trajectories using the above model. Points represent observed values from inventories. Colours correspond to the different plots. The box plot at year zero represents the attribute variation in the prelogging stands. The box plot at 60 years represents the attribute variation in the control stands." #nolint
 site_fig("ba", params$site)
 ```
 
 ## Stem density
 
+Stem density in trees per hectare directly derived from censuses.
+
 ```{r nstem}
 #| message: false
+#| warning: false
+#| fig-cap: "Recovery trajectory of forest attributes. Lines represent inferred recovery trajectories using the above model. Points represent observed values from inventories. Colours correspond to the different plots. The box plot at year zero represents the attribute variation in the prelogging stands. The box plot at 60 years represents the attribute variation in the control stands." #nolint
 site_fig("nstem", params$site)
 ```
 
 ## Gini index
 
+The Gini coefficient measures the inequality among the values of a the diameter distribution in censuses. A Gini coefficient of 0 reflects perfect equality, where all diameter values are the same, while a Gini coefficient of 1 (or 100%) reflects maximal inequality among diameters. See <https://en.wikipedia.org/wiki/Gini_coefficient>.
+
 ```{r gini}
 #| message: false
+#| warning: false
+#| fig-cap: "Recovery trajectory of forest attributes. Lines represent inferred recovery trajectories using the above model. Points represent observed values from inventories. Colours correspond to the different plots. The box plot at year zero represents the attribute variation in the prelogging stands. The box plot at 60 years represents the attribute variation in the control stands." #nolint
 site_fig("gini", params$site)
 ```
 
 ## Genus diversity
 
-Using the Hill number of order 1 with genus richness per hectare for a coverage of 80%.
+Genus diversity is measured using Hill's number with order $q=1$. Hill's numbers are parameterised by a diversity order $q$, which determines the sensitivity of the measures to the relative abundances of species. Hill's numbers include the three most commonly used measures of species diversity as special cases: species richness (q = 0), Shannon diversity (q = 1) and Simpson diversity (q = 2). The indices were derived from taxonomic censuses and cleaned taxonomies using the R package entropart [@marcon2015]. Finally, to account for differences in species identification, the indices have been corrected by a rarefaction curve, taking into account the value at 80% coverage.
 
 ```{r diversity_q1_gen}
 #| message: false
+#| warning: false
+#| fig-cap: "Recovery trajectory of forest attributes. Lines represent inferred recovery trajectories using the above model. Points represent observed values from inventories. Colours correspond to the different plots. The box plot at year zero represents the attribute variation in the prelogging stands. The box plot at 60 years represents the attribute variation in the control stands." #nolint
 site_fig("diversity_q1_gen", params$site)
 ```
 
 ## Functional diversity - FDiv
 
-FDiv indicce (ref).
+Functional diversity is measured through functional divergence Fdiv, the "Species deviance from the mean distance to the centre of gravity weighted by relative abundance" [@mouchet2010].
 
 ```{r FDiv}
 #| message: false
+#| warning: false
+#| fig-cap: "Recovery trajectory of forest attributes. Lines represent inferred recovery trajectories using the above model. Points represent observed values from inventories. Colours correspond to the different plots. The box plot at year zero represents the attribute variation in the prelogging stands. The box plot at 60 years represents the attribute variation in the control stands." #nolint
 site_fig("FDiv", params$site)
 ```
 
 ## Wood Density - WD
 
-Community Weighted Mean (CWM) of Wood Density (WD) per Basal Area (BA).
+Wood Density trajectories have been quantified using the community weighted mean, the average of the local distribution of a trait in a community. The trait value is weighted by tree basal area to better represent their biomass contribution in the community.
 
 ```{r WD_cwm_ba}
 #| message: false
+#| warning: false
+#| fig-cap: "Recovery trajectory of forest attributes. Lines represent inferred recovery trajectories using the above model. Points represent observed values from inventories. Colours correspond to the different plots. The box plot at year zero represents the attribute variation in the prelogging stands. The box plot at 60 years represents the attribute variation in the control stands." #nolint
 site_fig("WD_cwm_ba", params$site)
 ```
 
 ## Specific Leaf Area - SLA
 
-Community Weighted Mean (CWM) of Specific Leaf Area (SLA) per Basal Area (BA).
+Specific Leaf Area trajectories have been quantified using the community weighted mean, the average of the local distribution of a trait in a community. The trait value is weighted by tree basal area to better represent their biomass contribution in the community.
 
 ```{r SLA_cwm_ba}
 #| message: false
+#| warning: false
+#| fig-cap: "Recovery trajectory of forest attributes. Lines represent inferred recovery trajectories using the above model. Points represent observed values from inventories. Colours correspond to the different plots. The box plot at year zero represents the attribute variation in the prelogging stands. The box plot at 60 years represents the attribute variation in the control stands." #nolint
 site_fig("SLA_cwm_ba", params$site)
 ```
 
 ## Asymptotic height - hmax
 
-Community Weighted Mean (CWM) of asymptotic height hmax per Basal Area (BA).
+Asymptotic height trajectories have been quantified using the community weighted mean, the average of the local distribution of a trait in a community. The trait value is weighted by tree basal area to better represent their biomass contribution in the community. Asymptotic height is seldom derived for each species of a Michaelis Menten model linking tree diameter to tree height [@molto2014].
 
 ```{r hmax_cwm_ba}
 #| message: false
+#| warning: false
+#| fig-cap: "Recovery trajectory of forest attributes. Lines represent inferred recovery trajectories using the above model. Points represent observed values from inventories. Colours correspond to the different plots. The box plot at year zero represents the attribute variation in the prelogging stands. The box plot at 60 years represents the attribute variation in the control stands." #nolint
 site_fig("hmax_cwm_ba", params$site)
 ```
+
+## References
+
+::: {#refs}
+:::
