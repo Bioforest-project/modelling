@@ -230,13 +230,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
- <span class="menu-text">Appendices</span></a>
+            <a href="./50_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Parameters</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./51_group1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Group 1</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./91_stp_negative.html" class="sidebar-item-text sidebar-link">
@@ -406,19 +423,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>fit_stp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>   variable    mean  median    sd    mad      q5     q95 rhat ess_bulk ess_tail
- lp__       1763.60 1751.99 92.63 119.76 1640.95 1901.74 2.16        5       36
- mu_dist       1.00    1.00  0.05   0.05    0.92    1.10 1.46        7       29
- sigma_dist    0.16    0.16  0.03   0.03    0.12    0.21 1.24       11      105
- dist_p[1]     0.97    0.98  0.13   0.13    0.74    1.17 1.13       20       91
- dist_p[2]     1.15    1.14  0.13   0.15    0.95    1.34 1.11       24     1399
- dist_p[3]     1.05    1.05  0.11   0.11    0.88    1.25 1.06       41      293
- dist_p[4]     0.41    0.40  0.07   0.05    0.31    0.53 1.06      169     1385
- dist_p[5]     0.69    0.68  0.09   0.09    0.56    0.86 1.05       61     1427
- dist_p[6]     1.00    1.01  0.10   0.10    0.84    1.16 1.06       43     1591
- dist_p[7]     0.99    0.99  0.13   0.14    0.81    1.21 1.14       18      257
+<pre><code>   variable    mean  median     sd    mad      q5     q95 rhat ess_bulk
+ lp__       1868.97 1842.22 169.53 200.82 1648.74 2159.71 2.92        4
+ mu_dist       0.99    0.99   0.05   0.05    0.91    1.06 1.46        7
+ sigma_dist    0.14    0.14   0.03   0.03    0.10    0.19 1.26       11
+ dist_p[1]     0.98    0.99   0.12   0.12    0.76    1.16 1.19       14
+ dist_p[2]     1.11    1.10   0.11   0.11    0.94    1.33 1.02      771
+ dist_p[3]     1.05    1.05   0.11   0.10    0.88    1.23 1.07       36
+ dist_p[4]     0.44    0.44   0.08   0.07    0.33    0.57 1.09       29
+ dist_p[5]     0.72    0.72   0.09   0.09    0.58    0.87 1.05       62
+ dist_p[6]     0.99    0.99   0.10   0.09    0.84    1.15 1.01     1386
+ dist_p[7]     1.02    1.02   0.12   0.11    0.82    1.20 1.14       19
+ ess_tail
+       21
+       68
+      122
+      160
+     1111
+      280
+       61
+      400
+     1517
+      291
 
- # showing 10 of 10026 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
+ # showing 10 of 10132 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
 </div>
 <div class="cell">

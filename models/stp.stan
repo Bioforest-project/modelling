@@ -78,6 +78,7 @@ model {
 }
 generated quantities {
   matrix[time_max, n_plot_rec] y_pred;
+  vector[n_plot_rec] t95_p = log(20)/lambda_p;
   for(p in 1:n_plot_rec)
     y_pred[,p] = theta0_p[p] + 
                  (thetaInf_s[site_plot_rec[p]] - theta0_p[p]) * 

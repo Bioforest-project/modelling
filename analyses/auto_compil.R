@@ -1,4 +1,4 @@
-# sites <- "Mbaiki"
+# sites <- "Mbaiki" #nolint
 sites <- unique(readr::read_tsv("data/derived_data/data.tsv")$site) #nolint
 for (site in sites) {
   print(site)

@@ -1,3 +1,4 @@
+-   modelling 0.1.0.9028: pars begins
 -   modelling 0.1.0.9027: traj report ready & a bit of text, next pars & env vars for subgroups
 -   modelling 0.1.0.9026: trajs fits in a single code & auto compil
 -   modelling 0.1.0.9025: simplified traj code & projs with stan, analyses to be updated, trajs fits to be gathered in a single code to ease update, thethaInf_p to be added

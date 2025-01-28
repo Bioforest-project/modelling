@@ -22,6 +22,9 @@ book:
         - 40_sla.qmd
         - 41_n.qmd
         - 42_hmax.qmd
+    - part: 50_parameters.qmd
+      chapters:
+        - 51_group1.qmd
   appendices:
     - 91_stp_negative.qmd
     - 92_model_devs.qmd

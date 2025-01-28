@@ -249,13 +249,30 @@ div.csl-indent {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
- <span class="menu-text">Appendices</span></a>
+            <a href="./50_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Parameters</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./51_group1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Group 1</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./91_stp_negative.html" class="sidebar-item-text sidebar-link">
@@ -425,30 +442,19 @@ div.csl-indent {
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>fit_stp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>   variable    mean  median     sd    mad      q5     q95 rhat ess_bulk
- lp__       2901.41 2908.52 106.15 114.76 2729.95 3057.54 2.76        4
- mu_dist       1.02    1.02   0.03   0.03    0.96    1.07 1.31        9
- sigma_dist    0.14    0.14   0.02   0.02    0.11    0.18 1.11       23
- dist_p[1]     1.32    1.30   0.08   0.08    1.20    1.47 1.17       16
- dist_p[2]     1.38    1.40   0.08   0.08    1.23    1.49 1.05       58
- dist_p[3]     0.95    0.95   0.08   0.09    0.82    1.08 1.52        7
- dist_p[4]     0.92    0.95   0.30   0.43    0.56    1.28 1.74        6
- dist_p[5]     0.95    0.94   0.12   0.16    0.76    1.13 1.74        6
- dist_p[6]     0.83    0.84   0.09   0.09    0.68    0.95 1.60        6
- dist_p[7]     0.83    0.85   0.10   0.08    0.64    0.95 1.31        9
- ess_tail
-       39
-       64
-      175
-      128
-       62
-       93
-      107
-       94
-      109
-      101
+<pre><code>   variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
+ lp__       2915.80 2932.98 65.05 49.30 2797.96 3001.17 2.18        5       45
+ mu_dist       1.00    1.01  0.05  0.05    0.93    1.08 1.67        6       47
+ sigma_dist    0.14    0.14  0.02  0.02    0.11    0.18 1.04       58     2387
+ dist_p[1]     1.24    1.32  0.23  0.13    0.84    1.47 1.56        6       29
+ dist_p[2]     1.35    1.36  0.09  0.10    1.19    1.48 1.19       15      142
+ dist_p[3]     0.87    0.87  0.05  0.05    0.79    0.96 1.06       43     2283
+ dist_p[4]     0.78    0.65  0.26  0.06    0.56    1.23 1.53        7       28
+ dist_p[5]     0.84    0.84  0.06  0.05    0.75    0.92 1.03     2661     1734
+ dist_p[6]     0.77    0.77  0.05  0.04    0.67    0.84 1.04     1809     1205
+ dist_p[7]     0.76    0.77  0.09  0.07    0.62    0.88 1.06     1447      955
 
- # showing 10 of 10026 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
+ # showing 10 of 10132 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
 </div>
 <div class="cell">
