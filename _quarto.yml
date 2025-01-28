@@ -25,6 +25,7 @@ book:
     - part: 50_parameters.qmd
       chapters:
         - 51_group1.qmd
+        - 52_group2.qmd
   appendices:
     - 91_stp_negative.qmd
     - 92_model_devs.qmd

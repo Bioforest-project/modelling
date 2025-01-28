@@ -246,37 +246,3 @@ read_tsv("outputs/parameters.tsv") %>%
   ggtitle("AGB") +
   scale_y_log10()
 ```
-
-## Group 1
-
-> **H1**: tree diversity long-term response increases through time to a maximum value, after which it then declines in late succession
-
-> **H2**: tree diversity also shows a non-linear response to increased intensity of logging: lightly logged forests show a transient increase in tree diversity, but more intensively logged forests show a strong negative effect on diversity
-
-## Group 2
-
-> Q1. How do forest attributes vary in recovery rates in the long-term?
-
-mu_lambda across attributes
-
-mu_T95 accros attributes
-
-> Q2. How does recovery time vary with disturbance intensities?
-
-lambda_p versus Dist_p_ba across attributes (site in color)
-
-T95_p versus Dist_p_ba across attributes (site in color)
-
-> Q3. How do abiotic and biotic factors modify recovery rates?
-
-abiotic factors = soil fertility + climate stress + landscape connectivity
-
-biotic factors = biodiversity + Ecological strategy (acquisitive versus conservative) + structural diversity
-
-lambda_p versus soil / climate / landscape variables (site in color)
-
-lambda_p versus diversity_s/SLA_s/Gini_s of the controls/prelogging (site in color) 
-
-T95_p versus soil / climate / landscape variables (site in color)
-
-T95_p versus diversity_s/SLA_s/Gini_s of the controls/prelogging (site in color)

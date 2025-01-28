@@ -1,0 +1,119 @@
+```{r set}
+#| message: false
+#| include: false
+library(tidyverse)
+library(knitr)
+```
+
+# Group 2 {.unnumbered}
+
+Group 2 blabla. We started from 3 questions:
+
+-   **Q1**. How do forest attributes vary in recovery rates in the long-term?
+-   **Q2**. How does recovery time vary with disturbance intensities?
+-   **Q3**. How do abiotic and biotic factors modify recovery rates?
+
+## Q1 - Recovery rates
+
+> Q1. How do forest attributes vary in recovery rates in the long-term?
+
+```{r lambda_a}
+#| message: false
+#| warning: false
+#| fig-cap: "lambda across sites"
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(level == "inter", 
+         parameter != "lp__", parameter == "mu_lambda") %>% 
+  ggplot(aes(x = attribute, col = type)) +
+  geom_point(aes(y = median)) +
+  geom_segment(aes(y = median-sd, yend = median+sd)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
+  coord_flip() +
+  theme_bw() +
+  ylab(expression(mu[~lambda])) + xlab("")
+```
+
+```{r t95_a}
+#| message: false
+#| warning: false
+#| fig-cap: "t95 across sites"
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(level == "inter", 
+         parameter != "lp__", parameter == "mu_lambda") %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ log(20)/.) %>% 
+  mutate_at(c("median", "sd", "q5", "q95"), ~ ifelse(. < 0, 0, .)) %>% 
+  ggplot(aes(x = attribute, col = type)) +
+  geom_point(aes(y = median)) +
+  geom_segment(aes(y = median-sd, yend = median+sd)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
+  coord_flip() +
+  theme_bw() +
+  ylab(expression(mu[~t95])) + xlab("") +
+  scale_y_log10()
+```
+
+## Q2 - Recovery time & intensity
+
+> Q2. How does recovery time vary with disturbance intensities?
+
+```{r lambda_dist_ba}
+#| message: false
+#| warning: false
+#| fig-cap: "lambda across depending on dist BA"
+dist_p <- read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "dist", attribute == "ba") %>% 
+  select(site, plot, median, sd, q5, q95) %>% 
+  unique() %>% 
+  rename_at(c("median", "sd", "q5", "q95"), ~ paste0(., "_dist_ba"))
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "lambda") %>% 
+  left_join(dist_p) %>% 
+  ggplot(aes(median_dist_ba, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point() +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ggpubr::stat_cor(col = "red") +
+  xlab(expression(dist[BA])) +
+  ylab(expression(lambda))
+```
+
+```{r t95_dist_ba}
+#| message: false
+#| warning: false
+#| fig-cap: "t95 across depending on dist BA"
+dist_p <- read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "dist", attribute == "ba") %>% 
+  select(site, plot, median, sd, q5, q95) %>% 
+  unique() %>% 
+  rename_at(c("median", "sd", "q5", "q95"), ~ paste0(., "_dist_ba"))
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "t95") %>% 
+  left_join(dist_p) %>% 
+  ggplot(aes(median_dist_ba, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point() +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ggpubr::stat_cor(col = "red") +
+  xlab(expression(dist[BA])) +
+  ylab(expression(t[95]))
+```
+
+## Q3 - Recovery rates & abiotic and biotic factors
+
+> Q3. How do abiotic and biotic factors modify recovery rates?
+
+abiotic factors = soil fertility + climate stress + landscape connectivity
+
+biotic factors = biodiversity + Ecological strategy (acquisitive versus conservative) + structural diversity
+
+lambda_p versus soil / climate / landscape variables (site in color)
+
+lambda_p versus diversity_s/SLA_s/Gini_s of the controls/prelogging (site in color) 
+
+T95_p versus soil / climate / landscape variables (site in color)
+
+T95_p versus diversity_s/SLA_s/Gini_s of the controls/prelogging (site in color)

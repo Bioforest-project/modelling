@@ -5,4 +5,17 @@ library(tidyverse)
 library(knitr)
 ```
 
-# Group 1
+# Group 1 {.unnumbered}
+
+Group 1 on **LoggingDiversity** focus on the **effects of logging disturbance on tropical forest diversity - a global assessment** with the following question: What is the effect of logging intensity on biodiversity, and how does it change through time? We started from two hypotheses:
+
+-   **H1**: tree diversity long-term response increases through time to a maximum value, after which it then declines in late succession
+-   **H2**: tree diversity also shows a non-linear response to increased intensity of logging: lightly logged forests show a transient increase in tree diversity, but more intensively logged forests show a strong negative effect on diversity
+
+## H1 - Diversity & time
+
+> **H1**: tree diversity long-term response increases through time to a maximum value, after which it then declines in late succession
+
+## H2 - Diversity & intensity
+
+> **H2**: tree diversity also shows a non-linear response to increased intensity of logging: lightly logged forests show a transient increase in tree diversity, but more intensively logged forests show a strong negative effect on diversity
