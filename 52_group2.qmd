@@ -20,7 +20,6 @@ Group 2 blabla. We started from 3 questions:
 ```{r lambda_a}
 #| message: false
 #| warning: false
-#| fig-cap: "lambda across sites"
 read_tsv("outputs/parameters.tsv") %>% 
   filter(level == "inter", 
          parameter != "lp__", parameter == "mu_lambda") %>% 
@@ -36,19 +35,17 @@ read_tsv("outputs/parameters.tsv") %>%
 ```{r t95_a}
 #| message: false
 #| warning: false
-#| fig-cap: "t95 across sites"
 read_tsv("outputs/parameters.tsv") %>% 
   filter(level == "inter", 
          parameter != "lp__", parameter == "mu_lambda") %>%
   mutate_at(c("median", "sd", "q5", "q95"), ~ log(20)/.) %>% 
-  mutate_at(c("median", "sd", "q5", "q95"), ~ ifelse(. < 0, 0, .)) %>% 
   ggplot(aes(x = attribute, col = type)) +
   geom_point(aes(y = median)) +
-  geom_segment(aes(y = median-sd, yend = median+sd)) +
   geom_segment(aes(y = q5, yend = q95), size = .1) +
   coord_flip() +
   theme_bw() +
-  ylab(expression(mu[~t95])) + xlab("") +
+  ylab(expression(mu[~t95]~"["~years~"]")) + 
+  xlab("") +
   scale_y_log10()
 ```
 
@@ -59,7 +56,8 @@ read_tsv("outputs/parameters.tsv") %>%
 ```{r lambda_dist_ba}
 #| message: false
 #| warning: false
-#| fig-cap: "lambda across depending on dist BA"
+#| fig-width: 10
+#| fig-height: 8
 dist_p <- read_tsv("outputs/parameters.tsv") %>% 
   filter(parameter == "dist", attribute == "ba") %>% 
   select(site, plot, median, sd, q5, q95) %>% 
@@ -68,21 +66,23 @@ dist_p <- read_tsv("outputs/parameters.tsv") %>%
 read_tsv("outputs/parameters.tsv") %>% 
   filter(parameter == "lambda") %>% 
   left_join(dist_p) %>% 
-  ggplot(aes(median_dist_ba, median)) +
-  geom_smooth(method = "lm", se = FALSE) +
+  ggplot(aes((1-median_dist_ba)*100, median, col = site)) +
+  geom_smooth(method = "lm", se = FALSE, col = "black", aes(group = NA)) +
   geom_point() +
   facet_wrap(~ attribute, scales = "free_y") +
   scale_y_log10() +
   theme_bw() +
-  ggpubr::stat_cor(col = "red") +
-  xlab(expression(dist[BA])) +
-  ylab(expression(lambda))
+  xlab(expression(dist[BA]~"[ % lost ]")) +
+  ylab(expression(lambda)) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
 ```
 
 ```{r t95_dist_ba}
 #| message: false
 #| warning: false
-#| fig-cap: "t95 across depending on dist BA"
+#| fig-width: 10
+#| fig-height: 8
 dist_p <- read_tsv("outputs/parameters.tsv") %>% 
   filter(parameter == "dist", attribute == "ba") %>% 
   select(site, plot, median, sd, q5, q95) %>% 
@@ -91,15 +91,16 @@ dist_p <- read_tsv("outputs/parameters.tsv") %>%
 read_tsv("outputs/parameters.tsv") %>% 
   filter(parameter == "t95") %>% 
   left_join(dist_p) %>% 
-  ggplot(aes(median_dist_ba, median)) +
-  geom_smooth(method = "lm", se = FALSE) +
+  ggplot(aes((1-median_dist_ba)*100, median, col = site)) +
+  geom_smooth(method = "lm", se = FALSE, col = "black", aes(group = NA)) +
   geom_point() +
   facet_wrap(~ attribute, scales = "free_y") +
   scale_y_log10() +
   theme_bw() +
-  ggpubr::stat_cor(col = "red") +
-  xlab(expression(dist[BA])) +
-  ylab(expression(t[95]))
+  xlab(expression(dist[BA]~"[ % lost ]")) +
+  ylab(expression(t[95]~"["~years~"]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
 ```
 
 ## Q3 - Recovery rates & abiotic and biotic factors
@@ -110,10 +111,361 @@ abiotic factors = soil fertility + climate stress + landscape connectivity
 
 biotic factors = biodiversity + Ecological strategy (acquisitive versus conservative) + structural diversity
 
-lambda_p versus soil / climate / landscape variables (site in color)
+### $\lambda$ & abiotic
 
-lambda_p versus diversity_s/SLA_s/Gini_s of the controls/prelogging (site in color) 
+```{r lambda_cwd}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "lambda") %>% 
+  ggplot(aes(cwd, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(lambda)) +
+  scale_x_log10() +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression(Climate~Water~Deficit~"["~mm~year^{-1}~"]"))
+```
 
-T95_p versus soil / climate / landscape variables (site in color)
+```{r lambda_tmax}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "lambda") %>% 
+  ggplot(aes(tmax, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(lambda)) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression(Maximum~Temperature~"["~"°"~"]"))
+```
 
-T95_p versus diversity_s/SLA_s/Gini_s of the controls/prelogging (site in color)
+```{r lambda_bdod}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "lambda") %>% 
+  ggplot(aes(bdod, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(lambda)) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression(Bulk~Density~"["~kg~dm^{-3}~"]"))
+```
+
+```{r lambda_soc}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "lambda") %>% 
+  ggplot(aes(soc, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(lambda)) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression(Soil~organic~Carbon~"["~g~kg^{-1}~"]"))
+```
+
+```{r lambda_deforested}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "lambda") %>% 
+  ggplot(aes(deforested, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(lambda)) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression(Deforested~landscape~"["~"%"~"]")) +
+  scale_x_log10()
+```
+
+### $\lambda$ & biotic
+
+All site variables are the mean values for site $s$ across controls and pre-logging inventories.
+
+```{r lambda_gini}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "lambda") %>% 
+  ggplot(aes(gini_s, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(lambda)) +
+  xlab(expression(Gini[s])) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
+```
+
+```{r lambda_sla}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "lambda") %>% 
+  ggplot(aes(SLA_cwm_ba_s, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(lambda)) +
+  xlab(expression(SLA~"["~mm^2~mg^{-1}~"]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
+```
+
+```{r lambda_wd}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "lambda") %>% 
+  ggplot(aes(WD_cwm_ba_s, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(lambda)) +
+  xlab(expression(WD~"["~g~cm^{-3}~"]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
+```
+
+```{r lambda_gen}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "lambda") %>% 
+  ggplot(aes(diversity_q1_gen_s, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(lambda)) +
+  xlab(expression("Genus diversity" ~ q == 1)) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
+```
+
+### $t_{95}$ & abiotic
+
+```{r t95_cwd}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "t95") %>% 
+  ggplot(aes(cwd, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[95]~"["~years~"]")) +
+  scale_x_log10() +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression(Climate~Water~Deficit~"["~mm~year^{-1}~"]"))
+```
+
+```{r t95_tmax}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "t95") %>% 
+  ggplot(aes(tmax, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[95]~"["~years~"]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression(Maximum~Temperature~"["~"°"~"]"))
+```
+
+```{r t95_bdod}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "t95") %>% 
+  ggplot(aes(bdod, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[95]~"["~years~"]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression(Bulk~Density~"["~kg~dm^{-3}~"]"))
+```
+
+```{r t95_soc}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "t95") %>% 
+  ggplot(aes(soc, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[95]~"["~years~"]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression(Soil~organic~Carbon~"["~g~kg^{-1}~"]"))
+```
+
+```{r t95_deforested}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "t95") %>% 
+  ggplot(aes(deforested, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[95]~"["~years~"]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression(Deforested~landscape~"["~"%"~"]")) +
+  scale_x_log10()
+```
+
+### $t_{95}$ & biotic
+
+All site variables are the mean values for site $s$ across controls and pre-logging inventories.
+
+```{r t95_gini}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "t95") %>% 
+  ggplot(aes(gini_s, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[95]~"["~years~"]")) +
+  xlab(expression(Gini[s])) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
+```
+
+
+```{r t95_sla}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "t95") %>% 
+  ggplot(aes(SLA_cwm_ba_s, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[95]~"["~years~"]")) +
+  xlab(expression(SLA~"["~mm^2~mg^{-1}~"]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
+```
+
+```{r t95_wd}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "t95") %>% 
+  ggplot(aes(WD_cwm_ba_s, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[95]~"["~years~"]")) +
+  xlab(expression(WD~"["~g~cm^{-3}~"]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
+```
+
+```{r t95_gen}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "t95") %>% 
+  ggplot(aes(diversity_q1_gen_s, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[95]~"["~years~"]")) +
+  xlab(expression("Genus diversity" ~ q == 1)) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
+```

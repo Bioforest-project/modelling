@@ -104,7 +104,7 @@ The available data are:
     -   climate: actual evapotranspiration **ET**, climate water deficit **CWD**, Palmer drought sensitivity index **PDSI**, potential evapotranspiration **PET**, precipitaiton **Pr**, maximum temperature **Tmax**, minimum temperature **Tmin**, vapour pressure deficit **VPD**
     -   soil: proportion of clay **clay**, proportion of sand **sand**, proportion of silt **silt**, bulk density **BD**, cation exchange capacity **CEC**, coarse fragments **CF**, nitrogen **N**, **pH**, soil organic content **SOC**, organic carbon density **OCD**
     -   landscape: mean landscape deforested percentage **deforested**
-    -   biotic: mean site pre-logging and control gini index **gini_s**, specific leaf area **SLA_cwm_ba_s**, wood density **WD_cwm_ba_s**, genus diversity **diversity_q1_gen_s**, and functional diversity **FDiv_s**
+    -   biotic: mean site pre-logging and control gini index **gini_s**, specific leaf area **SLA_cwm_ba_s**, wood density **WD_cwm_ba_s**, and genus diversity **diversity_q1_gen_s**
 
 ## Likelihood convergence
 
