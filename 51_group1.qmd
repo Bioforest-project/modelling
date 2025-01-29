@@ -12,10 +12,125 @@ Group 1 on **LoggingDiversity** focus on the **effects of logging disturbance on
 -   **H1**: tree diversity long-term response increases through time to a maximum value, after which it then declines in late succession
 -   **H2**: tree diversity also shows a non-linear response to increased intensity of logging: lightly logged forests show a transient increase in tree diversity, but more intensively logged forests show a strong negative effect on diversity
 
+We will thus mainly work with diversity trajectories (genus & functional) bump characterized through bump time $\tau$ & bump intensity $\delta$ in the model and link it with forest structure (BA, AGB, or stem) disturbance index $dist_{ba}$.
+
 ## H1 - Diversity & time
 
 > **H1**: tree diversity long-term response increases through time to a maximum value, after which it then declines in late succession
 
+```{r inter}
+#| message: false
+#| warning: false
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(level == "inter") %>% 
+  filter((type == "diversity" & parameter %in% c("mu_delta", "mu_tau")) |
+           (type == "structure" & 
+              parameter %in% c("mu_dist"))) %>% 
+  mutate_at(c("median", "sd", "q5", "q95"), 
+            ~ ifelse(parameter == "mu_dist", (1-.)*100, .)) %>% 
+  mutate_at(c("median", "sd", "q5", "q95"), 
+            ~ ifelse(parameter == "mu_delta", .*100, .)) %>% 
+  mutate(parameter = recode(parameter,
+                            "mu_delta" = "mu[~delta]~'['~'%'~']'",
+                            "mu_dist" = "1-mu[~dist]~'['~'%'~']'",
+                            "mu_tau" = "mu[~tau]~'['~year~']'")) %>% 
+  ggplot(aes(x = attribute, col = attribute, label = attribute)) +
+  geom_text(aes(y = median), nudge_x = .15, size = 3) +
+  geom_point(aes(y = median)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
+  facet_wrap(~ parameter, scales = "free", labeller = label_parsed) +
+  coord_flip() +
+  theme_bw() +
+  xlab("") + ylab("") +
+  theme(axis.text.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  scale_color_discrete(guide = "none") +
+  ggtitle("Mean intersite")
+```
+
+```{r tau}
+#| message: false
+#| warning: false
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(level == "site") %>% 
+  filter(type == "diversity" & parameter == "tau") %>% 
+  ggplot(aes(x = site, col = continent)) +
+  geom_point(aes(y = median)) +
+  geom_segment(aes(y = median-sd, yend = median+sd)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
+  facet_wrap(~ attribute) +
+  coord_flip() +
+  theme_bw() +
+  ylab(expression(tau~"[ year ]")) + xlab("") +
+  scale_color_discrete("") +
+  ggtitle(expression(Site~tau)) +
+  theme(legend.position = "bottom")
+```
+
+```{r delta}
+#| message: false
+#| warning: false
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(level == "plot") %>% 
+  filter(type == "diversity" & parameter == "delta") %>% 
+  ggplot(aes(x = 100*median, y = site, fill = continent)) +
+  ggridges::geom_density_ridges() +
+  facet_wrap(~ attribute) +
+  theme_bw() +
+  xlab(expression(delta~"[ % ]")) + ylab("") +
+  scale_fill_discrete("") +
+  ggtitle(expression(Plot~delta)) +
+  theme(legend.position = "bottom") +
+  scale_x_log10()
+```
+
+```{r delta_tau}
+#| message: false
+#| warning: false
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(type == "diversity",
+         parameter %in% c("delta", "tau")) %>% 
+  select(attribute, parameter, site, median) %>% 
+  pivot_wider(names_from = parameter, values_from = median) %>% 
+  unnest(tau, delta) %>% 
+  ggplot(aes(tau, delta*100, fill = site)) +
+  geom_boxplot(varwidth = FALSE, width = 6) +
+  theme_bw() +
+  scale_y_log10() +
+  ylab(expression(delta~"[ % ]")) +
+  xlab(expression(tau~"[ year ]")) +
+  scale_fill_discrete("") +
+  ggtitle(expression(Plot~delta~"~"~Site~tau)) +
+  facet_wrap(~ attribute)
+```
+
 ## H2 - Diversity & intensity
 
 > **H2**: tree diversity also shows a non-linear response to increased intensity of logging: lightly logged forests show a transient increase in tree diversity, but more intensively logged forests show a strong negative effect on diversity
+
+```{r delta_dist_ba}
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 7
+dist_p <- read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "dist", attribute == "ba") %>% 
+  select(site, plot, median, sd, q5, q95) %>% 
+  unique() %>% 
+  rename_at(c("median", "sd", "q5", "q95"), ~ paste0(., "_dist_ba"))
+read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "delta", type == "diversity") %>% 
+  left_join(dist_p) %>% 
+  ggplot(aes((1-median_dist_ba)*100, median*100, col = site)) +
+  geom_smooth(method = "lm", se = FALSE, col = "black", aes(group = NA)) +
+  geom_point() +
+  facet_wrap(~ attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  xlab(expression(dist[BA]~"[ % lost ]")) +
+  ylab(expression(delta~"[ % ]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  ggtitle(expression(Plot~delta~"~"~dist[BA])) +
+  ggpubr::stat_cor(aes(group = NA))
+```

@@ -2,6 +2,18 @@
 
 Meetings notes.
 
+## 29/01/24
+
+Sill to do list:
+
+-   Before Thursday:
+    -   log SLA and LA change SLA to LMA
+    -   Invert STP and LTP
+-   After:
+    -   thetaInfp
+    -   joint or sequential inference across attributes
+    -   Group 3 help
+
 ## 24/01/24
 
 Sections are randomly ordered.

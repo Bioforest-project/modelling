@@ -1,3 +1,5 @@
+-   modelling 0.1.0.9031: group1 all figs
+-   modelling 0.1.0.9030: group2 all figs
 -   modelling 0.1.0.9029: group2 q1&q2
 -   modelling 0.1.0.9028: pars begins
 -   modelling 0.1.0.9027: traj report ready & a bit of text, next pars & env vars for subgroups

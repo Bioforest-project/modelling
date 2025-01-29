@@ -91,8 +91,8 @@ The available data are:
     -   **functional**: specific leaf area **SLA_cwm_ba**, wood density **WD_cwm_ba**, asymptotic height **hmax_cwm_ba**
 -   **Raw and derived parameters**: model parameters for each attribute at **inter-site**, **site** & **plot** levels (see <https://bioforest-project.github.io/modelling/21_models.html#stp>)
     -   **dist**: disturbance index $dist$
-    -   **tau**: bump time $tau$
-    -   **delta**: bump intensity $delta$
+    -   **tau**: bump time $\tau$
+    -   **delta**: bump intensity $\delta$
     -   **lambda**: recovery rate $\lambda$
     -   **thetaInf**: asymptotic value $\theta_{Inf}$.
     -   **t95**: recovery time $t_{95}$, derived from $\lambda$ with $t_{95}=\frac{log(20)}{\lambda}$
