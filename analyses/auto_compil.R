@@ -1,5 +1,5 @@
 # sites <- "Mbaiki" #nolint
-sites <- unique(readr::read_tsv("data/derived_data/data.tsv")$site) #nolint
+sites <- unique(readr::read_tsv("data/derived_data/data.tsv")$site) # nolint
 for (site in sites) {
   print(site)
   file_name <- paste0(site, "_trajectories.pdf")
@@ -10,8 +10,10 @@ for (site in sites) {
   )
   file.rename(
     from = file_name,
-    to = file.path("outputs",
-                   "trajectories",
-                   file_name)
+    to = file.path(
+      "outputs",
+      "trajectories",
+      file_name
+    )
   )
 }

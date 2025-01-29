@@ -8,11 +8,11 @@ Sill to do list:
 
 -   Before Thursday:
     -   log SLA and LA change SLA to LMA
-    -   Invert STP and LTP
 -   After:
     -   thetaInfp
     -   joint or sequential inference across attributes
     -   Group 3 help
+    -   N fixation & dispersal
 
 ## 24/01/24
 

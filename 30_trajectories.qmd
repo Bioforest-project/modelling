@@ -96,7 +96,7 @@ read_tsv("data/derived_data/bounds.tsv") %>%
     dist = paste0("[", dist_min, " ,", dist_max, "]"),
     delta = paste0("[", delta_min, " ,", delta_max, "]"),
     tau = paste0("[", tau_min, " ,", tau_max, "]")
-    ) %>%
+  ) %>%
   select(attribute, mu_thetaInf, thetaInf, lambda, dist, delta, tau) %>%
   kable(caption = "Parameters boundaries per attribute.")
 ```

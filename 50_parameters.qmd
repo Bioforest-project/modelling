@@ -17,68 +17,87 @@ This section explore parameters all raw and derived parameters for each variable
 tmp_path <- file.path("outputs", "pars_tmp")
 dir.create(tmp_path)
 model <- "stp"
-index_p <- read_tsv("data/derived_data/data_rec.tsv") %>% 
-  select(site, plot, sitenum, plotnum_rec) %>% 
+index_p <- read_tsv("data/derived_data/data_rec.tsv") %>%
+  select(site, plot, sitenum, plotnum_rec) %>%
   unique()
-index_s <- index_p %>% 
-  mutate(plot = NA, plotnum_rec = NA) %>% 
+index_s <- index_p %>%
+  mutate(plot = NA, plotnum_rec = NA) %>%
   unique()
 vars <- c(
   "agb", "ba", "nstem", "gini", "diversity_q1_gen", "FDiv",
   "SLA_cwm_ba", "WD_cwm_ba", "hmax_cwm_ba"
 )
-for(var in vars){
+for (var in vars) {
   path <- file.path("chains", var, model)
   fit <- as_cmdstan_fit(list.files(path, full.names = TRUE))
-  pars_a <- fit$summary(c("lp__", "mu_dist", "mu_lambda", "mu_thetaInf",
-                          "mu_delta", "mu_tau")) %>% 
-    rename(parameter = variable) %>% 
-    mutate(level = "inter", site = NA, plot = NA, 
-           sitenum = NA, plotnum_rec = NA) %>% 
-    select(parameter, level, site, plot, sitenum, plotnum_rec,
-           mean, median, sd, mad, q5, q95, 
-           rhat, ess_bulk, ess_tail)
-  pars_s <- fit$summary(c("tau_s", "thetaInf_s")) %>% 
-    separate(variable, c("parameter", "s", "sitenum"), convert = TRUE) %>% 
-    select(-s) %>% 
-    left_join(index_s) %>% 
-    mutate(level = "site") %>% 
-    select(parameter, level, site, plot, sitenum, plotnum_rec,
-           mean, median, sd, mad, q5, q95, 
-           rhat, ess_bulk, ess_tail)
-  pars_p <- fit$summary(c("dist_p", "delta_p", "lambda_p", "t95_p")) %>% 
-    separate(variable, c("parameter", "p", "plotnum_rec"), convert = TRUE) %>% 
-    select(-p) %>% 
-    left_join(index_p) %>% 
-    mutate(level = "plot") %>% 
-    select(parameter, level, site, plot, sitenum, plotnum_rec,
-           mean, median, sd, mad, q5, q95, 
-           rhat, ess_bulk, ess_tail)
-  bind_rows(pars_a, pars_s, pars_p) %>% 
-   mutate(attribute = var, .before = parameter) %>% 
+  pars_a <- fit$summary(c(
+    "lp__", "mu_dist", "mu_lambda", "mu_thetaInf",
+    "mu_delta", "mu_tau"
+  )) %>%
+    rename(parameter = variable) %>%
+    mutate(
+      level = "inter", site = NA, plot = NA,
+      sitenum = NA, plotnum_rec = NA
+    ) %>%
+    select(
+      parameter, level, site, plot, sitenum, plotnum_rec,
+      mean, median, sd, mad, q5, q95,
+      rhat, ess_bulk, ess_tail
+    )
+  pars_s <- fit$summary(c("tau_s", "thetaInf_s")) %>%
+    separate(variable, c("parameter", "s", "sitenum"), convert = TRUE) %>%
+    select(-s) %>%
+    left_join(index_s) %>%
+    mutate(level = "site") %>%
+    select(
+      parameter, level, site, plot, sitenum, plotnum_rec,
+      mean, median, sd, mad, q5, q95,
+      rhat, ess_bulk, ess_tail
+    )
+  pars_p <- fit$summary(c("dist_p", "delta_p", "lambda_p", "t95_p")) %>%
+    separate(variable, c("parameter", "p", "plotnum_rec"), convert = TRUE) %>%
+    select(-p) %>%
+    left_join(index_p) %>%
+    mutate(level = "plot") %>%
+    select(
+      parameter, level, site, plot, sitenum, plotnum_rec,
+      mean, median, sd, mad, q5, q95,
+      rhat, ess_bulk, ess_tail
+    )
+  bind_rows(pars_a, pars_s, pars_p) %>%
+    mutate(attribute = var, .before = parameter) %>%
     write_tsv(file.path(tmp_path, paste0(model, "_", var, "_pars.tsv")))
 }
-biotic <- read_tsv("data/derived_data/data.tsv") %>% 
-  filter(treatment != "logged" | rel_year <= 0) %>% 
-  filter(variable %in% c("gini", "SLA_cwm_ba", "WD_cwm_ba",
-                         "diversity_q1_gen", "FDiv")) %>% 
-  group_by(site, variable) %>% 
-  summarise(value = mean(value)) %>% 
-  mutate(variable = paste0(variable, "_s")) %>% 
+biotic <- read_tsv("data/derived_data/data.tsv") %>%
+  filter(treatment != "logged" | rel_year <= 0) %>%
+  filter(variable %in% c(
+    "gini", "SLA_cwm_ba", "WD_cwm_ba",
+    "diversity_q1_gen", "FDiv"
+  )) %>%
+  group_by(site, variable) %>%
+  summarise(value = mean(value)) %>%
+  mutate(variable = paste0(variable, "_s")) %>%
   pivot_wider(names_from = variable, values_from = value)
-read_tsv(list.files(tmp_path, pattern = "pars", full.names = TRUE)) %>% 
-  mutate(continent = "America") %>% 
-  mutate(continent = ifelse(site %in% c("Kibale", "Mbaiki"), "Africa", continent)) %>% 
-  mutate(continent = ifelse(site %in% c("Sg Lalang", "Ulu Muda",
-                                        "Uppangala", "Malinau", "Lesong"),
-                            "Asia", continent)) %>% 
-  mutate(type = "structure") %>% 
-  mutate(type = ifelse(attribute %in% c("diversity_q1_gen", "FDiv"), 
-                       "diversity", type)) %>% 
-  mutate(type = ifelse(attribute %in% c("SLA_cwm_ba", "WD_cwm_ba",
-                                        "hmax_cwm_ba"), "functional", type)) %>% 
-  left_join(read_tsv("data/raw_data/environment.tsv")) %>% 
-  left_join(biotic) %>% 
+read_tsv(list.files(tmp_path, pattern = "pars", full.names = TRUE)) %>%
+  mutate(continent = "America") %>%
+  mutate(continent = ifelse(site %in% c("Kibale", "Mbaiki"),
+                            "Africa", continent)) %>%
+  mutate(continent = ifelse(site %in% c(
+    "Sg Lalang", "Ulu Muda",
+    "Uppangala", "Malinau", "Lesong"
+  ),
+  "Asia", continent
+  )) %>%
+  mutate(type = "structure") %>%
+  mutate(type = ifelse(attribute %in% c("diversity_q1_gen", "FDiv"),
+    "diversity", type
+  )) %>%
+  mutate(type = ifelse(attribute %in% c(
+    "SLA_cwm_ba", "WD_cwm_ba",
+    "hmax_cwm_ba"
+  ), "functional", type)) %>%
+  left_join(read_tsv("data/raw_data/environment.tsv")) %>%
+  left_join(biotic) %>%
   write_tsv("outputs/parameters.tsv")
 unlink(tmp_path, recursive = TRUE)
 ```
@@ -111,10 +130,12 @@ The available data are:
 ```{r lp_rhat}
 #| message: false
 #| fig-cap: "Likelihood convergence per forest attribute."
-read_tsv("outputs/parameters.tsv") %>% 
-  filter(parameter == "lp__") %>% 
-  ggplot(aes(forcats::fct_reorder(attribute, desc(rhat)), 
-             rhat, fill = rhat)) +
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "lp__") %>%
+  ggplot(aes(forcats::fct_reorder(attribute, desc(rhat)),
+    rhat,
+    fill = rhat
+  )) +
   geom_col() +
   coord_flip() +
   theme_bw() +
@@ -128,22 +149,26 @@ read_tsv("outputs/parameters.tsv") %>%
 #| message: false
 #| warning: false
 #| fig-cap: "thetaInf across sites"
-read_tsv("outputs/parameters.tsv") %>% 
-  filter(level == "inter", 
-         parameter != "lp__", parameter != "mu_thetaInf") %>% 
+read_tsv("outputs/parameters.tsv") %>%
+  filter(
+    level == "inter",
+    parameter != "lp__", parameter != "mu_thetaInf"
+  ) %>%
   mutate(parameter = recode(parameter,
-                            "mu_delta" = "mu[~delta]",
-                            "mu_dist" = "mu[~dist]",
-                            "mu_lambda" = "mu[~lambda]",
-                            "mu_tau" = "mu[~tau]")) %>% 
+    "mu_delta" = "mu[~delta]",
+    "mu_dist" = "mu[~dist]",
+    "mu_lambda" = "mu[~lambda]",
+    "mu_tau" = "mu[~tau]"
+  )) %>%
   ggplot(aes(x = attribute, col = type)) +
   geom_point(aes(y = median)) +
-  geom_segment(aes(y = median-sd, yend = median+sd)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
   geom_segment(aes(y = q5, yend = q95), size = .1) +
-  facet_wrap(~ parameter, scales = "free_x", labeller = label_parsed) +
+  facet_wrap(~parameter, scales = "free_x", labeller = label_parsed) +
   coord_flip() +
   theme_bw() +
-  xlab("") + ylab("")
+  xlab("") +
+  ylab("")
 ```
 
 ## Site
@@ -154,17 +179,18 @@ read_tsv("outputs/parameters.tsv") %>%
 #| message: false
 #| warning: false
 #| fig-cap: "thetaInf across sites"
-read_tsv("outputs/parameters.tsv") %>% 
-  filter(parameter == "thetaInf") %>% 
-  unique() %>% 
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "thetaInf") %>%
+  unique() %>%
   ggplot(aes(site, color = continent)) +
   geom_point(aes(y = median)) +
-  geom_segment(aes(y = median-sd, yend = median+sd)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
   geom_segment(aes(y = q5, yend = q95), size = .1) +
-  facet_wrap(~ attribute, scales = "free_x") +
+  facet_wrap(~attribute, scales = "free_x") +
   theme_bw() +
   coord_flip() +
-  ylab(expression(theta[Inf])) + xlab("")
+  ylab(expression(theta[Inf])) +
+  xlab("")
 ```
 
 ### Bump time $\tau$
@@ -173,17 +199,18 @@ read_tsv("outputs/parameters.tsv") %>%
 #| message: false
 #| warning: false
 #| fig-cap: "tau across sites"
-read_tsv("outputs/parameters.tsv") %>% 
-  filter(parameter == "tau") %>% 
-  unique() %>% 
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "tau") %>%
+  unique() %>%
   ggplot(aes(site, color = continent)) +
   geom_point(aes(y = median)) +
-  geom_segment(aes(y = median-sd, yend = median+sd)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
   geom_segment(aes(y = q5, yend = q95), size = .1) +
-  facet_wrap(~ attribute) +
+  facet_wrap(~attribute) +
   theme_bw() +
   coord_flip() +
-  ylab(expression(tau)) + xlab("")
+  ylab(expression(tau)) +
+  xlab("")
 ```
 
 ## Plot
@@ -194,17 +221,18 @@ read_tsv("outputs/parameters.tsv") %>%
 #| message: false
 #| warning: false
 #| fig-cap: "dist across sites & plots for AGB"
-read_tsv("outputs/parameters.tsv") %>% 
-  filter(parameter == "dist", attribute == "agb") %>% 
-  unique() %>% 
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "dist", attribute == "agb") %>%
+  unique() %>%
   ggplot(aes(plot)) +
   geom_point(aes(y = median)) +
-  geom_segment(aes(y = median-sd, yend = median+sd)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
   geom_segment(aes(y = q5, yend = q95), size = .1) +
-  facet_wrap(~ site, scales = "free_y") +
+  facet_wrap(~site, scales = "free_y") +
   theme_bw() +
   coord_flip() +
-  ylab(expression(dist)) + xlab("Plot") +
+  ylab(expression(dist)) +
+  xlab("Plot") +
   ggtitle("AGB")
 ```
 
@@ -214,17 +242,18 @@ read_tsv("outputs/parameters.tsv") %>%
 #| message: false
 #| warning: false
 #| fig-cap: "delta across sites & plots for AGB"
-read_tsv("outputs/parameters.tsv") %>% 
-  filter(parameter == "delta", attribute == "diversity_q1_gen") %>% 
-  unique() %>% 
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "delta", attribute == "diversity_q1_gen") %>%
+  unique() %>%
   ggplot(aes(plot)) +
   geom_point(aes(y = median)) +
-  geom_segment(aes(y = median-sd, yend = median+sd)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
   geom_segment(aes(y = q5, yend = q95), size = .1) +
-  facet_wrap(~ site, scales = "free_y") +
+  facet_wrap(~site, scales = "free_y") +
   theme_bw() +
   coord_flip() +
-  ylab(expression(delta)) + xlab("Plot") +
+  ylab(expression(delta)) +
+  xlab("Plot") +
   ggtitle("diversity_q1_gen")
 ```
 
@@ -234,15 +263,16 @@ read_tsv("outputs/parameters.tsv") %>%
 #| message: false
 #| warning: false
 #| fig-cap: "t95 across sites & plots for AGB"
-read_tsv("outputs/parameters.tsv") %>% 
-  filter(parameter == "t95", attribute == "agb") %>% 
-  unique() %>% 
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "t95", attribute == "agb") %>%
+  unique() %>%
   ggplot(aes(plot)) +
   geom_point(aes(y = median)) +
-  facet_wrap(~ site, scales = "free_y") +
+  facet_wrap(~site, scales = "free_y") +
   theme_bw() +
   coord_flip() +
-  ylab(expression(dist)) + xlab("Plot") +
+  ylab(expression(dist)) +
+  xlab("Plot") +
   ggtitle("AGB") +
   scale_y_log10()
 ```

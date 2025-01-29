@@ -31,8 +31,10 @@ metadata <- read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcd
 data <- read_csv("data/raw_data/aggregated_data.csv") %>%
   rename_all(tolower) %>%
   left_join(metadata) %>%
-  filter(!(site %in% c("Peteco", "Bafog", "Tene",
-                       "Montagne_Tortue", "Manare"))) %>%
+  filter(!(site %in% c(
+    "Peteco", "Bafog", "Tene",
+    "Montagne_Tortue", "Manare"
+  ))) %>%
   filter(!(site == "Kabo" & year < 1980)) %>%
   mutate(rel_year = ifelse(treatment == "control",
     year - harvest_year_min,
