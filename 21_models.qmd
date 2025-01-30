@@ -98,7 +98,7 @@ data.frame(time = seq(0.1, 50, length.out = 100)) %>%
   geom_line(aes(y = y_stp)) +
   theme_bw() +
   annotate("text",
-    x = 52, y = 19.5, label = "theta[Inf]",
+    x = 52, y = 19.5, label = "theta[infinity]",
     col = "#9ea1d4", parse = TRUE, size = 5
   ) +
   annotate("text",
@@ -117,7 +117,7 @@ data.frame(time = seq(0.1, 50, length.out = 100)) %>%
     arrow = arrow(length = unit(0.2, "cm")), col = "#fc8a8a"
   ) +
   annotate("text",
-    x = 6, y = 11.3, label = "tau",
+    x = 6, y = 9.3, label = "tau",
     col = "#f2e5a9", parse = TRUE, size = 5
   ) +
   annotate("text",
@@ -130,10 +130,12 @@ data.frame(time = seq(0.1, 50, length.out = 100)) %>%
   geom_segment(aes(x = 6, y = 22, xend = 6, yend = 13),
     arrow = arrow(length = unit(0.2, "cm")), col = "#a7d6ac"
   ) +
-  geom_segment(aes(x = 6, y = 11, xend = 6, yend = 10),
+  geom_segment(aes(x = 6, y = 9, xend = 6, yend = 7),
     arrow = arrow(length = unit(0.2, "cm")), col = "#f2e5a9"
   ) +
-  theme(axis.title = element_blank())
+  theme(axis.title = element_blank()) +
+  geom_segment(aes(x = -5, y = 20, xend = 0, yend = 20)) +
+  ylim(7, NA)
 ```
 
 > Choices (**to be developed as text in an appendix**):
