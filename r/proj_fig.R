@@ -12,6 +12,7 @@ proj_fig <- function(
     ) %>%
     select(-y, -pred) %>%
     rename(y = median) %>%
+    mutate(rel_year = rel_year+3) %>% 
     left_join(data_rec %>%
                 select(site, plot, plotnum_rec) %>%
                 unique())

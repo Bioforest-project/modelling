@@ -94,6 +94,10 @@ pvo_fig(data_rec, data_pre, fit_stp)
 proj_fig(data_rec, data_pre, data_old, fit_stp, lab)
 ```
 
+```{r}
+proj_fig(data_rec, data_pre, data_old, fit_stp, lab, sit = "Misiones")
+```
+
 ## Comparison
 
 ```{r lambda_comp}

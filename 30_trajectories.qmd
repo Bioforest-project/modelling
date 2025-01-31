@@ -39,7 +39,7 @@ data.frame(time = seq(0.1, 50, length.out = 100)) %>%
   geom_line(aes(y = y_stp)) +
   theme_bw() +
   annotate("text",
-    x = 52, y = 19.5, label = "theta[Inf]",
+    x = 52, y = 19.5, label = "theta[infinity]",
     col = "#9ea1d4", parse = TRUE, size = 5
   ) +
   annotate("text",
@@ -58,7 +58,7 @@ data.frame(time = seq(0.1, 50, length.out = 100)) %>%
     arrow = arrow(length = unit(0.2, "cm")), col = "#fc8a8a"
   ) +
   annotate("text",
-    x = 6, y = 11.3, label = "tau",
+    x = 6, y = 9.3, label = "tau",
     col = "#f2e5a9", parse = TRUE, size = 5
   ) +
   annotate("text",
@@ -71,17 +71,19 @@ data.frame(time = seq(0.1, 50, length.out = 100)) %>%
   geom_segment(aes(x = 6, y = 22, xend = 6, yend = 13),
     arrow = arrow(length = unit(0.2, "cm")), col = "#a7d6ac"
   ) +
-  geom_segment(aes(x = 6, y = 11, xend = 6, yend = 10),
+  geom_segment(aes(x = 6, y = 9, xend = 6, yend = 7),
     arrow = arrow(length = unit(0.2, "cm")), col = "#f2e5a9"
   ) +
-  theme(axis.title = element_blank())
+  theme(axis.title = element_blank()) +
+  geom_segment(aes(x = -5, y = 20, xend = 0, yend = 20)) +
+  ylim(7, NA)
 ```
 
 > The forest attribute is first disturbed at $t=0$ with either an increase or a decrease depending on the parameter $dist$. Then the attributes recover asymptotically in the long term to an equilibrium value $\theta_{Inf}$ with a recovery rate $\lambda$. But in this second version the recovery trajectory can also accommodate a short term increase of decrease of the attribute at a time $\tau$ with an intensity $\delta$.
 
 ```{r data}
 #| eval: false
-bounds <- read_sheet("https://docs.google.com/spreadsheets/d/1rZZ_dKebVp1RnxI0ZawaSQws72FhubuPZ8O27DzJtFE/edit?usp=sharing") # nolint
+bounds <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1rZZ_dKebVp1RnxI0ZawaSQws72FhubuPZ8O27DzJtFE/edit?usp=sharing") # nolint
 write_tsv(bounds, "data/derived_data/bounds.tsv")
 ```
 
@@ -103,15 +105,16 @@ read_tsv("data/derived_data/bounds.tsv") %>%
 
 ```{r fit_all}
 #| eval: false
-ltp <- cmdstan_model("models/ltp.stan")
+# ltp <- cmdstan_model("models/ltp.stan")
 stp <- cmdstan_model("models/stp.stan")
-vars <- c(
-  "nstem", "agb", "WD_cwm_ba", "FDiv", "diversity_q1_gen", "gini",
-  "ba", "FEve", "SLA_cwm_ba", "N_cwm_ba", "hmax_cwm_ba"
-)
-for (var in vars) {
-  sample_model(var, "ltp")
-}
+# vars <- c(
+#   "nstem", "agb", "WD_cwm_ba", "FDiv", "diversity_q1_gen", "gini",
+#   "ba", "FEve", "SLA_cwm_ba", "N_cwm_ba", "hmax_cwm_ba"
+# )
+vars <- "diversity_q1_gen"
+# for (var in vars) {
+#   sample_model(var, "ltp")
+# }
 for (var in vars) {
   sample_model(var, "stp")
 }

@@ -397,16 +397,16 @@ div.csl-indent {
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>   variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
- lp__       2485.17 2478.00 40.55 36.48 2430.47 2565.00 1.29       11       50
- mu_dist       1.02    1.02  0.03  0.03    0.97    1.07 1.11       24      198
- sigma_dist    0.14    0.14  0.02  0.02    0.11    0.17 1.03       92     2151
- dist_p[1]     1.07    1.06  0.07  0.07    0.96    1.19 1.01     1197     1839
- dist_p[2]     0.76    0.76  0.06  0.05    0.67    0.85 1.01     1101     2302
- dist_p[3]     1.23    1.22  0.08  0.08    1.10    1.37 1.00     1244     1789
- dist_p[4]     0.82    0.82  0.06  0.06    0.73    0.92 1.01      949     1753
- dist_p[5]     1.07    1.06  0.07  0.06    0.96    1.19 1.00     1230     1820
- dist_p[6]     0.91    0.91  0.06  0.06    0.81    1.01 1.01     1097     1911
- dist_p[7]     0.69    0.69  0.06  0.06    0.58    0.78 1.02      261     1924
+ lp__       2467.77 2466.40 27.14 26.52 2425.14 2515.27 1.01      207      273
+ mu_dist       1.02    1.02  0.03  0.03    0.98    1.06 1.02      268     2219
+ sigma_dist    0.14    0.14  0.02  0.02    0.11    0.17 1.01     1227     2356
+ dist_p[1]     1.07    1.07  0.07  0.07    0.96    1.19 1.00     1282     1647
+ dist_p[2]     0.76    0.76  0.06  0.06    0.67    0.85 1.00     1211     1653
+ dist_p[3]     1.23    1.22  0.09  0.09    1.10    1.38 1.01     1119     1146
+ dist_p[4]     0.82    0.82  0.06  0.06    0.73    0.93 1.01     1081     1225
+ dist_p[5]     1.07    1.06  0.07  0.07    0.96    1.19 1.00     1392     1501
+ dist_p[6]     0.91    0.91  0.06  0.07    0.81    1.02 1.00     1215     1970
+ dist_p[7]     0.69    0.69  0.06  0.06    0.58    0.79 1.00      821      944
 
  # showing 10 of 9054 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
@@ -450,17 +450,17 @@ div.csl-indent {
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>fit_stp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>   variable    mean  median     sd   mad      q5     q95 rhat ess_bulk ess_tail
- lp__       2244.92 2188.56 145.21 84.74 2091.78 2512.24 2.27        5       15
- mu_dist       1.02    1.02   0.05  0.05    0.94    1.10 1.45        7       22
- sigma_dist    0.16    0.16   0.02  0.02    0.13    0.21 1.08       33      424
- dist_p[1]     1.12    1.11   0.09  0.09    0.99    1.28 1.00      828     1495
- dist_p[2]     0.75    0.75   0.07  0.07    0.65    0.87 1.01      870     1763
- dist_p[3]     1.28    1.28   0.10  0.10    1.12    1.44 1.01      756      849
- dist_p[4]     0.84    0.84   0.07  0.08    0.73    0.96 1.02      359     1572
- dist_p[5]     1.10    1.10   0.09  0.09    0.96    1.26 1.01      576      522
- dist_p[6]     0.92    0.92   0.08  0.08    0.80    1.05 1.02      291     1565
- dist_p[7]     0.65    0.64   0.07  0.07    0.55    0.77 1.02      685     1823
+<pre><code>   variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
+ lp__       2344.42 2342.42 66.80 76.67 2242.77 2452.96 1.10       37       80
+ mu_dist       0.80    0.81  0.02  0.02    0.77    0.84 1.02      207      187
+ sigma_dist    0.09    0.09  0.01  0.01    0.07    0.12 1.00      873     1853
+ dist_p[1]     0.92    0.92  0.05  0.05    0.84    0.99 1.01      300     1400
+ dist_p[2]     0.63    0.63  0.05  0.05    0.55    0.71 1.02      186      739
+ dist_p[3]     0.94    0.95  0.04  0.05    0.87    1.00 1.01      342      990
+ dist_p[4]     0.71    0.71  0.05  0.05    0.63    0.79 1.03      117      176
+ dist_p[5]     0.91    0.91  0.05  0.06    0.82    0.99 1.02      155       77
+ dist_p[6]     0.77    0.77  0.05  0.05    0.69    0.84 1.02      237     1172
+ dist_p[7]     0.54    0.54  0.05  0.04    0.47    0.62 1.03      130       48
 
  # showing 10 of 10132 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
@@ -493,13 +493,29 @@ div.csl-indent {
 </div>
 </div>
 </div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proj_fig</span>(data_rec, data_pre, data_old, fit_stp, lab, <span class="at">sit =</span> <span class="st">"Misiones"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Expected 4 pieces. Additional pieces discarded in 6360 rows [1, 2, 3, 4, 5, 6,
+7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...].</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(plotnum_rec)`</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="35_div_q1_gen_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 </section>
 <section id="comparison" class="level2">
 <h2 class="anchored" data-anchor-id="comparison">Comparison</h2>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">comp_lambda_fig</span>(data_rec, fit_ltp, fit_stp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">comp_lambda_fig</span>(data_rec, fit_ltp, fit_stp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
