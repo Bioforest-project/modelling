@@ -191,3 +191,60 @@ read_tsv("outputs/parameters.tsv") %>%
   scale_color_viridis_c()
 ```
 
+```{r y15_dist}
+#| message: false
+#| warning: false
+library(cmdstanr)
+dist_p <- read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "dist", attribute == "ba") %>%
+  select(site, plot, median, sd, q5, q95) %>%
+  unique() %>%
+  rename_at(c("median", "sd", "q5", "q95"), ~ paste0(., "_dist_ba"))
+data <- read_tsv("data/derived_data/data_rec.tsv") %>%
+  filter(variable == "diversity_q1_gen") %>% 
+  select(site, plot, plotnum_rec) %>%
+  unique()
+theta <- read_tsv("outputs/parameters.tsv") %>% 
+  filter(parameter == "thetaInf", attribute == "diversity_q1_gen") %>% 
+  select(site, mean) %>% 
+  rename(theta = mean)
+fit <- as_cmdstan_fit(list.files("chains/diversity_q1_gen/stp/", full.names = TRUE))
+y15 <- fit$summary("y_pred", "median") %>%
+    separate(variable,
+      c("y", "pred", "rel_year", "plotnum_rec"),
+      convert = TRUE
+    ) %>%
+    select(-y, -pred) %>%
+    rename(y = median) %>%
+    mutate(rel_year = rel_year+3) %>% 
+  filter(rel_year == 15) %>% 
+  left_join(data) %>% 
+  left_join(dist_p) %>% 
+  filter(!(site %in% c("Kibale", "Uppangala"))) %>% 
+  left_join(theta) %>% 
+  mutate(y_rel = y/theta)
+y15 %>%
+  ggplot(aes((1 - median_dist_ba) * 100, y_rel)) +
+  geom_smooth(method = "lm", col = "black") +
+  geom_point(aes(col = site)) +
+  theme_bw() +
+  ggpubr::stat_cor() +
+  xlab(expression(dist[BA] ~ "[ % lost ]")) +
+  ylab(expression(y[pred~t==15] / theta[Inf])) +
+  ggtitle(expression(Plot ~ y[pred~t==15] / theta[Inf] ~ "~" ~ dist[BA]))
+```
+
+```{r y15_dist_site}
+#| message: false
+#| warning: false
+y15 %>% 
+  ggplot(aes((1 - median_dist_ba) * 100, y_rel)) +
+  geom_smooth(method = "lm", col = "black") +
+  geom_point() +
+  theme_bw() +
+  ggpubr::stat_cor() +
+  xlab(expression(dist[BA] ~ "[ % lost ]")) +
+  ylab(expression(y[pred~t==15] / theta[Inf])) +
+  ggtitle(expression(Plot ~ y[pred~t==15] / theta[Inf] ~ "~" ~ dist[BA])) +
+  facet_wrap(~ site, scales = "free")
+```
