@@ -32,7 +32,8 @@ read_tsv("outputs/parameters.tsv") %>%
   coord_flip() +
   theme_bw() +
   ylab(expression(mu[~lambda])) +
-  xlab("")
+  xlab("") +
+  ylim(0, NA)
 ```
 
 ```{r t90_a}

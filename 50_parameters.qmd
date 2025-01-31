@@ -149,7 +149,6 @@ read_tsv("outputs/parameters.tsv") %>%
 #| message: false
 #| warning: false
 #| fig-cap: "thetaInf across sites"
-#| eval: false
 read_tsv("outputs/parameters.tsv") %>%
   filter(
     level == "inter",
@@ -169,7 +168,8 @@ read_tsv("outputs/parameters.tsv") %>%
   coord_flip() +
   theme_bw() +
   xlab("") +
-  ylab("")
+  ylab("") +
+  ylim(0, NA)
 ```
 
 ## Site
