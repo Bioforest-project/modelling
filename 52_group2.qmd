@@ -35,7 +35,7 @@ read_tsv("outputs/parameters.tsv") %>%
   xlab("")
 ```
 
-```{r t95_a}
+```{r t90_a}
 #| message: false
 #| warning: false
 read_tsv("outputs/parameters.tsv") %>%
@@ -43,13 +43,13 @@ read_tsv("outputs/parameters.tsv") %>%
     level == "inter",
     parameter != "lp__", parameter == "mu_lambda"
   ) %>%
-  mutate_at(c("median", "sd", "q5", "q95"), ~ log(20) / .) %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ log(10) / . + 3) %>%
   ggplot(aes(x = attribute, col = type)) +
   geom_point(aes(y = median)) +
   geom_segment(aes(y = q5, yend = q95), size = .1) +
   coord_flip() +
   theme_bw() +
-  ylab(expression(mu[~t95] ~ "[" ~ years ~ "]")) +
+  ylab(expression(mu[~t90] ~ "[" ~ years ~ "]")) +
   xlab("") +
   scale_y_log10()
 ```
@@ -83,7 +83,7 @@ read_tsv("outputs/parameters.tsv") %>%
   theme(legend.position = "bottom")
 ```
 
-```{r t95_dist_ba}
+```{r t90_dist_ba}
 #| message: false
 #| warning: false
 #| fig-width: 10
@@ -94,8 +94,9 @@ dist_p <- read_tsv("outputs/parameters.tsv") %>%
   unique() %>%
   rename_at(c("median", "sd", "q5", "q95"), ~ paste0(., "_dist_ba"))
 read_tsv("outputs/parameters.tsv") %>%
-  filter(parameter == "t95") %>%
+  filter(parameter == "lambda") %>%
   left_join(dist_p) %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ log(10) / . + 3) %>%
   ggplot(aes((1 - median_dist_ba) * 100, median, col = site)) +
   geom_smooth(method = "lm", se = FALSE, col = "black", aes(group = NA)) +
   geom_point() +
@@ -103,7 +104,7 @@ read_tsv("outputs/parameters.tsv") %>%
   scale_y_log10() +
   theme_bw() +
   xlab(expression(dist[BA] ~ "[ % lost ]")) +
-  ylab(expression(t[95] ~ "[" ~ years ~ "]")) +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
   scale_color_discrete("") +
   theme(legend.position = "bottom")
 ```
@@ -305,7 +306,7 @@ read_tsv("outputs/parameters.tsv") %>%
   theme(legend.position = "bottom")
 ```
 
-### $t_{95}$ & abiotic
+### $t_{90}$ & abiotic
 
 ```{r t95_cwd}
 #| message: false
@@ -313,14 +314,15 @@ read_tsv("outputs/parameters.tsv") %>%
 #| fig-width: 10
 #| fig-height: 8
 read_tsv("outputs/parameters.tsv") %>%
-  filter(parameter == "t95") %>%
+  filter(parameter == "lambda") %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ log(10) / . + 3) %>%
   ggplot(aes(cwd, median)) +
   geom_smooth(method = "lm", se = FALSE) +
   geom_point(aes(col = site)) +
   facet_wrap(~attribute, scales = "free_y") +
   scale_y_log10() +
   theme_bw() +
-  ylab(expression(t[95] ~ "[" ~ years ~ "]")) +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
   scale_x_log10() +
   scale_color_discrete("") +
   theme(legend.position = "bottom") +
@@ -335,14 +337,15 @@ read_tsv("outputs/parameters.tsv") %>%
 #| fig-width: 10
 #| fig-height: 8
 read_tsv("outputs/parameters.tsv") %>%
-  filter(parameter == "t95") %>%
+  filter(parameter == "lambda") %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ log(10) / . + 3) %>%
   ggplot(aes(tmax, median)) +
   geom_smooth(method = "lm", se = FALSE) +
   geom_point(aes(col = site)) +
   facet_wrap(~attribute, scales = "free_y") +
   scale_y_log10() +
   theme_bw() +
-  ylab(expression(t[95] ~ "[" ~ years ~ "]")) +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
   scale_color_discrete("") +
   theme(legend.position = "bottom") +
   xlab(expression(Maximum ~ Temperature ~ "[" ~ "°" ~ "]"))
@@ -354,14 +357,15 @@ read_tsv("outputs/parameters.tsv") %>%
 #| fig-width: 10
 #| fig-height: 8
 read_tsv("outputs/parameters.tsv") %>%
-  filter(parameter == "t95") %>%
+  filter(parameter == "lambda") %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ log(10) / . + 3) %>%
   ggplot(aes(bdod, median)) +
   geom_smooth(method = "lm", se = FALSE) +
   geom_point(aes(col = site)) +
   facet_wrap(~attribute, scales = "free_y") +
   scale_y_log10() +
   theme_bw() +
-  ylab(expression(t[95] ~ "[" ~ years ~ "]")) +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
   scale_color_discrete("") +
   theme(legend.position = "bottom") +
   xlab(expression(Bulk ~ Density ~ "[" ~ kg ~ dm^{
@@ -375,14 +379,15 @@ read_tsv("outputs/parameters.tsv") %>%
 #| fig-width: 10
 #| fig-height: 8
 read_tsv("outputs/parameters.tsv") %>%
-  filter(parameter == "t95") %>%
+  filter(parameter == "lambda") %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ log(10) / . + 3) %>%
   ggplot(aes(soc, median)) +
   geom_smooth(method = "lm", se = FALSE) +
   geom_point(aes(col = site)) +
   facet_wrap(~attribute, scales = "free_y") +
   scale_y_log10() +
   theme_bw() +
-  ylab(expression(t[95] ~ "[" ~ years ~ "]")) +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
   scale_color_discrete("") +
   theme(legend.position = "bottom") +
   xlab(expression(Soil ~ organic ~ Carbon ~ "[" ~ g ~ kg^{
@@ -396,21 +401,22 @@ read_tsv("outputs/parameters.tsv") %>%
 #| fig-width: 10
 #| fig-height: 8
 read_tsv("outputs/parameters.tsv") %>%
-  filter(parameter == "t95") %>%
+  filter(parameter == "lambda") %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ log(10) / . + 3) %>%
   ggplot(aes(deforested, median)) +
   geom_smooth(method = "lm", se = FALSE) +
   geom_point(aes(col = site)) +
   facet_wrap(~attribute, scales = "free_y") +
   scale_y_log10() +
   theme_bw() +
-  ylab(expression(t[95] ~ "[" ~ years ~ "]")) +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
   scale_color_discrete("") +
   theme(legend.position = "bottom") +
   xlab(expression(Deforested ~ landscape ~ "[" ~ "%" ~ "]")) +
   scale_x_log10()
 ```
 
-### $t_{95}$ & biotic
+### $t_{90}$ & biotic
 
 All site variables are the mean values for site $s$ across controls and pre-logging inventories.
 
@@ -420,14 +426,15 @@ All site variables are the mean values for site $s$ across controls and pre-logg
 #| fig-width: 10
 #| fig-height: 8
 read_tsv("outputs/parameters.tsv") %>%
-  filter(parameter == "t95") %>%
+  filter(parameter == "lambda") %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ log(10) / . + 3) %>%
   ggplot(aes(gini_s, median)) +
   geom_smooth(method = "lm", se = FALSE) +
   geom_point(aes(col = site)) +
   facet_wrap(~attribute, scales = "free_y") +
   scale_y_log10() +
   theme_bw() +
-  ylab(expression(t[95] ~ "[" ~ years ~ "]")) +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
   xlab(expression(Gini[s])) +
   scale_color_discrete("") +
   theme(legend.position = "bottom")
@@ -439,14 +446,15 @@ read_tsv("outputs/parameters.tsv") %>%
 #| fig-width: 10
 #| fig-height: 8
 read_tsv("outputs/parameters.tsv") %>%
-  filter(parameter == "t95") %>%
+  filter(parameter == "lambda") %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ log(10) / . + 3) %>%
   ggplot(aes(SLA_cwm_ba_s, median)) +
   geom_smooth(method = "lm", se = FALSE) +
   geom_point(aes(col = site)) +
   facet_wrap(~attribute, scales = "free_y") +
   scale_y_log10() +
   theme_bw() +
-  ylab(expression(t[95] ~ "[" ~ years ~ "]")) +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
   xlab(expression(SLA ~ "[" ~ mm^2 ~ mg^{
     -1
   } ~ "]")) +
@@ -460,14 +468,15 @@ read_tsv("outputs/parameters.tsv") %>%
 #| fig-width: 10
 #| fig-height: 8
 read_tsv("outputs/parameters.tsv") %>%
-  filter(parameter == "t95") %>%
+  filter(parameter == "lambda") %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ log(10) / . + 3) %>%
   ggplot(aes(WD_cwm_ba_s, median)) +
   geom_smooth(method = "lm", se = FALSE) +
   geom_point(aes(col = site)) +
   facet_wrap(~attribute, scales = "free_y") +
   scale_y_log10() +
   theme_bw() +
-  ylab(expression(t[95] ~ "[" ~ years ~ "]")) +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
   xlab(expression(WD ~ "[" ~ g ~ cm^{
     -3
   } ~ "]")) +
@@ -481,14 +490,15 @@ read_tsv("outputs/parameters.tsv") %>%
 #| fig-width: 10
 #| fig-height: 8
 read_tsv("outputs/parameters.tsv") %>%
-  filter(parameter == "t95") %>%
+  filter(parameter == "lambda") %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ log(10) / . + 3) %>%
   ggplot(aes(diversity_q1_gen_s, median)) +
   geom_smooth(method = "lm", se = FALSE) +
   geom_point(aes(col = site)) +
   facet_wrap(~attribute, scales = "free_y") +
   scale_y_log10() +
   theme_bw() +
-  ylab(expression(t[95] ~ "[" ~ years ~ "]")) +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
   xlab(expression("Genus diversity" ~ q == 1)) +
   scale_color_discrete("") +
   theme(legend.position = "bottom")

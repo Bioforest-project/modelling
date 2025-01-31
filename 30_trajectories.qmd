@@ -111,7 +111,7 @@ stp <- cmdstan_model("models/stp.stan")
 #   "nstem", "agb", "WD_cwm_ba", "FDiv", "diversity_q1_gen", "gini",
 #   "ba", "FEve", "SLA_cwm_ba", "N_cwm_ba", "hmax_cwm_ba"
 # )
-vars <- "diversity_q1_gen"
+vars <- "FDiv"
 # for (var in vars) {
 #   sample_model(var, "ltp")
 # }

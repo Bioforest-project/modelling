@@ -54,7 +54,7 @@ for (var in vars) {
       mean, median, sd, mad, q5, q95,
       rhat, ess_bulk, ess_tail
     )
-  pars_p <- fit$summary(c("dist_p", "delta_p", "lambda_p", "t95_p")) %>%
+  pars_p <- fit$summary(c("dist_p", "delta_p", "lambda_p")) %>%
     separate(variable, c("parameter", "p", "plotnum_rec"), convert = TRUE) %>%
     select(-p) %>%
     left_join(index_p) %>%
@@ -110,11 +110,11 @@ The available data are:
     -   **functional**: specific leaf area **SLA_cwm_ba**, wood density **WD_cwm_ba**, asymptotic height **hmax_cwm_ba**
 -   **Raw and derived parameters**: model parameters for each attribute at **inter-site**, **site** & **plot** levels (see <https://bioforest-project.github.io/modelling/21_models.html#stp>)
     -   **dist**: disturbance index $dist$
-    -   **tau**: bump time $\tau$
+    -   **tau**: bump timing $\tau$ + 3 years lag
     -   **delta**: bump intensity $\delta$
     -   **lambda**: recovery rate $\lambda$
     -   **thetaInf**: asymptotic value $\theta_{Inf}$.
-    -   **t95**: recovery time $t_{95}$, derived from $\lambda$ with $t_{95}=\frac{log(20)}{\lambda}$
+    -   **t90**: recovery time $t_{90}$, derived from $\lambda$ with $t_{90}=\frac{log(10)}{\lambda}$ + 3 years lag
 -   **Parameter metrics**
     -   metrics on posterior distribution: mean **mean**, median **median**, standard deviation **sd**, median absolute deviation **mad**, 5th quantile **q5**, 95th quantile **q95**
     -   metrics on quality of fit for diagnostic: Rhat convergence diagnostic **rhat**, bulk effective sample size **ess_bulk**, tail effective sample size **ess_tail**
@@ -202,6 +202,7 @@ read_tsv("outputs/parameters.tsv") %>%
 read_tsv("outputs/parameters.tsv") %>%
   filter(parameter == "tau") %>%
   unique() %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ .+3) %>% 
   ggplot(aes(site, color = continent)) +
   geom_point(aes(y = median)) +
   geom_segment(aes(y = median - sd, yend = median + sd)) +
@@ -220,9 +221,9 @@ read_tsv("outputs/parameters.tsv") %>%
 ```{r dist}
 #| message: false
 #| warning: false
-#| fig-cap: "dist across sites & plots for AGB"
+#| fig-cap: "dist across sites & plots for BA"
 read_tsv("outputs/parameters.tsv") %>%
-  filter(parameter == "dist", attribute == "agb") %>%
+  filter(parameter == "dist", attribute == "ba") %>%
   unique() %>%
   ggplot(aes(plot)) +
   geom_point(aes(y = median)) +
@@ -233,7 +234,7 @@ read_tsv("outputs/parameters.tsv") %>%
   coord_flip() +
   ylab(expression(dist)) +
   xlab("Plot") +
-  ggtitle("AGB")
+  ggtitle("BA")
 ```
 
 ### Bump intensity $\delta$
@@ -257,22 +258,23 @@ read_tsv("outputs/parameters.tsv") %>%
   ggtitle("diversity_q1_gen")
 ```
 
-### Recovery time $t_{95}$
+### Recovery time $t_{90}$
 
-```{r t95}
+```{r t90}
 #| message: false
 #| warning: false
-#| fig-cap: "t95 across sites & plots for AGB"
+#| fig-cap: "t90 across sites & plots for BA"
 read_tsv("outputs/parameters.tsv") %>%
-  filter(parameter == "t95", attribute == "agb") %>%
+  filter(parameter == "lambda", attribute == "ba") %>%
   unique() %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ (log(10) / .) + 3) %>% 
   ggplot(aes(plot)) +
   geom_point(aes(y = median)) +
-  facet_wrap(~site, scales = "free_y") +
+  facet_wrap(~site, scales = "free") +
   theme_bw() +
   coord_flip() +
-  ylab(expression(dist)) +
+  ylab(expression(t[90])) +
   xlab("Plot") +
-  ggtitle("AGB") +
+  ggtitle("BA") +
   scale_y_log10()
 ```

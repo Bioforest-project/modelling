@@ -72,6 +72,8 @@ proj_fig(data_rec, data_pre, data_old, fit_ltp, lab)
 
 ## STP
 
+**Should Mbaiki controls be removed?**
+
 ```{r load_stp}
 #| message: false
 #| warning: false
@@ -95,7 +97,15 @@ proj_fig(data_rec, data_pre, data_old, fit_stp, lab)
 ```
 
 ```{r}
+#| eval: false
 proj_fig(data_rec, data_pre, data_old, fit_stp, lab, sit = "Misiones")
+```
+
+```{r}
+#| eval: false
+fit_stp$draws(paste0("tau_s[", 6, "]")) %>% mcmc_areas_ridges()
+fit_stp$draws(paste0("dist_p[", 46:55, "]")) %>% mcmc_areas_ridges()
+fit_stp$draws(paste0("delta_p[", 46:55, "]")) %>% mcmc_areas_ridges()
 ```
 
 ## Comparison

@@ -442,6 +442,7 @@ div.csl-indent {
 </section>
 <section id="stp" class="level2">
 <h2 class="anchored" data-anchor-id="stp">STP</h2>
+<p><strong>Should Mbaiki controls be removed?</strong></p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -451,16 +452,16 @@ div.csl-indent {
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>   variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
- lp__       2344.42 2342.42 66.80 76.67 2242.77 2452.96 1.10       37       80
- mu_dist       0.80    0.81  0.02  0.02    0.77    0.84 1.02      207      187
- sigma_dist    0.09    0.09  0.01  0.01    0.07    0.12 1.00      873     1853
- dist_p[1]     0.92    0.92  0.05  0.05    0.84    0.99 1.01      300     1400
- dist_p[2]     0.63    0.63  0.05  0.05    0.55    0.71 1.02      186      739
- dist_p[3]     0.94    0.95  0.04  0.05    0.87    1.00 1.01      342      990
- dist_p[4]     0.71    0.71  0.05  0.05    0.63    0.79 1.03      117      176
- dist_p[5]     0.91    0.91  0.05  0.06    0.82    0.99 1.02      155       77
- dist_p[6]     0.77    0.77  0.05  0.05    0.69    0.84 1.02      237     1172
- dist_p[7]     0.54    0.54  0.05  0.04    0.47    0.62 1.03      130       48
+ lp__       2202.62 2202.78 22.51 22.33 2165.92 2239.81 1.00      480      827
+ mu_dist       0.77    0.77  0.02  0.02    0.73    0.80 1.00     1894     2590
+ sigma_dist    0.10    0.10  0.01  0.01    0.08    0.13 1.00     4683     3139
+ dist_p[1]     0.90    0.90  0.05  0.05    0.81    0.98 1.00     1455     1644
+ dist_p[2]     0.61    0.61  0.04  0.04    0.53    0.68 1.00     1536     2021
+ dist_p[3]     0.96    0.97  0.04  0.03    0.86    1.00 1.00     2367     2808
+ dist_p[4]     0.68    0.68  0.04  0.04    0.61    0.75 1.00     1801     2728
+ dist_p[5]     0.88    0.88  0.05  0.06    0.79    0.97 1.00     1806     1497
+ dist_p[6]     0.74    0.74  0.04  0.04    0.67    0.81 1.00     2325     2086
+ dist_p[7]     0.51    0.51  0.04  0.04    0.44    0.58 1.00     2340     2413
 
  # showing 10 of 10132 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
@@ -498,16 +499,14 @@ div.csl-indent {
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proj_fig</span>(data_rec, data_pre, data_old, fit_stp, lab, <span class="at">sit =</span> <span class="st">"Misiones"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Expected 4 pieces. Additional pieces discarded in 6360 rows [1, 2, 3, 4, 5, 6,
-7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...].</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Joining with `by = join_by(plotnum_rec)`</code></pre>
-</div>
-<div class="cell-output-display">
-<p><img src="35_div_q1_gen_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
-</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fit_stp<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">paste0</span>(<span class="st">"tau_s["</span>, <span class="dv">6</span>, <span class="st">"]"</span>)) <span class="sc">%&gt;%</span> <span class="fu">mcmc_areas_ridges</span>()</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>fit_stp<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">paste0</span>(<span class="st">"dist_p["</span>, <span class="dv">46</span><span class="sc">:</span><span class="dv">55</span>, <span class="st">"]"</span>)) <span class="sc">%&gt;%</span> <span class="fu">mcmc_areas_ridges</span>()</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>fit_stp<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">paste0</span>(<span class="st">"delta_p["</span>, <span class="dv">46</span><span class="sc">:</span><span class="dv">55</span>, <span class="st">"]"</span>)) <span class="sc">%&gt;%</span> <span class="fu">mcmc_areas_ridges</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="comparison" class="level2">
@@ -515,7 +514,7 @@ div.csl-indent {
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">comp_lambda_fig</span>(data_rec, fit_ltp, fit_stp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">comp_lambda_fig</span>(data_rec, fit_ltp, fit_stp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
