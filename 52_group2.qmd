@@ -308,7 +308,7 @@ read_tsv("outputs/parameters.tsv") %>%
 
 ### $t_{90}$ & abiotic
 
-```{r t95_cwd}
+```{r t90_cwd}
 #| message: false
 #| warning: false
 #| fig-width: 10
@@ -331,7 +331,7 @@ read_tsv("outputs/parameters.tsv") %>%
   } ~ "]"))
 ```
 
-```{r t95_tmax}
+```{r t90_tmax}
 #| message: false
 #| warning: false
 #| fig-width: 10
@@ -351,7 +351,7 @@ read_tsv("outputs/parameters.tsv") %>%
   xlab(expression(Maximum ~ Temperature ~ "[" ~ "°" ~ "]"))
 ```
 
-```{r t95_bdod}
+```{r t90_bdod}
 #| message: false
 #| warning: false
 #| fig-width: 10
@@ -373,7 +373,7 @@ read_tsv("outputs/parameters.tsv") %>%
   } ~ "]"))
 ```
 
-```{r t95_soc}
+```{r t90_soc}
 #| message: false
 #| warning: false
 #| fig-width: 10
@@ -395,7 +395,7 @@ read_tsv("outputs/parameters.tsv") %>%
   } ~ "]"))
 ```
 
-```{r t95_deforested}
+```{r t90_deforested}
 #| message: false
 #| warning: false
 #| fig-width: 10
@@ -420,7 +420,7 @@ read_tsv("outputs/parameters.tsv") %>%
 
 All site variables are the mean values for site $s$ across controls and pre-logging inventories.
 
-```{r t95_gini}
+```{r t90_gini}
 #| message: false
 #| warning: false
 #| fig-width: 10
@@ -440,7 +440,7 @@ read_tsv("outputs/parameters.tsv") %>%
   theme(legend.position = "bottom")
 ```
 
-```{r t95_sla}
+```{r t90_sla}
 #| message: false
 #| warning: false
 #| fig-width: 10
@@ -462,7 +462,7 @@ read_tsv("outputs/parameters.tsv") %>%
   theme(legend.position = "bottom")
 ```
 
-```{r t95_wd}
+```{r t90_wd}
 #| message: false
 #| warning: false
 #| fig-width: 10
@@ -484,7 +484,7 @@ read_tsv("outputs/parameters.tsv") %>%
   theme(legend.position = "bottom")
 ```
 
-```{r t95_gen}
+```{r t90_gen}
 #| message: false
 #| warning: false
 #| fig-width: 10
