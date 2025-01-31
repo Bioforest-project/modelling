@@ -389,7 +389,7 @@
     "href": "50_parameters.html#inter-site",
     "title": "Parameters",
     "section": "Inter-site",
-    "text": "Inter-site\n\n\nCode\nread_tsv(\"outputs/parameters.tsv\") %&gt;%\n  filter(\n    level == \"inter\",\n    parameter != \"lp__\", parameter != \"mu_thetaInf\"\n  ) %&gt;%\n  mutate(parameter = recode(parameter,\n    \"mu_delta\" = \"mu[~delta]\",\n    \"mu_dist\" = \"mu[~dist]\",\n    \"mu_lambda\" = \"mu[~lambda]\",\n    \"mu_tau\" = \"mu[~tau]\"\n  )) %&gt;%\n  ggplot(aes(x = attribute, col = type)) +\n  geom_point(aes(y = median)) +\n  geom_segment(aes(y = median - sd, yend = median + sd)) +\n  geom_segment(aes(y = q5, yend = q95), size = .1) +\n  facet_wrap(~parameter, scales = \"free_x\", labeller = label_parsed) +\n  coord_flip() +\n  theme_bw() +\n  xlab(\"\") +\n  ylab(\"\")\n\n\n\n\n\nthetaInf across sites"
+    "text": "Inter-site\n\n\nCode\nread_tsv(\"outputs/parameters.tsv\") %&gt;%\n  filter(\n    level == \"inter\",\n    parameter != \"lp__\", parameter != \"mu_thetaInf\"\n  ) %&gt;%\n  mutate(parameter = recode(parameter,\n    \"mu_delta\" = \"mu[~delta]\",\n    \"mu_dist\" = \"mu[~dist]\",\n    \"mu_lambda\" = \"mu[~lambda]\",\n    \"mu_tau\" = \"mu[~tau]\"\n  )) %&gt;%\n  ggplot(aes(x = attribute, col = type)) +\n  geom_point(aes(y = median)) +\n  geom_segment(aes(y = median - sd, yend = median + sd)) +\n  geom_segment(aes(y = q5, yend = q95), size = .1) +\n  facet_wrap(~parameter, scales = \"free\", labeller = label_parsed) +\n  coord_flip() +\n  theme_bw() +\n  xlab(\"\") +\n  ylab(\"\")"
   },
   {
     "objectID": "50_parameters.html#site",

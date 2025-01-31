@@ -149,6 +149,7 @@ read_tsv("outputs/parameters.tsv") %>%
 #| message: false
 #| warning: false
 #| fig-cap: "thetaInf across sites"
+#| eval: false
 read_tsv("outputs/parameters.tsv") %>%
   filter(
     level == "inter",
@@ -164,7 +165,7 @@ read_tsv("outputs/parameters.tsv") %>%
   geom_point(aes(y = median)) +
   geom_segment(aes(y = median - sd, yend = median + sd)) +
   geom_segment(aes(y = q5, yend = q95), size = .1) +
-  facet_wrap(~parameter, scales = "free_x", labeller = label_parsed) +
+  facet_wrap(~parameter, scales = "free", labeller = label_parsed) +
   coord_flip() +
   theme_bw() +
   xlab("") +
