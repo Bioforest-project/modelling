@@ -14,6 +14,21 @@ Group 1 on **LoggingDiversity** focus on the **effects of logging disturbance on
 
 We will thus mainly work with diversity trajectories (genus & functional) bump characterized through bump time $\tau'$ & bump intensity $\delta$ in the model and link it with forest structure (BA, AGB, or stem) disturbance index $dist_{ba}$.
 
+```{r}
+#| message: false
+#| warning: false
+site_pars <- read_tsv("outputs/parameters.tsv") %>% 
+  filter(level == "site") %>% 
+  select(attribute, parameter, site, median) %>% 
+  pivot_wider(names_from = parameter, values_from = median)
+pars <- read_tsv("outputs/parameters.tsv") %>% 
+  filter(level == "plot") %>% 
+  select(attribute, parameter, site, plot, median) %>% 
+  pivot_wider(names_from = parameter, values_from = median) %>% 
+  left_join(site_pars) %>% 
+  mutate(deltap = (delta*thetaInf)/(thetaInf-(thetaInf*dist)))
+```
+
 ## H1 - Diversity & time
 
 > **H1**: tree diversity long-term response increases through time to a maximum value, after which it then declines in late succession
@@ -247,4 +262,66 @@ y15 %>%
   ylab(expression(y[pred~t==15] / theta[Inf])) +
   ggtitle(expression(Plot ~ y[pred~t==15] / theta[Inf] ~ "~" ~ dist[BA])) +
   facet_wrap(~ site, scales = "free")
+```
+
+## H2 - Diversity & intensity with $\delta'$
+
+> **We will use** $\delta'$ **as** $\delta'=\frac{\delta\times\theta_{\infty}}{\theta_{\infty}-\theta_{0}}$ **to solve the issue of relativity pointed by Camille but in a near future we should re-express and re-fit the model as** $\theta_{0} + (\theta_{\infty}-\theta_{0})\times LTP + \theta_{\infty} \times STP$**.**
+
+```{r}
+#| message: false
+#| warning: false
+pars %>%
+  filter(!(site %in% c("Kibale", "Uppangala"))) %>% 
+  filter(attribute == "diversity_q1_gen") %>%
+  left_join(dist_p) %>%
+  ggplot(aes((1 - median_dist_ba) * 100, deltap, col = site)) +
+  geom_smooth(method = "lm", se = FALSE, col = "black", aes(group = NA)) +
+  geom_point() +
+  facet_wrap(~attribute, scales = "free_y") +
+  theme_bw() +
+  xlab(expression(dist[BA] ~ "[ % lost ]")) +
+  ylab(expression(delta~"'" ~ "[ % ]")) +
+  scale_color_discrete("") +
+  ggpubr::stat_cor(aes(group = NA))
+```
+
+```{r}
+#| message: false
+#| warning: false
+pars %>%
+  filter(!(site %in% c("Kibale", "Uppangala"))) %>% 
+  filter(attribute == "diversity_q1_gen") %>%
+  left_join(dist_p) %>%
+  ggplot(aes((1 - median_dist_ba) * 100, deltap, col = site)) +
+  geom_smooth(method = "lm", se = FALSE, col = "black", aes(group = NA)) +
+  geom_point() +
+  facet_wrap(~attribute, scales = "free_y") +
+  theme_bw() +
+  xlab(expression(dist[BA] ~ "[ % lost ]")) +
+  ylab(expression(delta~"'" ~ "[ % ]")) +
+  scale_color_discrete("") +
+  ggpubr::stat_cor(aes(group = NA)) +
+  scale_y_log10()
+```
+
+```{r}
+#| message: false
+#| warning: false
+pars %>%
+  filter(!(site %in% c("Kibale", "Uppangala"))) %>% 
+  filter(attribute == "diversity_q1_gen") %>%
+  left_join(dist_p) %>%
+  ggplot(aes((1 - median_dist_ba) * 100, deltap)) +
+  geom_smooth(method = "lm", se = FALSE, col = "black", aes(group = NA)) +
+  geom_point() +
+  facet_wrap(~attribute, scales = "free_y") +
+  theme_bw() +
+  xlab(expression(dist[BA] ~ "[ % lost ]")) +
+  ylab(expression(delta~"'" ~ "[ % ]")) +
+  scale_color_discrete("") +
+  ggtitle(expression(Plot ~ delta ~ "~" ~ dist[BA])) +
+  ggpubr::stat_cor(aes(group = NA)) +
+  facet_wrap(~ site) +
+  scale_y_log10()
 ```

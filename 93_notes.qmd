@@ -2,6 +2,16 @@
 
 Meetings notes.
 
+## 31/01/24
+
+1.  delta upper boundary could be relaxed above 200%
+2.  we could try using plot level bump timing tau_p
+3.  Geno suggested hiding the points at 20 years for Misiones to see if we have the same issue than in Malinau and then we set a higher minimum bump timing tau min to ca 10 years
+4.  Andes suggested exploring successively the diversity \~ disturbance relationships starting from site, then continent and finally pantropically
+5.  Camille suggested normalizing bump intensity delta with asymptotic value thetaInf
+6.  Marielos suggested to investigate the link between treatments and basal area disturbance index (common with WG2)
+7.  For the environmental variables, I should add Soil Water Content from ERA5-Land and Dry Season Length from CHIRPS
+
 ## 29/01/24
 
 Sill to do list:

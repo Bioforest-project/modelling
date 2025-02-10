@@ -98,7 +98,7 @@ proj_fig(data_rec, data_pre, data_old, fit_stp, lab)
 
 ```{r}
 #| eval: false
-proj_fig(data_rec, data_pre, data_old, fit_stp, lab, sit = "Misiones")
+proj_fig(data_rec, data_pre, data_old, fit_stp, lab, sit = "Malinau")
 ```
 
 ```{r}
