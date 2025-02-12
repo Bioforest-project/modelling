@@ -81,7 +81,8 @@ biotic <- read_tsv("data/derived_data/data.tsv") %>%
 read_tsv(list.files(tmp_path, pattern = "pars", full.names = TRUE)) %>%
   mutate(continent = "America") %>%
   mutate(continent = ifelse(site %in% c("Kibale", "Mbaiki"),
-                            "Africa", continent)) %>%
+    "Africa", continent
+  )) %>%
   mutate(continent = ifelse(site %in% c(
     "Sg Lalang", "Ulu Muda",
     "Uppangala", "Malinau", "Lesong"
@@ -203,7 +204,7 @@ read_tsv("outputs/parameters.tsv") %>%
 read_tsv("outputs/parameters.tsv") %>%
   filter(parameter == "tau") %>%
   unique() %>%
-  mutate_at(c("median", "sd", "q5", "q95"), ~ .+3) %>% 
+  mutate_at(c("median", "sd", "q5", "q95"), ~ . + 3) %>%
   ggplot(aes(site, color = continent)) +
   geom_point(aes(y = median)) +
   geom_segment(aes(y = median - sd, yend = median + sd)) +
@@ -268,7 +269,7 @@ read_tsv("outputs/parameters.tsv") %>%
 read_tsv("outputs/parameters.tsv") %>%
   filter(parameter == "lambda", attribute == "ba") %>%
   unique() %>%
-  mutate_at(c("median", "sd", "q5", "q95"), ~ (log(10) / .) + 3) %>% 
+  mutate_at(c("median", "sd", "q5", "q95"), ~ (log(10) / .) + 3) %>%
   ggplot(aes(plot)) +
   geom_point(aes(y = median)) +
   facet_wrap(~site, scales = "free") +

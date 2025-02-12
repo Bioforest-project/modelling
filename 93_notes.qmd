@@ -2,6 +2,17 @@
 
 Meetings notes.
 
+## 12/02/24
+
+Quick chat with Camille, list of implementations:
+
+-   delta relative to thetaInf
+-   tau+3 in the model
+-   explore new delta boundaries
+-   check the negative value case with new delta expression
+-   add random effect with thetaInf_p
+-   include all needed derived parameters (delta_pct, dist_pct, y15)
+
 ## 31/01/24
 
 1.  delta upper boundary could be relaxed above 200%

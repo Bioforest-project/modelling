@@ -1,0 +1,326 @@
+---
+title: "Working Group 1"
+author: "Schmitt, S."
+date: last-modified
+format:
+  pdf:
+    number-sections: false
+    link-citations: true
+    colorlinks: true
+    fig-pos: H
+params:
+  site: "Misiones"
+execute:
+  echo: false
+bibliography: ../references.bib
+---
+
+```{r set}
+#| include: false
+library(tidyverse)
+library(cmdstanr)
+library(knitr)
+options(knitr.kable.NA = "")
+```
+
+The aim of this document is to help the **Group 1** on **LoggingDiversity** with principal investigator (**PI**) of each site exploring in depth:
+
+1.  **Basal area trajectories to gain confidence in each plot disturbance index** $dist_{BA}$;
+2.  **Genus diversity trajectories to gain confidence in each plot bump intensity** $\delta$**.**
+
+## Site
+
+This document summarises the forest attribute trajectories for the following sites, plots and treatments.
+
+```{r site}
+#| message: false
+read_tsv("../data/derived_data/data.tsv") %>%
+  filter(site == params$site) %>%
+  group_by(site, plot, treatment, harvest_year) %>%
+  summarise(year_min = min(year), year_max = max(year)) %>%
+  arrange(plot) %>%
+  kable(col.names = c(
+    "Site", "Plot", "Treatment", "Harvest year",
+    "First inventory", "Last inventory"
+  ))
+```
+
+## Model
+
+The model we use is derived from the common framework for modelling recovery in disturbed tropical forests [@maurent2023]. The forest attribute is first disturbed at $t=0$ with either an increase or a decrease depending on the parameter $dist$. Then the attributes recover asymptotically in the long term to an equilibrium value $\theta_{Inf}$ with a recovery rate $\lambda$. But the recovery trajectory can also accommodate a short term increase of decrease of the attribute at a time $\tau$ with an intensity $\delta$.
+
+```{r model_fig}
+#| warning: false
+#| message: false
+#| fig-cap: "Modelled trajectories and associated parameters."
+#| fig-pos: '!htb'
+ltp <- function(time, dist, thetainf, lambda) {
+  theta0 <- thetainf * dist
+  ltp <- 1 - exp(-lambda * time)
+  return(theta0 + (thetainf - theta0) * (ltp))
+}
+stp <- function(time, dist, thetainf, lambda, tau, delta) {
+  theta0 <- thetainf * dist
+  ltp <- 1 - exp(-lambda * time)
+  stp <- delta * (time / tau * exp(1 - time / tau))^2
+  return(theta0 + (thetainf - theta0) * (ltp + stp))
+}
+data.frame(time = seq(0.1, 50, length.out = 100)) %>%
+  mutate(y_stp = stp(time,
+    dist = 0.5, thetainf = 20, lambda = 0.05,
+    tau = 5, delta = 1
+  )) %>%
+  mutate(y_ltp = ltp(time, dist = 0.5, thetainf = 20, lambda = 0.05)) %>%
+  bind_rows(data.frame(time = 0, y_stp = 20, y_ltp = 20)) %>%
+  ggplot(aes(time)) +
+  geom_line(aes(y = y_ltp), col = "grey") +
+  geom_line(aes(y = y_stp)) +
+  theme_bw() +
+  annotate("text",
+    x = 52, y = 19.5, label = "theta[infinity]",
+    col = "#9ea1d4", parse = TRUE, size = 5
+  ) +
+  annotate("text",
+    x = 20, y = 15, label = "lambda",
+    col = "#a8d2d1", parse = TRUE, size = 5
+  ) +
+  annotate("text",
+    x = -4, y = 15, label = "dist",
+    col = "#fc8a8a", parse = TRUE, size = 5
+  ) +
+  theme(axis.title = element_blank()) +
+  geom_segment(aes(x = -2, y = 10, xend = -2, yend = 20),
+    arrow = arrow(length = unit(0.2, "cm")), col = "#fc8a8a"
+  ) +
+  geom_segment(aes(x = -2, y = 20, xend = -2, yend = 10),
+    arrow = arrow(length = unit(0.2, "cm")), col = "#fc8a8a"
+  ) +
+  annotate("text",
+    x = 6, y = 9.3, label = "tau",
+    col = "#f2e5a9", parse = TRUE, size = 5
+  ) +
+  annotate("text",
+    x = 5, y = 17.5, label = "delta",
+    col = "#a7d6ac", parse = TRUE, size = 5
+  ) +
+  geom_segment(aes(x = 6, y = 13, xend = 6, yend = 22),
+    arrow = arrow(length = unit(0.2, "cm")), col = "#a7d6ac"
+  ) +
+  geom_segment(aes(x = 6, y = 22, xend = 6, yend = 13),
+    arrow = arrow(length = unit(0.2, "cm")), col = "#a7d6ac"
+  ) +
+  geom_segment(aes(x = 6, y = 9, xend = 6, yend = 7),
+    arrow = arrow(length = unit(0.2, "cm")), col = "#f2e5a9"
+  ) +
+  theme(axis.title = element_blank()) +
+  geom_segment(aes(x = -5, y = 20, xend = 0, yend = 20)) +
+  ylim(7, NA)
+```
+
+## Basal area
+
+Basal areas in square meter per square meter directly derived from diameter censuses.
+
+```{r ba}
+#| message: false
+#| warning: false
+#| fig-cap: "Recovery trajectory of basal area. Lines represent inferred recovery trajectories using the above model. Points represent observed values from inventories. Colours correspond to the different plots. The box plot at year zero represents the basal area variation in the prelogging stands. The box plot at 45 years represents the attribute basal area in the control stands." #nolint
+data_rec <- read_tsv("../data/derived_data/data_rec.tsv") %>%
+  filter(variable == "ba")
+data_pre <- read_tsv("../data/derived_data/data_pre.tsv") %>%
+  filter(variable == "ba")
+data_old <- read_tsv("../data/derived_data/data_old.tsv") %>%
+  filter(variable == "ba")
+path <- file.path("..", "chains", "ba", "stp")
+fit_stp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
+projs <- fit_stp$summary("y_pred", "median") %>%
+  separate(variable,
+    c("y", "pred", "rel_year", "plotnum_rec"),
+    convert = TRUE
+  ) %>%
+  select(-y, -pred) %>%
+  rename(y = median) %>%
+  mutate(rel_year = rel_year + 3) %>%
+  left_join(data_rec %>%
+              select(site, plot, plotnum_rec) %>%
+              unique()) %>%
+  filter(site == params$site) %>%
+  filter(rel_year <= 40)
+data_pre <- filter(data_pre, site == params$site)
+data_rec <- filter(data_rec, site == params$site)
+data_old <- filter(data_old, site == params$site)
+projs %>%
+  ggplot(aes(rel_year, y)) +
+  geom_boxplot(
+    data = data_old %>% mutate(rel_year = 45),
+    width = 4, fill = NA
+  ) +
+  geom_boxplot(
+    data = data_pre %>% mutate(rel_year = -1),
+    width = 4, fill = NA
+  ) +
+  geom_point(aes(group = paste(site, plot), col = plot),
+    data = data_rec, alpha = .5
+  ) +
+  geom_line(aes(group = paste(site, plot), col = plot)) +
+  facet_wrap(~site, scales = "free") +
+  theme_bw() +
+  xlab("") +
+  theme(legend.position = "bottom") +
+  ylab(expression("BA [" ~ m^2 ~ m^{
+    -2
+  } ~ "]")) +
+  scale_color_discrete(guide = "none") +
+  ggrepel::geom_text_repel(
+    aes(label = plot, col = plot),
+    filter(projs, rel_year == 40)
+  )
+```
+
+```{r dist}
+#| message: false
+#| warning: false
+#| fig-cap: "Disturbance index for basal area dist_BA per plot in % of area lost. The point represents the median value of the posterior, while the line represents the 90% confidence interval. The colour refers to the convergence metric Rhat for diagnosis, with Rhat above 1.1 indicating poor exploration of the parameter (lack of chain mixing)."#nolint
+dist <- read_tsv("../outputs/parameters.tsv") %>%
+  filter(attribute == "ba", parameter == "dist", site == params$site) %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ (1 - .) * 100)
+ggplot(dist, aes(plot, median,
+                 label = paste0(round(median), "%"), col = rhat)) +
+  geom_point() +
+  geom_text(nudge_x = .4) +
+  geom_segment(aes(y = q5, yend = q95)) +
+  theme_bw() +
+  coord_flip() +
+  ylab(expression(dist[BA] ~ "[ % lost ]")) +
+  xlab("Plot") +
+  scale_color_viridis_c(expression(hat(R)))
+```
+
+## Genus diversity
+
+Genus diversity is measured using Hill's number with order $q=1$. Hill's numbers are parameterised by a diversity order $q$, which determines the sensitivity of the measures to the relative abundances of species. Hill's numbers include the three most commonly used measures of species diversity as special cases: species richness (q = 0), Shannon diversity (q = 1) and Simpson diversity (q = 2). The indices were derived from taxonomic censuses and cleaned taxonomies using the R package entropart [@marcon2015]. Finally, to account for differences in species identification, the indices have been corrected by a rarefaction curve, taking into account the value at 80% coverage.
+
+```{r diversity_q1_gen}
+#| message: false
+#| warning: false
+#| fig-cap: "Recovery trajectory of forest attributes. Lines represent inferred recovery trajectories using the above model. Points represent observed values from inventories. Colours correspond to the different plots. The box plot at year zero represents the attribute variation in the prelogging stands. The box plot at 45 years represents the attribute variation in the control stands." #nolint
+data_rec <- read_tsv("../data/derived_data/data_rec.tsv") %>%
+  filter(variable == "diversity_q1_gen")
+data_pre <- read_tsv("../data/derived_data/data_pre.tsv") %>%
+  filter(variable == "diversity_q1_gen")
+data_old <- read_tsv("../data/derived_data/data_old.tsv") %>%
+  filter(variable == "diversity_q1_gen")
+path <- file.path("..", "chains", "diversity_q1_gen", "stp")
+fit_stp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
+projs <- fit_stp$summary("y_pred", "median") %>%
+  separate(variable,
+    c("y", "pred", "rel_year", "plotnum_rec"),
+    convert = TRUE
+  ) %>%
+  select(-y, -pred) %>%
+  rename(y = median) %>%
+  mutate(rel_year = rel_year + 3) %>%
+  left_join(data_rec %>%
+              select(site, plot, plotnum_rec) %>%
+              unique()) %>%
+  filter(site == params$site) %>%
+  filter(rel_year <= 40)
+data_pre <- filter(data_pre, site == params$site)
+data_rec <- filter(data_rec, site == params$site)
+data_old <- filter(data_old, site == params$site)
+projs %>%
+  ggplot(aes(rel_year, y)) +
+  geom_boxplot(
+    data = data_old %>% mutate(rel_year = 45),
+    width = 4, fill = NA
+  ) +
+  geom_boxplot(
+    data = data_pre %>% mutate(rel_year = -1),
+    width = 4, fill = NA
+  ) +
+  geom_point(aes(group = paste(site, plot), col = plot),
+    data = data_rec, alpha = .5
+  ) +
+  geom_line(aes(group = paste(site, plot), col = plot)) +
+  facet_wrap(~site, scales = "free") +
+  theme_bw() +
+  xlab("") +
+  theme(legend.position = "bottom") +
+  ylab(expression("Genus diversity" ~ q == 1)) +
+  scale_color_discrete(guide = "none") +
+  ggrepel::geom_text_repel(
+    aes(label = plot, col = plot),
+    filter(projs, rel_year == 40)
+  )
+```
+
+```{r delta}
+#| message: false
+#| warning: false
+#| fig-cap: "Bump intensity for genus diversity delta per plot in %. The point represents the median value of the posterior, while the line represents the 90% confidence interval. The colour refers to the convergence metric Rhat for diagnosis, with Rhat above 1.1 indicating poor exploration of the parameter (lack of chain mixing)."#nolint
+thetaInf <- read_tsv("../outputs/parameters.tsv") %>%  #nolint
+  filter(attribute == "diversity_q1_gen", parameter == "thetaInf") %>%
+  select(attribute, parameter, site, median) %>%
+  pivot_wider(names_from = parameter, values_from = median)
+dist_div <- read_tsv("../outputs/parameters.tsv") %>%
+  filter(attribute == "diversity_q1_gen", parameter == "dist") %>%
+  select(attribute, parameter, site, plot, median) %>%
+  pivot_wider(names_from = parameter, values_from = median)
+delta <- read_tsv("../outputs/parameters.tsv") %>%
+  filter(attribute == "diversity_q1_gen",
+         parameter == "delta", site == params$site) %>%
+  left_join(thetaInf) %>%
+  left_join(dist_div) %>%
+  mutate_at(
+    c("median", "sd", "q5", "q95"),
+    ~ (. * thetaInf) / (thetaInf - (thetaInf * dist))
+  )
+delta %>%
+  mutate(q5 = ifelse(q5 < 0.1, 0.1, q5)) %>%
+  mutate(q95 = ifelse(q95 > 100, 100, q95)) %>%
+  ggplot(aes(plot, median, label = paste0(round(median), "%"), col = rhat)) +
+  geom_point() +
+  geom_text(nudge_x = .4) +
+  geom_segment(aes(y = q5, yend = q95)) +
+  theme_bw() +
+  coord_flip() +
+  ylab(expression(delta ~ "[ % ]")) +
+  xlab("Plot") +
+  scale_color_viridis_c(expression(hat(R))) +
+  scale_y_log10()
+```
+
+## Diveristy & intensity
+
+```{r divint}
+#| message: false
+#| warning: false
+#| fig-cap: "Diversity disturbance relation. x axis represents disturbance index for basal area dist_BA per plot in % of area lost. y axis represents nump intensity for genus diversity delta per plot in %. The point represents the median value of the posterior, while the line represents the 90% confidence interval." #nolint
+dist %>%
+  select(site, plot, median, sd, q5, q95) %>%
+  unique() %>%
+  rename_at(c("median", "sd", "q5", "q95"), ~ paste0(., "_dist_ba")) %>%
+  left_join(delta) %>%
+  mutate(q5 = ifelse(q5 < 0.1, 0.1, q5)) %>%
+  mutate(q95 = ifelse(q95 > 100, 100, q95)) %>%
+  ggplot(aes(median_dist_ba, median, label = plot)) +
+  geom_smooth(
+    method = "lm", se = FALSE,
+    col = "lightgrey"
+  ) +
+  geom_point() +
+  geom_segment(aes(y = q5, yend = q95), alpha = .5) +
+  geom_segment(aes(x = q5_dist_ba, xend = q95_dist_ba), alpha = .5) +
+  ggrepel::geom_text_repel() +
+  theme_bw() +
+  xlab(expression(dist[BA] ~ "[ % lost ]")) +
+  ylab(expression(delta ~ "[ % ]")) +
+  scale_color_discrete("") +
+  ggpubr::stat_cor(aes(group = NA)) +
+  scale_y_log10()
+```
+
+## References
+
+::: {#refs}
+:::

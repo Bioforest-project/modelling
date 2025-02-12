@@ -105,16 +105,16 @@ read_tsv("data/derived_data/bounds.tsv") %>%
 
 ```{r fit_all}
 #| eval: false
-# ltp <- cmdstan_model("models/ltp.stan")
+# ltp <- cmdstan_model("models/ltp.stan") #nolint
 stp <- cmdstan_model("models/stp.stan")
-# vars <- c(
-#   "nstem", "agb", "WD_cwm_ba", "FDiv", "diversity_q1_gen", "gini",
-#   "ba", "FEve", "SLA_cwm_ba", "N_cwm_ba", "hmax_cwm_ba"
-# )
+# vars <- c( #nolint
+#   "nstem", "agb", "WD_cwm_ba", "FDiv", "diversity_q1_gen", "gini", #nolint
+#   "ba", "FEve", "SLA_cwm_ba", "N_cwm_ba", "hmax_cwm_ba" #nolint
+# ) #nolint
 vars <- "FDiv"
-# for (var in vars) {
-#   sample_model(var, "ltp")
-# }
+# for (var in vars) { #nolint
+#   sample_model(var, "ltp") #nolint
+# } #nolint
 for (var in vars) {
   sample_model(var, "stp")
 }
