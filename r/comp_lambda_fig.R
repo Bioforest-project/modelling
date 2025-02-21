@@ -6,7 +6,7 @@ comp_lambda_fig <- function(
     select(site, plot, sitenum, plotnum_rec) %>%
     unique() %>%
     arrange(plotnum_rec)
-  g <- fit_ltp$summary("lambda_p", "mean") %>%
+  fit_ltp$summary("lambda_p", "mean") %>%
     rename(ltp = mean) %>%
     left_join(
       fit_stp$summary("lambda_p", "mean") %>%
@@ -24,5 +24,4 @@ comp_lambda_fig <- function(
     scale_color_discrete("") +
     xlab("LTP") +
     ylab("STP")
-  return(g)
 }

@@ -59,8 +59,7 @@ site_fig <- function(
     filter(variable == var)
   path <- file.path("..", "chains", var, "stp")
   fit_stp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
-  g <- proj_fig(data_rec, data_pre, data_old, fit_stp, lab, sit = site)
-  return(g)
+  proj_fig(data_rec, data_pre, data_old, fit_stp, lab, sit = site)
 }
 ```
 
@@ -97,13 +96,13 @@ The model we use is derived from the common framework for modelling recovery in 
 ltp <- function(time, dist, thetainf, lambda) {
   theta0 <- thetainf * dist
   ltp <- 1 - exp(-lambda * time)
-  return(theta0 + (thetainf - theta0) * (ltp))
+  theta0 + (thetainf - theta0) * (ltp)
 }
 stp <- function(time, dist, thetainf, lambda, tau, delta) {
   theta0 <- thetainf * dist
   ltp <- 1 - exp(-lambda * time)
   stp <- delta * (time / tau * exp(1 - time / tau))^2
-  return(theta0 + (thetainf - theta0) * (ltp + stp))
+  theta0 + (thetainf - theta0) * (ltp + stp)
 }
 data.frame(time = seq(0.1, 50, length.out = 100)) %>%
   mutate(y_stp = stp(time,

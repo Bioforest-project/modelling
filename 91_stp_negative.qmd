@@ -44,7 +44,7 @@ model <- function(time, dist, thetainf, lambda, tau, delta) {
   theta0 <- thetainf * dist
   ltp <- 1 - exp(-lambda * time)
   stp <- delta * (time / tau * exp(1 - time / tau))^2
-  return(theta0 + (thetainf - theta0) * (ltp + stp))
+  theta0 + (thetainf - theta0) * (ltp + stp)
 }
 data.frame(time = 1:50) %>%
   mutate(y = model(time,

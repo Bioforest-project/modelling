@@ -24,5 +24,5 @@ pvo_fig <- function(
     theme(legend.position = "bottom") +
     xlab("Predicted") +
     ylab("Observed")
-  return(g_pre + g_rec)
+  g_pre + g_rec
 }
