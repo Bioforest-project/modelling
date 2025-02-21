@@ -13,7 +13,6 @@ data {
   array[n_pre] int<lower=0, upper=n_site> site_pre;
   array[n_rec] int<lower=0, upper=n_plot_rec> plot_rec;
   array[n_plot_rec] int<lower=0, upper=n_site> site_plot_rec;
-  array[2] real mu_thetaInf_bounds;
   array[2] real thetaInf_bounds;
   array[2] real lambda_bounds;
   array[2] real dist_bounds;
@@ -33,7 +32,7 @@ parameters {
   real<lower=lambda_bounds[1], upper=lambda_bounds[2]> mu_lambda; // recovery rate
   real<lower=0> sigma_lambda;
   vector<lower=lambda_bounds[1], upper=lambda_bounds[2]>[n_plot_rec] lambda_p;
-  real<lower=mu_thetaInf_bounds[1], upper=mu_thetaInf_bounds[2]> mu_thetaInf; // ending point
+  real<lower=thetaInf_bounds[1], upper=thetaInf_bounds[2]> mu_thetaInf; // ending point
   real<lower=0> sigma_thetaInf;
   vector<lower=thetaInf_bounds[1], upper=thetaInf_bounds[2]>[n_site] thetaInf_s;
   real<lower=0> sigma_old;
@@ -42,8 +41,8 @@ parameters {
   real<lower=delta_bounds[1], upper=delta_bounds[2]> mu_delta; // str var
   vector<lower=delta_bounds[1], upper=delta_bounds[2]>[n_plot_rec] delta_p;
   real<lower=0> sigma_delta;
-  real<lower=tau_bounds[1], upper=tau_bounds[2]> mu_tau; //str time
-  vector<lower=tau_bounds[1], upper=tau_bounds[2]>[n_site] tau_s;
+  real<lower=tau_bounds[1]-3, upper=tau_bounds[2]-3> mu_tau_0; //str time
+  vector<lower=tau_bounds[1]-3, upper=tau_bounds[2]-3>[n_site] tau_0_s;
   real<lower=0> sigma_tau;
 }
 transformed parameters {
@@ -52,11 +51,11 @@ transformed parameters {
   vector[n_pre] mu_pre = thetaInf_s[site_pre];
   vector[n_rec] ltp_rec = 1 - exp(-lambda_p[plot_rec] .* time);
   vector[n_rec] stp_rec = delta_p[plot_rec] .* 
-                           (time ./ tau_s[site_rec] .* exp( 1 - time ./ tau_s[site_rec] )) .*
-                           (time ./ tau_s[site_rec] .* exp( 1 - time ./ tau_s[site_rec] ));
+                           (time ./ tau_0_s[site_rec] .* exp( 1 - time ./ tau_0_s[site_rec] )) .*
+                           (time ./ tau_0_s[site_rec] .* exp( 1 - time ./ tau_0_s[site_rec] ));
   vector[n_rec] mu_rec = theta0_p[plot_rec] + 
-                         (thetaInf_s[site_rec] - theta0_p[plot_rec]) .* 
-                         (ltp_rec+stp_rec);
+                         ltp_rec .* (thetaInf_s[site_rec] - theta0_p[plot_rec]) + 
+                         stp_rec .* thetaInf_s[site_rec];
 }
 model {
   log(y_old) ~ normal(log(mu_old), sigma_old);
@@ -66,7 +65,7 @@ model {
   thetaInf_s ~ cauchy(mu_thetaInf, sigma_thetaInf);
   lambda_p ~ cauchy(mu_lambda, sigma_lambda);
   delta_p ~ cauchy(mu_delta, sigma_delta);
-  tau_s ~ cauchy(mu_tau, sigma_tau);
+  tau_0_s ~ cauchy(mu_tau_0, sigma_tau);
   sigma_old ~ std_normal();
   sigma_pre ~ std_normal();
   sigma_rec ~ std_normal();
@@ -78,13 +77,24 @@ model {
 }
 generated quantities {
   matrix[time_max, n_plot_rec] y_pred;
+  vector[n_plot_rec] y15_rel_p;
+  real mu_tau = mu_tau_0 + 3;
+  vector[n_site] tau_s = tau_0_s + 3;
+  real mu_t90 = log(10) / mu_lambda + 3;
+  vector[n_plot_rec] t90_p = log(10) / lambda_p + 3;
+  real mu_delta_pct = (1-mu_delta)*100;
+  vector[n_plot_rec] delta_pct_p = (1-delta_p)*100;
+  real mu_dist_pct = mu_dist*100;
+  vector[n_plot_rec] dist_pct_p = dist_p*100;
   for(p in 1:n_plot_rec)
     y_pred[,p] = theta0_p[p] + 
                  (thetaInf_s[site_plot_rec[p]] - theta0_p[p]) * 
-                 (1 - exp(-lambda_p[p] * time_pred) +
-                 delta_p[p] * 
-                 (time_pred / tau_s[site_plot_rec[p]] .* 
-                 exp( 1 - time_pred ./ tau_s[site_plot_rec[p]] )) .*
-                 (time_pred / tau_s[site_plot_rec[p]] .* 
-                 exp( 1 - time_pred ./ tau_s[site_plot_rec[p]] )));
+                 (1 - exp(-lambda_p[p] * time_pred)) +
+                 thetaInf_s[site_plot_rec[p]] * 
+                 (delta_p[p] * 
+                 (time_pred / tau_0_s[site_plot_rec[p]] .* 
+                 exp( 1 - time_pred ./ tau_0_s[site_plot_rec[p]] )) .*
+                 (time_pred / tau_0_s[site_plot_rec[p]] .* 
+                 exp( 1 - time_pred ./ tau_0_s[site_plot_rec[p]] )));
+   y15_rel_p = to_vector(y_pred[(15+3),]) ./ thetaInf_s[site_plot_rec];
 }

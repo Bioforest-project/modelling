@@ -1,0 +1,349 @@
+```{r set}
+#| message: false
+#| include: false
+library(tidyverse)
+library(knitr)
+library(cmdstanr)
+list.files("r", full.names = TRUE, pattern = ".R") %>%
+  lapply(source)
+```
+
+# Parameters
+
+This section explore parameters all raw and derived parameters for each variable attribute and with co-variables.
+
+```{r data}
+#| eval: false
+tmp_path <- file.path("outputs", "pars_tmp")
+dir.create(tmp_path)
+model <- "stp"
+index_p <- read_tsv("data/derived_data/data_rec.tsv") %>%
+  select(site, plot, sitenum, plotnum_rec) %>%
+  unique()
+index_s <- index_p %>%
+  mutate(plot = NA, plotnum_rec = NA) %>%
+  unique()
+vars <- c(
+  "ba", "agb", "nstem", "gini",
+  "diversity_q1_gen", "FDiv",
+  "WD_cwm_ba", "SLA_cwm_ba"
+)
+for (var in vars) {
+  path <- file.path("chains", var, model)
+  fit <- as_cmdstan_fit(list.files(path, full.names = TRUE))
+  pars_a <- fit$summary(c(
+    "lp__", "mu_dist", "mu_lambda", "mu_thetaInf",
+    "mu_delta", "mu_tau", "mu_t90", "mu_delta_pct", "mu_dist_pct"
+  )) %>%
+    rename(parameter = variable) %>%
+    mutate(
+      level = "inter", site = NA, plot = NA,
+      sitenum = NA, plotnum_rec = NA
+    ) %>%
+    select(
+      parameter, level, site, plot, sitenum, plotnum_rec,
+      mean, median, sd, mad, q5, q95,
+      rhat, ess_bulk, ess_tail
+    )
+  pars_s <- fit$summary(c("tau_s", "thetaInf_s")) %>%
+    separate(variable, c("parameter", "s", "sitenum"), convert = TRUE) %>%
+    select(-s) %>%
+    left_join(index_s) %>%
+    mutate(level = "site") %>%
+    select(
+      parameter, level, site, plot, sitenum, plotnum_rec,
+      mean, median, sd, mad, q5, q95,
+      rhat, ess_bulk, ess_tail
+    )
+  pars_p <- fit$summary(c(
+    "dist_p", "delta_p", "lambda_p",
+    "t90_p", "delta_pct_p", "dist_pct_p", "y15_rel_p"
+  )) %>%
+    mutate(variable = gsub("delta_pct", "deltapct", variable)) %>%
+    mutate(variable = gsub("dist_pct", "distpct", variable)) %>%
+    mutate(variable = gsub("y15_rel", "y15rel", variable)) %>%
+    separate(variable, c("parameter", "p", "plotnum_rec"), convert = TRUE) %>%
+    select(-p) %>%
+    mutate(parameter = gsub("deltapct", "delta_pct", parameter)) %>%
+    mutate(parameter = gsub("distpct", "dist_pct", parameter)) %>%
+    mutate(parameter = gsub("y15rel", "y15_rel", parameter)) %>%
+    left_join(index_p) %>%
+    mutate(level = "plot") %>%
+    select(
+      parameter, level, site, plot, sitenum, plotnum_rec,
+      mean, median, sd, mad, q5, q95,
+      rhat, ess_bulk, ess_tail
+    )
+  bind_rows(pars_a, pars_s, pars_p) %>%
+    mutate(attribute = var, .before = parameter) %>%
+    write_tsv(file.path(tmp_path, paste0(model, "_", var, "_pars.tsv")))
+}
+biotic <- read_tsv("data/derived_data/data.tsv") %>%
+  filter(treatment != "logged" | rel_year <= 0) %>%
+  filter(variable %in% c(
+    "gini", "SLA_cwm_ba", "WD_cwm_ba",
+    "diversity_q1_gen", "FDiv"
+  )) %>%
+  group_by(site, variable) %>%
+  summarise(value = mean(value)) %>%
+  mutate(variable = paste0(variable, "_s")) %>%
+  pivot_wider(names_from = variable, values_from = value)
+read_tsv(list.files(tmp_path, pattern = "pars", full.names = TRUE)) %>%
+  mutate(continent = "America") %>%
+  mutate(continent = ifelse(site %in% c("Kibale", "Mbaiki"),
+    "Africa", continent
+  )) %>%
+  mutate(continent = ifelse(site %in% c(
+    "Sg Lalang", "Ulu Muda",
+    "Uppangala", "Malinau", "Lesong"
+  ),
+  "Asia", continent
+  )) %>%
+  mutate(type = "structure") %>%
+  mutate(type = ifelse(attribute %in% c("diversity_q1_gen", "FDiv"),
+    "diversity", type
+  )) %>%
+  mutate(type = ifelse(attribute %in% c(
+    "SLA_cwm_ba", "WD_cwm_ba"
+  ), "functional", type)) %>%
+  left_join(read_tsv("data/raw_data/environment.tsv")) %>%
+  left_join(biotic) %>%
+  write_tsv("outputs/parameters.tsv")
+unlink(tmp_path, recursive = TRUE)
+```
+
+The available data are:
+
+-   **Attributes**: forest attributes for which post logging trajectories have been modelled
+    -   **structure**: biomass **agb**, basal area **ba**, number of stems **nstem**, Gini index **gini**
+    -   **diversity**: genus diversity **diversity_q1_gen**, functional diversity **FDiv**
+    -   **functional**: specific leaf area **SLA_cwm_ba**, wood density **WD_cwm_ba**, asymptotic height **hmax_cwm_ba**
+-   **Raw and derived parameters**: model parameters for each attribute at **inter-site**, **site** & **plot** levels (see <https://bioforest-project.github.io/modelling/21_models.html#stp>)
+    -   **dist**: disturbance index $dist$
+    -   **tau**: bump timing $\tau$ years lag
+    -   **delta**: bump intensity $\delta$
+    -   **lambda**: recovery rate $\lambda$
+    -   **thetaInf**: asymptotic value $\theta_{Inf}$.
+    -   **t90**: recovery time $t_{90}$, derived from $\lambda$ with $t_{90}=\frac{log(10)}{\lambda}$years lag
+    -   **dist_pct**: disturbance index in pecent $dist_{pct} = (1-dist)\times100$
+    -   **delta_pct**: bump intensity in percent $\delta_{pct} = \delta \times 100$
+    -   **y15_rel**: 15-year relative bump $y15_{rel} = \frac{\hat{y_{t=15}}}{\theta_{Inf}}$
+-   **Parameter metrics**
+    -   metrics on posterior distribution: mean **mean**, median **median**, standard deviation **sd**, median absolute deviation **mad**, 5th quantile **q5**, 95th quantile **q95**
+    -   metrics on quality of fit for diagnostic: Rhat convergence diagnostic **rhat**, bulk effective sample size **ess_bulk**, tail effective sample size **ess_tail**
+-   **Variables**: associated variables at site or plot level (see <https://bioforest-project.github.io/environment/>)
+    -   **continent**
+    -   climate: actual evapotranspiration **ET**, climate water deficit **CWD**, Palmer drought sensitivity index **PDSI**, potential evapotranspiration **PET**, precipitaiton **Pr**, maximum temperature **Tmax**, minimum temperature **Tmin**, vapour pressure deficit **VPD**
+    -   soil: proportion of clay **clay**, proportion of sand **sand**, proportion of silt **silt**, bulk density **BD**, cation exchange capacity **CEC**, coarse fragments **CF**, nitrogen **N**, **pH**, soil organic content **SOC**, organic carbon density **OCD**
+    -   landscape: mean landscape deforested percentage **deforested**
+    -   biotic: mean site pre-logging and control gini index **gini_s**, specific leaf area **SLA_cwm_ba_s**, wood density **WD_cwm_ba_s**, and genus diversity **diversity_q1_gen_s**
+
+## Likelihood convergence
+
+```{r lp_rhat}
+#| message: false
+#| fig-cap: "Likelihood convergence per forest attribute."
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "lp__") %>%
+  ggplot(aes(forcats::fct_reorder(attribute, desc(rhat)),
+    rhat,
+    fill = rhat
+  )) +
+  geom_col() +
+  coord_flip() +
+  theme_bw() +
+  scale_fill_viridis_c(expression(hat(R)), trans = "log") +
+  theme(axis.title = element_blank())
+```
+
+## Inter-site
+
+```{r inter}
+#| message: false
+#| warning: false
+#| fig-cap: "thetaInf across sites"
+read_tsv("outputs/parameters.tsv") %>%
+  filter(
+    level == "inter",
+    parameter != "lp__", parameter != "mu_thetaInf"
+  ) %>%
+  filter(!(parameter %in% c("mu_delta_pct", "mu_dist_pct", "mu_t90"))) %>%
+  mutate(parameter = recode(parameter,
+    "mu_delta" = "mu[~delta]",
+    "mu_dist" = "mu[~dist]",
+    "mu_lambda" = "mu[~lambda]",
+    "mu_tau" = "mu[~tau]"
+  )) %>%
+  mutate(attribute = recode(attribute,
+    "ba" = "Str - BA",
+    "agb" = "Str - AGB",
+    "nstem" = "Str - Stem",
+    "gini" = "Str - Gini",
+    "diversity_q1_gen" = "Div - Genus q=1",
+    "FDiv" = "Div - FDiv",
+    "WD_cwm_ba" = "Func - WD",
+    "SLA_cwm_ba" = "Func - SLA",
+    "N_cwm_ba" = "Func - N"
+  )) %>%
+  ggplot(aes(x = attribute, col = type)) +
+  geom_point(aes(y = median)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
+  facet_wrap(~parameter, scales = "free", labeller = label_parsed) +
+  coord_flip() +
+  theme_bw() +
+  xlab("") +
+  ylab("") +
+  ylim(0, NA)
+```
+
+## Site
+
+### Asymptotic value $\theta_{inf}$
+
+```{r thetaInf}
+#| message: false
+#| warning: false
+#| fig-cap: "thetaInf across sites"
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "thetaInf") %>%
+  unique() %>%
+  ggplot(aes(site, color = continent)) +
+  geom_point(aes(y = median)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
+  facet_wrap(~attribute, scales = "free_x") +
+  theme_bw() +
+  coord_flip() +
+  ylab(expression(theta[Inf])) +
+  xlab("")
+```
+
+### Bump time $\tau$
+
+```{r tau}
+#| message: false
+#| warning: false
+#| fig-cap: "tau across sites"
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "tau") %>%
+  unique() %>%
+  mutate_at(c("median", "sd", "q5", "q95"), ~ . + 3) %>%
+  ggplot(aes(site, color = continent)) +
+  geom_point(aes(y = median)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
+  facet_wrap(~attribute) +
+  theme_bw() +
+  coord_flip() +
+  ylab(expression(tau)) +
+  xlab("")
+```
+
+## Plot
+
+### Disturbance index $dist$
+
+```{r dist}
+#| message: false
+#| warning: false
+#| fig-cap: "dist across sites & plots for BA"
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "dist_pct", attribute == "ba") %>%
+  unique() %>%
+  ggplot(aes(plot)) +
+  geom_point(aes(y = median)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
+  facet_wrap(~site, scales = "free_y") +
+  theme_bw() +
+  coord_flip() +
+  ylab(expression(dist[BA] ~ "[ % lost ]")) +
+  xlab("Plot") +
+  ggtitle("Str - BA")
+```
+
+### Recovery rate $\lambda$
+
+```{r lambda}
+#| message: false
+#| warning: false
+#| fig-cap: "lambda across sites & plots for BA"
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "lambda", attribute == "ba") %>%
+  ggplot(aes(plot)) +
+  geom_point(aes(y = median)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
+  facet_wrap(~site, scales = "free") +
+  theme_bw() +
+  coord_flip() +
+  ylab(expression(lambda)) +
+  xlab("Plot") +
+  ggtitle("Str - BA") +
+  scale_y_log10()
+```
+
+### Recovery time $t_{90}$
+
+```{r t90}
+#| message: false
+#| warning: false
+#| fig-cap: "t90 across sites & plots for BA"
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "t90", attribute == "ba") %>%
+  unique() %>%
+  ggplot(aes(plot)) +
+  geom_point(aes(y = median)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
+  facet_wrap(~site, scales = "free") +
+  theme_bw() +
+  coord_flip() +
+  ylab(expression(t[90] ~ "[ yr ]")) +
+  xlab("Plot") +
+  ggtitle("Str - BA") +
+  scale_y_log10()
+```
+
+### Bump intensity $\delta$
+
+```{r delta}
+#| message: false
+#| warning: false
+#| fig-cap: "delta across sites & plots for AGB"
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "delta_pct", attribute == "diversity_q1_gen") %>%
+  unique() %>%
+  ggplot(aes(plot)) +
+  geom_point(aes(y = median)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
+  facet_wrap(~site, scales = "free") +
+  theme_bw() +
+  coord_flip() +
+  ylab(expression(delta ~ "[ % ]")) +
+  xlab("Plot") +
+  ggtitle("Div - Genus q=1")
+```
+
+### 15-year relative bump  $y15_{rel}$
+
+```{r y15_rel}
+#| message: false
+#| warning: false
+#| fig-cap: "delta across sites & plots for AGB"
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "y15_rel", attribute == "diversity_q1_gen") %>%
+  unique() %>%
+  ggplot(aes(plot)) +
+  geom_point(aes(y = median * 100)) +
+  geom_segment(aes(y = (median - sd) * 100, yend = (median + sd) * 100)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
+  facet_wrap(~site, scales = "free") +
+  theme_bw() +
+  coord_flip() +
+  ylab(expression(y15[rel] ~ "[ % ]")) +
+  xlab("Plot") +
+  ggtitle("Div - Genus q=1")
+```

@@ -1,0 +1,324 @@
+```{r set}
+#| message: false
+#| include: false
+library(tidyverse)
+library(knitr)
+```
+
+# Group 2 {.unnumbered}
+
+Group 2 blabla. We started from 3 questions:
+
+-   **Q1**. How do forest attributes vary in recovery rates in the long-term?
+-   **Q2**. How does recovery time vary with disturbance intensities?
+-   **Q3**. How do abiotic and biotic factors modify recovery rates?
+
+## Q1 - Recovery rates
+
+> Q1. How do forest attributes vary in recovery rates in the long-term?
+
+```{r lambda_a}
+#| message: false
+#| warning: false
+read_tsv("outputs/parameters.tsv") %>%
+  filter(
+    level == "inter",
+    parameter != "lp__", parameter == "mu_lambda"
+  ) %>%
+  mutate(attribute = recode(attribute,
+    "ba" = "Str - BA",
+    "agb" = "Str - AGB",
+    "nstem" = "Str - Stem",
+    "gini" = "Str - Gini",
+    "diversity_q1_gen" = "Div - Genus q=1",
+    "FDiv" = "Div - FDiv",
+    "WD_cwm_ba" = "Func - WD",
+    "SLA_cwm_ba" = "Func - SLA",
+    "N_cwm_ba" = "Func - N"
+  )) %>%
+  ggplot(aes(x = attribute, col = type)) +
+  geom_point(aes(y = median)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
+  coord_flip() +
+  theme_bw() +
+  ylab(expression(mu[~lambda])) +
+  xlab("") +
+  ylim(0, NA)
+```
+
+```{r t90_a}
+#| message: false
+#| warning: false
+read_tsv("outputs/parameters.tsv") %>%
+  filter(
+    level == "inter",
+    parameter != "lp__", parameter == "mu_t90"
+  ) %>%
+  mutate(attribute = recode(attribute,
+    "ba" = "Str - BA",
+    "agb" = "Str - AGB",
+    "nstem" = "Str - Stem",
+    "gini" = "Str - Gini",
+    "diversity_q1_gen" = "Div - Genus q=1",
+    "FDiv" = "Div - FDiv",
+    "WD_cwm_ba" = "Func - WD",
+    "SLA_cwm_ba" = "Func - SLA",
+    "N_cwm_ba" = "Func - N"
+  )) %>%
+  ggplot(aes(x = attribute, col = type)) +
+  geom_point(aes(y = median)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
+  coord_flip() +
+  theme_bw() +
+  ylab(expression(mu[~t90] ~ "[" ~ years ~ "]")) +
+  xlab("") +
+  scale_y_log10()
+```
+
+## Q2 - Recovery time & intensity
+
+> Q2. How does recovery time vary with disturbance intensities?
+
+```{r lambda_dist_ba}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+dist_p <- read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "dist_pct", attribute == "ba") %>%
+  select(site, plot, median, sd, q5, q95) %>%
+  unique() %>%
+  rename_at(c("median", "sd", "q5", "q95"), ~ paste0(., "_dist_ba"))
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "lambda") %>%
+  left_join(dist_p) %>%
+  ggplot(aes(median_dist_ba, median, col = site)) +
+  geom_smooth(method = "lm", se = FALSE, col = "black", aes(group = NA)) +
+  geom_point() +
+  facet_wrap(~attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  xlab(expression(dist[BA] ~ "[ % lost ]")) +
+  ylab(expression(lambda)) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
+```
+
+```{r t90_dist_ba}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "t90") %>%
+  left_join(dist_p) %>%
+  ggplot(aes(median_dist_ba, median, col = site)) +
+  geom_smooth(method = "lm", se = FALSE, col = "black", aes(group = NA)) +
+  geom_point() +
+  facet_wrap(~attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  xlab(expression(dist[BA] ~ "[ % lost ]")) +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
+```
+
+## Q3 - Recovery rates & abiotic and biotic factors
+
+> Q3. How do abiotic and biotic factors modify recovery rates?
+
+abiotic factors = soil fertility + climate stress + landscape connectivity
+
+biotic factors = biodiversity + Ecological strategy (acquisitive versus conservative) + structural diversity
+
+### Abiotic
+
+```{r t90_cwd}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "t90") %>%
+  ggplot(aes(cwd, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
+  scale_x_log10() +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression(Climate ~ Water ~ Deficit ~ "[" ~ mm ~ year^{
+    -1
+  } ~ "]"))
+```
+
+```{r t90_tmax}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "t90") %>%
+  ggplot(aes(tmax, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression(Maximum ~ Temperature ~ "[" ~ "°" ~ "]"))
+```
+
+```{r t90_bdod}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "t90") %>%
+  ggplot(aes(bdod, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression(Bulk ~ Density ~ "[" ~ kg ~ dm^{
+    -3
+  } ~ "]"))
+```
+
+```{r t90_soc}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "t90") %>%
+  ggplot(aes(soc, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression(Soil ~ organic ~ Carbon ~ "[" ~ g ~ kg^{
+    -1
+  } ~ "]"))
+```
+
+```{r t90_deforested}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "t90") %>%
+  ggplot(aes(deforested, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom") +
+  xlab(expression(Deforested ~ landscape ~ "[" ~ "%" ~ "]")) +
+  scale_x_log10()
+```
+
+### Biotic
+
+All site variables are the mean values for site $s$ across controls and pre-logging inventories.
+
+```{r t90_gini}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "t90") %>%
+  ggplot(aes(gini_s, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
+  xlab(expression(Gini[s])) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
+```
+
+```{r t90_sla}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "t90") %>%
+  ggplot(aes(SLA_cwm_ba_s, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
+  xlab(expression(SLA ~ "[" ~ mm^2 ~ mg^{
+    -1
+  } ~ "]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
+```
+
+```{r t90_wd}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "t90") %>%
+  ggplot(aes(WD_cwm_ba_s, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
+  xlab(expression(WD ~ "[" ~ g ~ cm^{
+    -3
+  } ~ "]")) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
+```
+
+```{r t90_gen}
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "t90") %>%
+  ggplot(aes(diversity_q1_gen_s, median)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(aes(col = site)) +
+  facet_wrap(~attribute, scales = "free_y") +
+  scale_y_log10() +
+  theme_bw() +
+  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
+  xlab(expression("Genus diversity" ~ q == 1)) +
+  scale_color_discrete("") +
+  theme(legend.position = "bottom")
+```

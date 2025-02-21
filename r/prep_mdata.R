@@ -1,17 +1,17 @@
 prep_mdata <- function(
     var,
     time_max = 60) {
-  data_rec <- read_tsv("data/derived_data/data_rec.tsv") %>%
+  data_rec <- read_tsv("data/derived_data/data_rec.tsv", col_types = cols()) %>%
     filter(variable == var)
-  data_pre <- read_tsv("data/derived_data/data_pre.tsv") %>%
+  data_pre <- read_tsv("data/derived_data/data_pre.tsv", col_types = cols()) %>%
     filter(variable == var)
-  data_old <- read_tsv("data/derived_data/data_old.tsv") %>%
+  data_old <- read_tsv("data/derived_data/data_old.tsv", col_types = cols()) %>%
     filter(variable == var)
   ind_rec <- data_rec %>%
     select(site, plot, sitenum, plotnum_rec) %>%
     unique() %>%
     arrange(plotnum_rec)
-  bounds <- read_tsv("data/derived_data/bounds.tsv") %>%
+  bounds <- read_tsv("data/derived_data/bounds.tsv", col_types = cols()) %>%
     filter(attribute == var)
   mdata <- list(
     n_rec = nrow(data_rec),
@@ -29,10 +29,6 @@ prep_mdata <- function(
     plot_rec = data_rec$plotnum_rec,
     site_plot_rec = ind_rec$sitenum,
     time_max = time_max,
-    mu_thetaInf_bounds = c(
-      bounds$mu_thetaInf_min,
-      bounds$mu_thetaInf_max
-    ),
     thetaInf_bounds = c(
       bounds$thetaInf_min,
       bounds$thetaInf_max

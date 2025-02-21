@@ -25,12 +25,12 @@ stp <- function(time, dist, thetainf, lambda, tau, delta) {
   theta0 <- thetainf * dist
   ltp <- 1 - exp(-lambda * time)
   stp <- delta * (time / tau * exp(1 - time / tau))^2
-  return(theta0 + (thetainf - theta0) * (ltp + stp))
+  return(theta0 + ltp * (thetainf - theta0) + stp * thetainf)
 }
 data.frame(time = seq(0.1, 50, length.out = 100)) %>%
   mutate(y_stp = stp(time,
     dist = 0.5, thetainf = 20, lambda = 0.05,
-    tau = 5, delta = 1
+    tau = 5, delta = 0.5
   )) %>%
   mutate(y_ltp = ltp(time, dist = 0.5, thetainf = 20, lambda = 0.05)) %>%
   bind_rows(data.frame(time = 0, y_stp = 20, y_ltp = 20)) %>%
@@ -92,29 +92,25 @@ write_tsv(bounds, "data/derived_data/bounds.tsv")
 #| message: false
 read_tsv("data/derived_data/bounds.tsv") %>%
   mutate(
-    mu_thetaInf = paste0("[", mu_thetaInf_min, " ,", mu_thetaInf_max, "]"),
     thetaInf = paste0("[", thetaInf_min, " ,", thetaInf_max, "]"),
     lambda = paste0("[", lambda_min, " ,", lambda_max, "]"),
     dist = paste0("[", dist_min, " ,", dist_max, "]"),
     delta = paste0("[", delta_min, " ,", delta_max, "]"),
     tau = paste0("[", tau_min, " ,", tau_max, "]")
   ) %>%
-  select(attribute, mu_thetaInf, thetaInf, lambda, dist, delta, tau) %>%
+  select(attribute, thetaInf, lambda, dist, delta, tau) %>%
   kable(caption = "Parameters boundaries per attribute.")
 ```
 
 ```{r fit_all}
 #| eval: false
-# ltp <- cmdstan_model("models/ltp.stan") #nolint
 stp <- cmdstan_model("models/stp.stan")
-# vars <- c( #nolint
-#   "nstem", "agb", "WD_cwm_ba", "FDiv", "diversity_q1_gen", "gini", #nolint
-#   "ba", "FEve", "SLA_cwm_ba", "N_cwm_ba", "hmax_cwm_ba" #nolint
-# ) #nolint
+vars <- c(
+  "ba", "agb", "nstem", "gini",
+  "diversity_q1_gen", "FDiv", "FEve",
+  "WD_cwm_ba", "SLA_cwm_ba", "N_cwm_ba"
+)
 vars <- "FDiv"
-# for (var in vars) { #nolint
-#   sample_model(var, "ltp") #nolint
-# } #nolint
 for (var in vars) {
   sample_model(var, "stp")
 }

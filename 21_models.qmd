@@ -2,10 +2,7 @@
 #| message: false
 #| include: false
 library(tidyverse)
-library(knitr)
 library(cmdstanr)
-library(bayesplot)
-library(loo)
 ```
 
 # Models {.unnumbered}
@@ -58,7 +55,10 @@ data.frame(time = seq(0.1, 50, length.out = 100)) %>%
   ) +
   geom_segment(aes(x = -2, y = 20, xend = -2, yend = 10),
     arrow = arrow(length = unit(0.2, "cm")), col = "#fc8a8a"
-  )
+  ) +
+  theme(axis.title = element_blank()) +
+  geom_segment(aes(x = -5, y = 20, xend = 0, yend = 20)) +
+  ylim(7, NA)
 ```
 
 ## STP
@@ -67,7 +67,7 @@ Long term and short term processes model based on disturbance index $dist$:
 
 $$
 \begin{align}
-\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times (LTP+STP) \\
+\mu_{rec} = \theta_{0,p} + LTP \times (\theta_{\infty,s} - \theta_{0,p}) + STP \times \theta_{\infty,s} \\
 LTP = 1 - e^{-\lambda_p \times time} \\
 STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \\
 \theta_{0,p} = \theta_{\infty,s} \times dist_p
@@ -84,12 +84,12 @@ stp <- function(time, dist, thetainf, lambda, tau, delta) {
   theta0 <- thetainf * dist
   ltp <- 1 - exp(-lambda * time)
   stp <- delta * (time / tau * exp(1 - time / tau))^2
-  return(theta0 + (thetainf - theta0) * (ltp + stp))
+  return(theta0 + ltp * (thetainf - theta0) + stp * thetainf)
 }
 data.frame(time = seq(0.1, 50, length.out = 100)) %>%
   mutate(y_stp = stp(time,
     dist = 0.5, thetainf = 20, lambda = 0.05,
-    tau = 5, delta = 1
+    tau = 5, delta = 0.5
   )) %>%
   mutate(y_ltp = ltp(time, dist = 0.5, thetainf = 20, lambda = 0.05)) %>%
   bind_rows(data.frame(time = 0, y_stp = 20, y_ltp = 20)) %>%

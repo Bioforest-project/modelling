@@ -53,7 +53,7 @@ data_pre <- data %>%
   filter(rel_year <= 0) %>%
   mutate(plotnum_pre = as.numeric(as.factor(paste0(site, "_", plot))))
 data_old <- data %>%
-  filter(treatment == "control") %>%
+  filter(treatment == "control", rel_year > 0) %>%
   mutate(plotnum_old = as.numeric(as.factor(paste0(site, "_", plot))))
 write_tsv(data, "data/derived_data/data.tsv")
 write_tsv(data_rec, "data/derived_data/data_rec.tsv")
@@ -61,11 +61,28 @@ write_tsv(data_pre, "data/derived_data/data_pre.tsv")
 write_tsv(data_old, "data/derived_data/data_old.tsv")
 ```
 
+Computed variables are:
+
+```{r vars}
+#| output: asis
+read_tsv("data/derived_data/data.tsv", col_types = cols()) %>%
+  select(variable) %>%
+  unique() %>%
+  unlist() %>%
+  paste0(collapse = ", ")
+```
+
 ```{r fig1}
 #| message: false
 #| warning: false
-#| fig-cap: "All attributes trajectories."
+#| fig-cap: "All modeled attributes trajectories."
+vars <- c( # nolint
+  "nstem", "agb", "ba", "gini", # nolint
+  "diversity_q1_gen", "FDiv", "FEve", # nolint
+  "WD_cwm_ba", "SLA_cwm_ba", "N_cwm_ba" # nolint
+)
 read_tsv("data/derived_data/data.tsv") %>%
+  filter(variable %in% vars) %>%
   ggplot(aes(year, value, group = paste(site, plot))) +
   geom_line() +
   theme_bw() +

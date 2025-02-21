@@ -11,21 +11,20 @@ book:
     - 21_models.qmd
     - part: 30_trajectories.qmd
       chapters:
-        - 31_stem.qmd
-        - 32_wd.qmd
-        - 33_agb.qmd
-        - 34_fdiv.qmd
-        - 35_div_q1_gen.qmd
-        - 37_gini.qmd
-        - 38_ba.qmd
-        - 39_feve.qmd
-        - 40_sla.qmd
-        - 41_n.qmd
-        - 42_hmax.qmd
-    - part: 50_parameters.qmd
+        - 31_ba.qmd
+        - 32_agb.qmd
+        - 33_stem.qmd
+        - 34_gini.qmd
+        - 41_gen_q1.qmd
+        - 42_fdiv.qmd
+        - 43_feve.qmd
+        - 51_wd.qmd
+        - 52_sla.qmd
+        - 53_n.qmd
+    - part: 60_parameters.qmd
       chapters:
-        - 51_group1.qmd
-        - 52_group2.qmd
+        - 61_group1.qmd
+        - 62_group2.qmd
   appendices:
     - 91_stp_negative.qmd
     - 92_model_devs.qmd

@@ -12,7 +12,8 @@ sample_model <- function(
     chains = 4,
     parallel_chains = 4,
     save_warmup = FALSE,
-    output_dir = chains_path
+    output_dir = chains_path,
+    refresh = 100
   )
   print(paste(model, var, "done!"))
 }
