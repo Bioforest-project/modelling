@@ -81,6 +81,44 @@ read_tsv("outputs/parameters.tsv") %>%
   facet_wrap(~attribute, scales = "free")
 ```
 
+## Observed & inferred $dist_{BA}$
+
+```{r dist_ba}
+#| message: false
+#| warning: false
+data_rec <- read_tsv("data/derived_data/data_rec.tsv", col_types = cols()) %>%
+  filter(variable == "ba") %>%
+  filter(variable == "ba") %>%
+  group_by(site, plot) %>%
+  summarise(ba_post = min(value, na.rm = TRUE))
+data_pre <- read_tsv("data/derived_data/data_pre.tsv", col_types = cols()) %>%
+  filter(variable == "ba") %>%
+  group_by(site, plot) %>%
+  summarise(ba_pre = median(value, na.rm = TRUE))
+dist_obs <- data_pre %>%
+  left_join(data_rec) %>%
+  na.omit() %>%
+  mutate(dist_obs = (1 - (ba_pre - ba_post) / ba_pre) * 100) %>%
+  select(site, plot, dist_obs)
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "dist_pct", attribute == "ba") %>%
+  select(site, plot, median, sd, q5, q95) %>%
+  unique() %>%
+  left_join(dist_obs) %>%
+  na.omit() %>%
+  ggplot(aes(median, dist_obs)) +
+  geom_abline(col = "darkgrey") +
+  geom_segment(aes(x = median - sd, xend = median + sd)) +
+  geom_segment(aes(x = q5, xend = q95), size = .1) +
+  geom_point() +
+  facet_wrap(~site) +
+  theme_bw() +
+  ggpubr::stat_cor() +
+  coord_equal() +
+  xlab(expression(dist[BA] ~ "inferred [ % lost ]")) +
+  ylab(expression(dist[BA] ~ "observed [ % lost ]"))
+```
+
 ## H2 - Diversity & intensity
 
 > **H2**: tree diversity also shows a non-linear response to increased intensity of logging: lightly logged forests show a transient increase in tree diversity, but more intensively logged forests show a strong negative effect on diversity

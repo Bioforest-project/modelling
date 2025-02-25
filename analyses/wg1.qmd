@@ -9,7 +9,7 @@ format:
     colorlinks: true
     fig-pos: H
 params:
-  site: "Misiones"
+  site: "Paracou"
 execute:
   echo: false
 bibliography: ../references.bib
@@ -191,14 +191,14 @@ projs %>%
 #| warning: false
 #| fig-cap: "Disturbance index for basal area dist_BA per plot in % of area lost. The point represents the median value of the parameter, while the line represents the 90% confidence interval. The colour refers to the convergence metric Rhat for diagnosis, with Rhat above 1.1 indicating poor exploration of the parameter (lack of chain mixing)."#nolint
 dist <- read_tsv("../outputs/parameters.tsv") %>%
-  filter(attribute == "ba", parameter == "dist", site == params$site) %>%
-  mutate_at(c("median", "sd", "q5", "q95"), ~ (1 - .) * 100)
+  filter(attribute == "ba", parameter == "dist_pct", site == params$site)
 ggplot(dist, aes(plot, median,
   label = paste0(round(median), "%"), col = rhat
 )) +
   geom_point() +
   geom_text(nudge_x = .4) +
-  geom_segment(aes(y = q5, yend = q95)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
   theme_bw() +
   coord_flip() +
   ylab(expression(dist[BA] ~ "[ % lost ]")) +
@@ -277,38 +277,23 @@ projs %>%
 #| message: false
 #| warning: false
 #| fig-cap: "Bump intensity for genus diversity delta per plot in %. The point represents the median value of the parameter, while the line represents the 90% confidence interval. The colour refers to the convergence metric Rhat for diagnosis, with Rhat above 1.1 indicating poor exploration of the parameter (lack of chain mixing)."#nolint
-thetaInf <- read_tsv("../outputs/parameters.tsv") %>% # nolint
-  filter(attribute == "diversity_q1_gen", parameter == "thetaInf") %>%
-  select(attribute, parameter, site, median) %>%
-  pivot_wider(names_from = parameter, values_from = median)
-dist_div <- read_tsv("../outputs/parameters.tsv") %>%
-  filter(attribute == "diversity_q1_gen", parameter == "dist") %>%
-  select(attribute, parameter, site, plot, median) %>%
-  pivot_wider(names_from = parameter, values_from = median)
 delta <- read_tsv("../outputs/parameters.tsv") %>%
   filter(
     attribute == "diversity_q1_gen",
-    parameter == "delta", site == params$site
-  ) %>%
-  left_join(thetaInf) %>%
-  left_join(dist_div) %>%
-  mutate_at(
-    c("median", "sd", "q5", "q95"),
-    ~ (. * thetaInf) / (thetaInf - (thetaInf * dist))
+    parameter == "delta_pct", site == params$site
   )
-delta %>%
-  mutate(q5 = ifelse(q5 < 0.1, 0.1, q5)) %>%
-  mutate(q95 = ifelse(q95 > 100, 100, q95)) %>%
-  ggplot(aes(plot, median, label = paste0(round(median), "%"), col = rhat)) +
+ggplot(delta, aes(plot, median,
+  label = paste0(round(median), "%"), col = rhat
+)) +
   geom_point() +
   geom_text(nudge_x = .4) +
-  geom_segment(aes(y = q5, yend = q95)) +
+  geom_segment(aes(y = median - sd, yend = median + sd)) +
+  geom_segment(aes(y = q5, yend = q95), size = .1) +
   theme_bw() +
   coord_flip() +
-  ylab(expression(delta ~ "[ % ]")) +
+  ylab(expression(dist[BA] ~ "[ % lost ]")) +
   xlab("Plot") +
-  scale_color_viridis_c(expression(hat(R))) +
-  scale_y_log10()
+  scale_color_viridis_c(expression(hat(R)))
 ```
 
 ## Diveristy & intensity
@@ -322,23 +307,25 @@ dist %>%
   unique() %>%
   rename_at(c("median", "sd", "q5", "q95"), ~ paste0(., "_dist_ba")) %>%
   left_join(delta) %>%
-  mutate(q5 = ifelse(q5 < 0.1, 0.1, q5)) %>%
-  mutate(q95 = ifelse(q95 > 100, 100, q95)) %>%
   ggplot(aes(median_dist_ba, median, label = plot)) +
   geom_smooth(
     method = "lm", se = FALSE,
     col = "lightgrey"
   ) +
   geom_point() +
-  geom_segment(aes(y = q5, yend = q95), alpha = .5) +
-  geom_segment(aes(x = q5_dist_ba, xend = q95_dist_ba), alpha = .5) +
+  geom_segment(aes(y = median - sd, yend = median + sd), alpha = .5) +
+  geom_segment(aes(y = q5, yend = q95), alpha = .5, size = .1) +
+  geom_segment(aes(
+    x = median_dist_ba - sd_dist_ba,
+    xend = median_dist_ba + sd_dist_ba
+  ), alpha = .5) +
+  geom_segment(aes(x = q5_dist_ba, xend = q95_dist_ba), alpha = .5, size = .1) +
   ggrepel::geom_text_repel() +
   theme_bw() +
   xlab(expression(dist[BA] ~ "[ % lost ]")) +
   ylab(expression(delta ~ "[ % ]")) +
   scale_color_discrete("") +
-  ggpubr::stat_cor(aes(group = NA)) +
-  scale_y_log10()
+  ggpubr::stat_cor(aes(group = NA))
 ```
 
 ## References
