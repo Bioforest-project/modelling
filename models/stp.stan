@@ -45,7 +45,7 @@ parameters {
   real<lower=0> sigma_thetaInf_s;
   vector<lower=thetaInf_bounds[1], upper=thetaInf_bounds[2]>[n_site] thetaInf_s;
   
-  vector<lower=0>[n_site] sigma_thetaInf_p;
+  real<lower=0> sigma_thetaInf_p;
   vector<lower=0>[n_plot_old] thetaInf_p;
   
   real<lower=0> sigma_old;
@@ -79,7 +79,7 @@ model {
   dist_p ~ cauchy(mu_dist, sigma_dist);
   thetaInf_s ~ cauchy(mu_thetaInf, sigma_thetaInf_s);
   
-  thetaInf_p ~ cauchy(1, sigma_thetaInf_p[site_plot_old]);
+  thetaInf_p ~ cauchy(1, sigma_thetaInf_p);
   
   lambda_p ~ cauchy(mu_lambda, sigma_lambda);
   delta_p ~ cauchy(mu_delta, sigma_delta);
