@@ -4,6 +4,9 @@ data {
   int<lower=0> n_pre; // obs prelog
   int<lower=0> n_site;
   int<lower=0> n_plot_rec;
+  
+  int<lower=0> n_plot_old;
+  
   vector[n_rec] y_rec;
   vector[n_old] y_old;
   vector[n_pre] y_pre;
@@ -12,7 +15,13 @@ data {
   array[n_old] int<lower=0, upper=n_site> site_old;
   array[n_pre] int<lower=0, upper=n_site> site_pre;
   array[n_rec] int<lower=0, upper=n_plot_rec> plot_rec;
+  
+  array[n_old] int<lower=0, upper=n_plot_old> plot_old;
+  
   array[n_plot_rec] int<lower=0, upper=n_site> site_plot_rec;
+  
+  array[n_plot_old] int<lower=0, upper=n_site> site_plot_old;
+  
   array[2] real thetaInf_bounds;
   array[2] real lambda_bounds;
   array[2] real dist_bounds;
@@ -33,8 +42,12 @@ parameters {
   real<lower=0> sigma_lambda;
   vector<lower=lambda_bounds[1], upper=lambda_bounds[2]>[n_plot_rec] lambda_p;
   real<lower=thetaInf_bounds[1], upper=thetaInf_bounds[2]> mu_thetaInf; // ending point
-  real<lower=0> sigma_thetaInf;
+  real<lower=0> sigma_thetaInf_s;
   vector<lower=thetaInf_bounds[1], upper=thetaInf_bounds[2]>[n_site] thetaInf_s;
+  
+  vector<lower=0>[n_site] sigma_thetaInf_p;
+  vector<lower=0>[n_plot_old] thetaInf_p;
+  
   real<lower=0> sigma_old;
   real<lower=0> sigma_pre;
   real<lower=0> sigma_rec;
@@ -47,7 +60,9 @@ parameters {
 }
 transformed parameters {
   vector[n_plot_rec] theta0_p = thetaInf_s[site_plot_rec] .* dist_p;
-  vector[n_old] mu_old = thetaInf_s[site_old];
+  
+  vector[n_old] mu_old = thetaInf_s[site_old] .* thetaInf_p[plot_old];
+  
   vector[n_pre] mu_pre = thetaInf_s[site_pre];
   vector[n_rec] ltp_rec = 1 - exp(-lambda_p[plot_rec] .* time);
   vector[n_rec] stp_rec = delta_p[plot_rec] .* 
@@ -62,7 +77,10 @@ model {
   log(y_pre) ~ normal(log(mu_pre), sigma_pre);
   log(y_rec) ~ normal(log(mu_rec), sigma_rec);
   dist_p ~ cauchy(mu_dist, sigma_dist);
-  thetaInf_s ~ cauchy(mu_thetaInf, sigma_thetaInf);
+  thetaInf_s ~ cauchy(mu_thetaInf, sigma_thetaInf_s);
+  
+  thetaInf_p ~ cauchy(1, sigma_thetaInf_p[site_plot_old]);
+  
   lambda_p ~ cauchy(mu_lambda, sigma_lambda);
   delta_p ~ cauchy(mu_delta, sigma_delta);
   tau_0_s ~ cauchy(mu_tau_0, sigma_tau);
@@ -70,7 +88,10 @@ model {
   sigma_pre ~ std_normal();
   sigma_rec ~ std_normal();
   sigma_dist ~ std_normal();
-  sigma_thetaInf ~ std_normal();
+  sigma_thetaInf_s ~ std_normal();
+  
+  sigma_thetaInf_p ~ std_normal();
+  
   sigma_lambda ~ std_normal();
   sigma_delta ~ std_normal();
   sigma_tau ~ std_normal();
@@ -82,10 +103,10 @@ generated quantities {
   vector[n_site] tau_s = tau_0_s + 3;
   real mu_t90 = log(10) / mu_lambda + 3;
   vector[n_plot_rec] t90_p = log(10) / lambda_p + 3;
-  real mu_delta_pct = (1-mu_delta)*100;
-  vector[n_plot_rec] delta_pct_p = (1-delta_p)*100;
+  real mu_delta_pct = mu_delta*100;
+  vector[n_plot_rec] delta_pct_p = delta_p*100;
   real mu_dist_pct = mu_dist*100;
-  vector[n_plot_rec] dist_pct_p = dist_p*100;
+  vector[n_plot_rec] dist_pct_p = (1-dist_p)*100;
   for(p in 1:n_plot_rec)
     y_pred[,p] = theta0_p[p] + 
                  (thetaInf_s[site_plot_rec[p]] - theta0_p[p]) * 
