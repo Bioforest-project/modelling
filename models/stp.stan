@@ -71,9 +71,10 @@ transformed parameters {
   vector[n_rec] stp_rec = delta_p[plot_rec] .* 
                            (time ./ tau_0_s[site_rec] .* exp( 1 - time ./ tau_0_s[site_rec] )) .*
                            (time ./ tau_0_s[site_rec] .* exp( 1 - time ./ tau_0_s[site_rec] ));
-  vector[n_rec] mu_rec = exp(log(theta0_p[plot_rec] + 
-                         ltp_rec .* (thetaInf_s[site_rec] - theta0_p[plot_rec]) + 
-                         stp_rec .* thetaInf_s[site_rec]) + noiserec_p[plot_rec]);
+  vector[n_rec] mu_rec = theta0_p[plot_rec] + 
+                         ltp_rec .* (exp(log(thetaInf_s[site_rec]) + noiserec_p[plot_rec]) - 
+                                     theta0_p[plot_rec]) + 
+                         stp_rec .* exp(log(thetaInf_s[site_rec]) + noiserec_p[plot_rec]);
 }
 model {
   log(y_old) ~ normal(log(mu_old), sigma_old);
