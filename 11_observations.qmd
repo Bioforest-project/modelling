@@ -46,15 +46,20 @@ data <- read_csv("data/raw_data/aggregated_data.csv") %>%
     300, value
   )) %>%
   ungroup()
-data_rec <- data %>%
-  filter(treatment == "logged", rel_year > 2) %>%
-  mutate(plotnum_rec = as.numeric(as.factor(paste0(site, "_", plot))))
-data_pre <- data %>%
+data_log <- data %>%
+  filter(treatment == "logged") %>%
+  mutate(plotnum = as.numeric(as.factor(paste0(site, "_", plot))))
+data_rec <- data_log %>%
+  filter(rel_year > 2) %>%
+  rename(plotnum_rec = plotnum)
+data_pre <- data_log %>%
   filter(rel_year <= 0) %>%
-  mutate(plotnum_pre = as.numeric(as.factor(paste0(site, "_", plot))))
+  rename(plotnum_pre = plotnum)
 data_old <- data %>%
-  filter(treatment == "control", rel_year > 0) %>%
-  mutate(plotnum_old = as.numeric(as.factor(paste0(site, "_", plot))))
+  filter(treatment == "control") %>%
+  mutate(plotnum_old = as.numeric(as.factor(paste0(site, "_", plot)))) %>% 
+  group_by(site, plot, sitenum, plotnum_old, variable) %>% 
+  summarise(y = median(y))
 write_tsv(data, "data/derived_data/data.tsv")
 write_tsv(data_rec, "data/derived_data/data_rec.tsv")
 write_tsv(data_pre, "data/derived_data/data_pre.tsv")

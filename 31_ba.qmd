@@ -70,3 +70,31 @@ pvo_fig(data_rec, data_pre, fit_stp)
 #| fig-cap: "Predicted trajectories."
 proj_fig(data_rec, data_pre, data_old, fit_stp, lab)
 ```
+
+```{r}
+t1 <- data_rec %>% 
+  select(plotnum_rec, site) %>% 
+  unique() %>% 
+  rename(plotnum = plotnum_rec)
+t2 <- data_old %>% 
+  select(plotnum_old, site) %>% 
+  unique() %>% 
+  rename(plotnum = plotnum_old)
+pars1 <- fit_stp$summary("noiserec_p") %>% 
+  separate(variable, c("theta", "plot", "plotnum"), convert = TRUE) %>% 
+  left_join(t1) %>% 
+  mutate(type = "rec")
+pars2 <- fit_stp$summary("noiseold_p") %>% 
+  separate(variable, c("theta", "plot", "plotnum"), convert = TRUE) %>% 
+  left_join(t2) %>% 
+  mutate(type = "old")
+
+bind_rows(pars1, pars2) %>% 
+  ggplot(aes(exp(median), as.character(plotnum), col = as.character(type))) +
+  # geom_segment(aes(x = median - sd, xend = median + sd)) +
+  geom_segment(aes(x = exp(q5), xend = exp(q95)), size = .1) +
+  geom_point() +
+  facet_wrap(~site, scales = "free") +
+  theme_bw() +
+  geom_vline(xintercept = exp(0))
+```
