@@ -327,7 +327,7 @@ read_tsv("outputs/parameters.tsv") %>%
   ggtitle("Div - Genus q=1")
 ```
 
-### 15-year relative bump  $y15_{rel}$
+### 15-year relative bump $y15_{rel}$
 
 ```{r y15_rel}
 #| message: false

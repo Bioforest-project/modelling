@@ -9,72 +9,30 @@ library(cmdstanr)
 
 Models description.
 
-## LTP
-
-Long term process only model:
-
-$$
-\begin{align}
-\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times LTP \\
-LTP = 1 - e^{-\lambda_p \times time}
-\end{align}
-$$
-
-The model we use is derived from the common framework for modelling recovery in disturbed tropical forests [@maurent2023]. The forest attribute is first disturbed at $t=0$ with either an increase or a decrease depending on the parameter $dist$. Then the attributes recover asymptotically in the long term to an equilibrium value $\theta_{Inf}$ with a recovery rate $\lambda$.
-
-```{r ltp_proj}
-#| warning: false
-#| message: false
-#| fig-cap: "LTP proj with pars."
-ltp <- function(time, dist, thetainf, lambda) {
-  theta0 <- thetainf * dist
-  ltp <- 1 - exp(-lambda * time)
-  theta0 + (thetainf - theta0) * (ltp)
-}
-data.frame(time = seq(0.1, 50, length.out = 100)) %>%
-  mutate(y_ltp = ltp(time, dist = 0.5, thetainf = 20, lambda = 0.05)) %>%
-  bind_rows(data.frame(time = 0, y_stp = 20, y_ltp = 20)) %>%
-  ggplot(aes(time)) +
-  geom_line(aes(y = y_ltp)) +
-  theme_bw() +
-  annotate("text",
-    x = 52, y = 19.5, label = "theta[Inf]",
-    col = "#9ea1d4", parse = TRUE, size = 5
-  ) +
-  annotate("text",
-    x = 20, y = 15, label = "lambda",
-    col = "#a8d2d1", parse = TRUE, size = 5
-  ) +
-  annotate("text",
-    x = -4, y = 15, label = "dist",
-    col = "#fc8a8a", parse = TRUE, size = 5
-  ) +
-  theme(axis.title = element_blank()) +
-  geom_segment(aes(x = -2, y = 10, xend = -2, yend = 20),
-    arrow = arrow(length = unit(0.2, "cm")), col = "#fc8a8a"
-  ) +
-  geom_segment(aes(x = -2, y = 20, xend = -2, yend = 10),
-    arrow = arrow(length = unit(0.2, "cm")), col = "#fc8a8a"
-  ) +
-  theme(axis.title = element_blank()) +
-  geom_segment(aes(x = -5, y = 20, xend = 0, yend = 20)) +
-  ylim(7, NA)
-```
-
 ## STP
 
-Long term and short term processes model based on disturbance index $dist$:
+Long term and short term processes model:
 
 $$
 \begin{align}
-\mu_{rec} = \theta_{0,p} + LTP \times (\theta_{\infty,s} - \theta_{0,p}) + STP \times \theta_{\infty,s} \\
-LTP = 1 - e^{-\lambda_p \times time} \\
-STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \\
-\theta_{0,p} = \theta_{\infty,s} \times dist_p
+log(y) \sim \mathcal N (log(\mu), \sigma)\\
+\mu = \theta_{site} \times (\phi_{plot} + LTP \times (1 - \phi_{plot}) + STP) \\
+LTP = 1 - e^{-\lambda_{plot} \times t} \\
+STP = \delta_{plot} \times (\frac{t}{\tau_{site}} \times e^{1-\frac{t}{\tau_{site}}})^2 \\
+\phi_{plot} \sim \mathcal N (\mu_{\phi}, \sigma_{\phi}) \\
+\lambda_{plot} \sim \mathcal N (\mu_{\lambda}, \sigma_{\lambda})\\
+\delta_{plot} \sim \mathcal N (\mu_{\delta}, \sigma_{\delta})\\
+\tau_{site} \sim \mathcal N (\mu_{\tau}, \sigma_{\tau}) \\
+(\sigma,\sigma_{\phi},\sigma_{\lambda},\sigma_{\delta},\sigma_{\tau}) \sim \mathcal N^5(0,1) \\
+\theta_{site} \sim \mathcal N (mean(y_{control,site}), sd(y_{control,site})) \\
+\phi_{plot} \sim \mathcal U(0.1,1.5) \\
+\lambda_{plot} \sim \mathcal U(0,0.5) \\
+\delta_{plot} \sim \mathcal U(-\phi_{plot},2) \\
+\tau_{site} \sim \mathcal U(5,40) 
 \end{align}
 $$
 
-The model we use is derived from the common framework for modelling recovery in disturbed tropical forests [@maurent2023]. The forest attribute is first disturbed at $t=0$ with either an increase or a decrease depending on the parameter $dist$. Then the attributes recover asymptotically in the long term to an equilibrium value $\theta_{Inf}$ with a recovery rate $\lambda$. But in this second version the recovery trajectory can also accommodate a short term increase of decrease of the attribute at a time $\tau$ with an intensity $\delta$.
+The model we use is derived from the common framework for modelling recovery in disturbed tropical forests [@maurent2023]. The forest attribute is first disturbed at $t=0$ with either an increase or a decrease depending on the parameter $\phi$. Then the attributes recover asymptotically in the long term to an equilibrium value $\theta$ with a recovery rate $\lambda$. But the recovery trajectory can also accommodate a short term increase of decrease of the attribute at a time $\tau$ with an intensity $\delta$.
 
 ```{r stp_proj}
 #| warning: false
@@ -98,15 +56,15 @@ data.frame(time = seq(0.1, 50, length.out = 100)) %>%
   geom_line(aes(y = y_stp)) +
   theme_bw() +
   annotate("text",
-    x = 52, y = 19.5, label = "theta[infinity]",
+    x = 52, y = 19.5, label = "theta[site]",
     col = "#9ea1d4", parse = TRUE, size = 5
   ) +
   annotate("text",
-    x = 20, y = 15, label = "lambda",
+    x = 20, y = 15, label = "lambda[plot]",
     col = "#a8d2d1", parse = TRUE, size = 5
   ) +
   annotate("text",
-    x = -4, y = 15, label = "dist",
+    x = -4, y = 15, label = "phi[plot]",
     col = "#fc8a8a", parse = TRUE, size = 5
   ) +
   theme(axis.title = element_blank()) +
@@ -117,11 +75,11 @@ data.frame(time = seq(0.1, 50, length.out = 100)) %>%
     arrow = arrow(length = unit(0.2, "cm")), col = "#fc8a8a"
   ) +
   annotate("text",
-    x = 6, y = 9.3, label = "tau",
+    x = 6, y = 9.3, label = "tau[site]",
     col = "#f2e5a9", parse = TRUE, size = 5
   ) +
   annotate("text",
-    x = 5, y = 17.5, label = "delta",
+    x = 4, y = 17.5, label = "delta[plot]",
     col = "#a7d6ac", parse = TRUE, size = 5
   ) +
   geom_segment(aes(x = 6, y = 13, xend = 6, yend = 22),

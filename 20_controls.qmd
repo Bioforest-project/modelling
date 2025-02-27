@@ -69,7 +69,7 @@ data_rec <- read_tsv("data/derived_data/data_rec.tsv", col_types = cols()) %>%
   filter(variable == "ba") %>% 
   select(-sitenum) %>% 
   left_join(index)
-model_path <- file.path("models", paste0("stp2", ".stan"))
+model_path <- file.path("models", paste0("stp3", ".stan"))
 stan_model <- cmdstan_model(model_path)
 ind_rec <- data_rec %>%
     select(site, plot, sitenum, plotnum_rec) %>%
@@ -77,22 +77,16 @@ ind_rec <- data_rec %>%
     arrange(plotnum_rec)
 fit2 <- stan_model$sample(
     data = list(
-      n_obs = nrow(data_rec),
-      n_site = max(data_rec$sitenum),
-      n_plot = max(data_rec$plotnum_rec),
+      n = nrow(data_rec),
+      s = max(data_rec$sitenum),
+      p = max(data_rec$plotnum_rec),
       y = data_rec$y,
-      time = data_rec$rel_year - 3,
+      t = data_rec$rel_year - 3,
       site = data_rec$sitenum,
       plot = data_rec$plotnum_rec,
       site_plot = ind_rec$sitenum,
-      time_max = 60,
-      thetaInf_bounds = c(1, 100),
-      mu_thetaInf_s = fit$summary("mu")$median,
-      sigma_thetaInf_s = fit$summary("mu")$sd,
-      lambda_bounds = c(0,0.5),
-      dist_bounds = c(0.1, 1.5),
-      delta_bounds = c(0, 5),
-      tau_bounds = c(5, 40)
+      mu_theta_s = fit$summary("mu")$median,
+      sigma_theta_s = fit$summary("mu")$sd
     ),
     chains = 4,
     parallel_chains = 4,
@@ -160,7 +154,7 @@ index <- mdata %>%
   select(sitenum, site) %>% 
   unique()
 bind_rows(
-  fit2$summary("thetaInf_s") %>% 
+  fit2$summary("theta_s") %>% 
   separate(variable, c("mu", "s", "sitenum"), convert = TRUE) %>% 
   left_join(index) %>%
   select(site, mu, median, sd, q5, q95) %>% 
