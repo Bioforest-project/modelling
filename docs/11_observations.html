@@ -198,12 +198,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./43_feve.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Div - FEve</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./51_wd.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Func - WD</span></a>
   </div>
@@ -212,12 +206,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="./52_sla.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Func - SLA</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./53_n.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Func - N</span></a>
   </div>
 </li>
       </ul>
@@ -330,7 +318,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(tolower) <span class="sc">%&gt;%</span></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(metadata) <span class="sc">%&gt;%</span></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(site <span class="sc">%in%</span> <span class="fu">c</span>(</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Peteco"</span>, <span class="st">"Bafog"</span>, <span class="st">"Tene"</span>,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Peteco"</span>, <span class="st">"Bafog"</span>, <span class="st">"Tene"</span>, <span class="st">"Sg Lalang"</span>,</span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Montagne_Tortue"</span>, <span class="st">"Manare"</span></span>
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  ))) <span class="sc">%&gt;%</span></span>
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(site <span class="sc">==</span> <span class="st">"Kabo"</span> <span class="sc">&amp;</span> year <span class="sc">&lt;</span> <span class="dv">1980</span>)) <span class="sc">%&gt;%</span></span>
@@ -344,19 +332,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="dv">300</span>, value</span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span></span>
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>data_rec <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(treatment <span class="sc">==</span> <span class="st">"logged"</span>, rel_year <span class="sc">&gt;</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">plotnum_rec =</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(<span class="fu">paste0</span>(site, <span class="st">"_"</span>, plot))))</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>data_pre <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(rel_year <span class="sc">&lt;=</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">plotnum_pre =</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(<span class="fu">paste0</span>(site, <span class="st">"_"</span>, plot))))</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>data_old <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(treatment <span class="sc">==</span> <span class="st">"control"</span>, rel_year <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">plotnum_old =</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(<span class="fu">paste0</span>(site, <span class="st">"_"</span>, plot))))</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(data, <span class="st">"data/derived_data/data.tsv"</span>)</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(data_rec, <span class="st">"data/derived_data/data_rec.tsv"</span>)</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(data_pre, <span class="st">"data/derived_data/data_pre.tsv"</span>)</span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(data_old, <span class="st">"data/derived_data/data_old.tsv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>data_ogf <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>((rel_year <span class="sc">&lt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> treatment <span class="sc">==</span> <span class="st">"logged"</span>) <span class="sc">|</span> treatment <span class="sc">==</span> <span class="st">"control"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">plotnum =</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(<span class="fu">paste</span>(site, plot))))</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>data_rec <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(treatment <span class="sc">==</span> <span class="st">"logged"</span>, rel_year <span class="sc">&gt;</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">plotnum =</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(<span class="fu">paste0</span>(site, <span class="st">"_"</span>, plot))))</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(data, <span class="st">"data/derived_data/data.tsv"</span>)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(data_rec, <span class="st">"data/derived_data/data_rec.tsv"</span>)</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(data_ogf, <span class="st">"data/derived_data/data_ogf.tsv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Computed variables are:</p>

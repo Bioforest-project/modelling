@@ -32,7 +32,7 @@ data <- read_csv("data/raw_data/aggregated_data.csv") %>%
   rename_all(tolower) %>%
   left_join(metadata) %>%
   filter(!(site %in% c(
-    "Peteco", "Bafog", "Tene",
+    "Peteco", "Bafog", "Tene", "Sg Lalang",
     "Montagne_Tortue", "Manare"
   ))) %>%
   filter(!(site == "Kabo" & year < 1980)) %>%
@@ -46,24 +46,15 @@ data <- read_csv("data/raw_data/aggregated_data.csv") %>%
     300, value
   )) %>%
   ungroup()
-data_log <- data %>%
-  filter(treatment == "logged") %>%
+data_ogf <- data %>%
+  filter((rel_year <= 0 & treatment == "logged") | treatment == "control") %>%
+  mutate(plotnum = as.numeric(as.factor(paste(site, plot))))
+data_rec <- data %>%
+  filter(treatment == "logged", rel_year > 2) %>%
   mutate(plotnum = as.numeric(as.factor(paste0(site, "_", plot))))
-data_rec <- data_log %>%
-  filter(rel_year > 2) %>%
-  rename(plotnum_rec = plotnum)
-data_pre <- data_log %>%
-  filter(rel_year <= 0) %>%
-  rename(plotnum_pre = plotnum)
-data_old <- data %>%
-  filter(treatment == "control") %>%
-  mutate(plotnum_old = as.numeric(as.factor(paste0(site, "_", plot)))) %>% 
-  group_by(site, plot, sitenum, plotnum_old, variable) %>% 
-  summarise(y = median(y))
 write_tsv(data, "data/derived_data/data.tsv")
 write_tsv(data_rec, "data/derived_data/data_rec.tsv")
-write_tsv(data_pre, "data/derived_data/data_pre.tsv")
-write_tsv(data_old, "data/derived_data/data_old.tsv")
+write_tsv(data_ogf, "data/derived_data/data_ogf.tsv")
 ```
 
 Computed variables are:

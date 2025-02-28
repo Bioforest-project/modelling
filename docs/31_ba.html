@@ -198,12 +198,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./43_feve.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Div - FEve</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./51_wd.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Func - WD</span></a>
   </div>
@@ -212,12 +206,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="./52_sla.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Func - SLA</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./53_n.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Func - N</span></a>
   </div>
 </li>
       </ul>
@@ -290,7 +278,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#data" id="toc-data" class="nav-link active" data-scroll-target="#data">Data</a></li>
+  <li><a href="#ogf" id="toc-ogf" class="nav-link active" data-scroll-target="#ogf">OGF</a></li>
   <li><a href="#stp" id="toc-stp" class="nav-link" data-scroll-target="#stp">STP</a></li>
   </ul>
 </nav>
@@ -316,44 +304,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 <p>Basal areas in square meter per square meter directly derived from diameter censuses.</p>
-<section id="data" class="level2">
-<h2 class="anchored" data-anchor-id="data">Data</h2>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>var <span class="ot">&lt;-</span> <span class="st">"ba"</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">exists</span>(<span class="fu">file.path</span>(<span class="st">"chains"</span>, var))) {</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(<span class="fu">file.path</span>(<span class="st">"chains"</span>, var))</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>lab <span class="ot">&lt;-</span> <span class="fu">expression</span>(<span class="st">"BA ["</span> <span class="sc">~</span> m<span class="sc">^</span><span class="dv">2</span> <span class="sc">~</span> m<span class="sc">^</span>{</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="dv">2</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>} <span class="sc">~</span> <span class="st">"]"</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>data_rec <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">"data/derived_data/data_rec.tsv"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> var)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>data_pre <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">"data/derived_data/data_pre.tsv"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> var)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>data_old <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">"data/derived_data/data_old.tsv"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> var)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>lab <span class="ot">&lt;-</span> <span class="fu">expression</span>(<span class="st">"BA ["</span> <span class="sc">~</span> m<span class="sc">^</span><span class="dv">2</span> <span class="sc">~</span> m<span class="sc">^</span>{</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="dv">2</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>} <span class="sc">~</span> <span class="st">"]"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">load_all</span>(var, lab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<section id="ogf" class="level2">
+<h2 class="anchored" data-anchor-id="ogf">OGF</h2>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(data_rec, data_pre, data_old) <span class="sc">%&gt;%</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rel_year, y, <span class="at">group =</span> <span class="fu">paste</span>(site, plot), <span class="at">col =</span> treatment)) <span class="sc">+</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>site) <span class="sc">+</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(lab) <span class="sc">+</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ogf_data_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="31_ba_files/figure-html/fig-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Modelled trajectories.</figcaption>
+<p><img src="31_ba_files/figure-html/ogf_data-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Old growth forests data.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ogf_theta_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="31_ba_files/figure-html/theta_ogf-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Theta posterior from old growth forests.</figcaption>
 </figure>
 </div>
 </div>
@@ -364,30 +350,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">"chains"</span>, var, <span class="st">"stp"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fit_stp <span class="ot">&lt;-</span> <span class="fu">as_cmdstan_fit</span>(<span class="fu">list.files</span>(path, <span class="at">full.names =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>fit_stp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fit_stp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>   variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
- lp__       2556.23 2556.40 20.84 20.62 2521.42 2589.62 1.01      627     1090
- mu_dist       0.70    0.70  0.03  0.03    0.66    0.74 1.00     1648     2504
- sigma_dist    0.13    0.13  0.02  0.02    0.10    0.17 1.00     4702     3079
- dist_p[1]     0.57    0.57  0.04  0.04    0.51    0.64 1.00     2524     2607
- dist_p[2]     0.77    0.77  0.04  0.04    0.70    0.84 1.00     1521     2200
- dist_p[3]     0.75    0.75  0.05  0.05    0.67    0.83 1.00     2151     2328
- dist_p[4]     0.76    0.76  0.05  0.05    0.67    0.84 1.00     1650     1903
- dist_p[5]     0.71    0.71  0.04  0.04    0.65    0.77 1.00     2079     2431
- dist_p[6]     0.86    0.87  0.05  0.05    0.78    0.95 1.00     1757     1742
- dist_p[7]     0.83    0.83  0.06  0.06    0.73    0.92 1.00     1664     2325
+<pre><code> variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
+ lp__     2010.10 2010.84 18.00 18.24 1979.86 2038.92 1.00      726     1485
+ phi_p[1]    0.56    0.56  0.04  0.04    0.50    0.63 1.00      846     1938
+ phi_p[2]    0.83    0.83  0.06  0.06    0.74    0.92 1.00      822     1583
+ phi_p[3]    0.75    0.74  0.05  0.05    0.66    0.83 1.00      861     1569
+ phi_p[4]    0.77    0.77  0.06  0.06    0.68    0.87 1.00      784     1522
+ phi_p[5]    0.76    0.76  0.05  0.05    0.67    0.85 1.00      758     1296
+ phi_p[6]    0.86    0.86  0.06  0.06    0.77    0.96 1.00      769     1004
+ phi_p[7]    0.82    0.82  0.06  0.06    0.73    0.92 1.00      768     1299
+ phi_p[8]    0.73    0.73  0.05  0.05    0.65    0.82 1.00      788     1592
+ phi_p[9]    0.75    0.75  0.05  0.05    0.66    0.84 1.00      722     1319
 
- # showing 10 of 9832 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
+ # showing 10 of 8635 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
 </div>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvo_fig</span>(data_rec, data_pre, fit_stp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvo_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -401,13 +385,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proj_fig</span>(data_rec, data_pre, data_old, fit_stp, lab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proj_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="31_ba_files/figure-html/preds_stp-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption class="figure-caption">Predicted trajectories.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rec_theta_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="31_ba_files/figure-html/theta_stp-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Theta posterior from recovery trajectories against its posterior.</figcaption>
 </figure>
 </div>
 </div>

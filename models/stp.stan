@@ -1,100 +1,77 @@
 data {
-  int<lower=0> n_rec; // obs reco
-  int<lower=0> n_old; // obs old
-  int<lower=0> n_pre; // obs prelog
-  int<lower=0> n_site;
-  int<lower=0> n_plot_rec;
-  vector[n_rec] y_rec;
-  vector[n_old] y_old;
-  vector[n_pre] y_pre;
-  vector[n_rec] time;
-  array[n_rec] int<lower=0, upper=n_site> site_rec;
-  array[n_old] int<lower=0, upper=n_site> site_old;
-  array[n_pre] int<lower=0, upper=n_site> site_pre;
-  array[n_rec] int<lower=0, upper=n_plot_rec> plot_rec;
-  array[n_plot_rec] int<lower=0, upper=n_site> site_plot_rec;
-  array[2] real thetaInf_bounds;
-  array[2] real lambda_bounds;
-  array[2] real dist_bounds;
-  array[2] real delta_bounds;
-  array[2] real tau_bounds;
-  int<lower=1> time_max;
+  int<lower=0> n; // # obs
+  int<lower=0> s; // # sites
+  int<lower=0> p; // # plots
+  vector[n] y; // forest attribute
+  vector[n] t; // time
+  array[n] int<lower=0, upper=n> site; // site index
+  array[n] int<lower=0, upper=n> plot; // plot index
+  array[p] int<lower=0, upper=n> site_plot; // site index in plots
+  vector[s] mu_theta_s; // mean site asymptotic value in controls
+  vector[s] sigma_theta_s; // sd site asymptotic value in controls
 }
 transformed data {
-  vector[time_max] time_pred;
-  for(t in 1:time_max)
-    time_pred[t] = t;
+  vector[55] t_pred;
+  for(i in 1:55)
+    t_pred[i] = i;
 }
 parameters {
-  real<lower=dist_bounds[1], upper=dist_bounds[2]> mu_dist; // starting point
-  real<lower=0> sigma_dist;
-  vector<lower=dist_bounds[1], upper=dist_bounds[2]>[n_plot_rec] dist_p;
-  real<lower=lambda_bounds[1], upper=lambda_bounds[2]> mu_lambda; // recovery rate
+  vector<lower=0.1, upper=1>[p] phi_p; // disturbance intensity
+  real<lower=0.1, upper=1> mu_phi;
+  real<lower=0> sigma_phi;
+  vector<lower=0, upper=0.5>[p] lambda_p; // recovery rate
+  real<lower=0, upper=0.5> mu_lambda;
   real<lower=0> sigma_lambda;
-  vector<lower=lambda_bounds[1], upper=lambda_bounds[2]>[n_plot_rec] lambda_p;
-  real<lower=thetaInf_bounds[1], upper=thetaInf_bounds[2]> mu_thetaInf; // ending point
-  real<lower=0> sigma_thetaInf_s;
-  vector<lower=thetaInf_bounds[1], upper=thetaInf_bounds[2]>[n_site] thetaInf_s;
-  real<lower=0> sigma_old;
-  real<lower=0> sigma_pre;
-  real<lower=0> sigma_rec;
-  real<lower=delta_bounds[1], upper=delta_bounds[2]> mu_delta; // str var
-  vector<lower=-dist_p, upper=delta_bounds[2]>[n_plot_rec] delta_p;
+  vector<lower=-phi_p, upper=2>[p] delta_p; // bump height
+  real<lower=0, upper=2> mu_delta;
   real<lower=0> sigma_delta;
-  real<lower=tau_bounds[1]-3, upper=tau_bounds[2]-3> mu_tau_0; //str time
-  vector<lower=tau_bounds[1]-3, upper=tau_bounds[2]-3>[n_site] tau_0_s;
+  vector<lower=5-3, upper=40-3>[s] tau0_s; // bump time
+  real<lower=5-3, upper=40-3> mu_tau0;
   real<lower=0> sigma_tau;
+  vector<lower=(mu_theta_s-sigma_theta_s)*0.1, upper=(mu_theta_s+sigma_theta_s)*10>[s] theta_s; // asymptotic value
+  real<lower=0> sigma; // residual variation
 }
 transformed parameters {
-  vector[n_plot_rec] theta0_p = thetaInf_s[site_plot_rec] .* dist_p;
-  vector[n_old] mu_old = thetaInf_s[site_old];
-  vector[n_pre] mu_pre = thetaInf_s[site_pre];
-  vector[n_rec] ltp_rec = 1 - exp(-lambda_p[plot_rec] .* time);
-  vector[n_rec] stp_rec = delta_p[plot_rec] .* 
-                           (time ./ tau_0_s[site_rec] .* exp( 1 - time ./ tau_0_s[site_rec] )) .*
-                           (time ./ tau_0_s[site_rec] .* exp( 1 - time ./ tau_0_s[site_rec] ));
-  vector[n_rec] mu_rec = theta0_p[plot_rec] + 
-                         ltp_rec .* (thetaInf_s[site_rec] - theta0_p[plot_rec]) + 
-                         stp_rec .* thetaInf_s[site_rec];
+  vector[n] ltp = 1 - exp(-lambda_p[plot] .* t);
+  vector[n] stp = delta_p[plot] .*
+                  (t ./ tau0_s[site] .* exp(1 - t ./ tau0_s[site])) .*
+                  (t ./ tau0_s[site] .* exp(1 - t ./ tau0_s[site]));
+  vector[n] mu = theta_s[site] .* (phi_p[plot] + ltp.*(1 - phi_p[plot]) + stp);
 }
 model {
-  log(y_old) ~ normal(log(mu_old), sigma_old);
-  log(y_pre) ~ normal(log(mu_pre), sigma_pre);
-  log(y_rec) ~ normal(log(mu_rec), sigma_rec);
-  dist_p ~ cauchy(mu_dist, sigma_dist);
-  thetaInf_s ~ cauchy(mu_thetaInf, sigma_thetaInf_s);
-  lambda_p ~ cauchy(mu_lambda, sigma_lambda);
-  delta_p ~ cauchy(mu_delta, sigma_delta);
-  tau_0_s ~ cauchy(mu_tau_0, sigma_tau);
-  sigma_old ~ std_normal();
-  sigma_pre ~ std_normal();
-  sigma_rec ~ std_normal();
-  sigma_dist ~ std_normal();
-  sigma_thetaInf_s ~ std_normal();
+  log(y) ~ normal(log(mu), sigma);
+  phi_p ~ normal(mu_phi, sigma_phi);
+  lambda_p ~ normal(mu_lambda, sigma_lambda);
+  delta_p ~ normal(mu_delta, sigma_delta);
+  tau0_s ~ normal(mu_tau0, sigma_tau);
+  for(i in 1:s)
+    theta_s[i] ~ normal(mu_theta_s[i], sigma_theta_s[i]);
+  sigma ~ std_normal();
+  sigma_phi ~ std_normal();
   sigma_lambda ~ std_normal();
   sigma_delta ~ std_normal();
   sigma_tau ~ std_normal();
 }
 generated quantities {
-  matrix[time_max, n_plot_rec] y_pred;
-  vector[n_plot_rec] y15_rel_p;
-  real mu_tau = mu_tau_0 + 3;
-  vector[n_site] tau_s = tau_0_s + 3;
-  real mu_t90 = log(10) / mu_lambda + 3;
-  vector[n_plot_rec] t90_p = log(10) / lambda_p + 3;
-  real mu_delta_pct = mu_delta*100;
-  vector[n_plot_rec] delta_pct_p = delta_p*100;
-  real mu_dist_pct = mu_dist*100;
-  vector[n_plot_rec] dist_pct_p = (1-dist_p)*100;
-  for(p in 1:n_plot_rec)
-    y_pred[,p] = theta0_p[p] + 
-                 (thetaInf_s[site_plot_rec[p]] - theta0_p[p]) * 
-                 (1 - exp(-lambda_p[p] * time_pred)) +
-                 thetaInf_s[site_plot_rec[p]] * 
-                 (delta_p[p] * 
-                 (time_pred / tau_0_s[site_plot_rec[p]] .* 
-                 exp( 1 - time_pred ./ tau_0_s[site_plot_rec[p]] )) .*
-                 (time_pred / tau_0_s[site_plot_rec[p]] .* 
-                 exp( 1 - time_pred ./ tau_0_s[site_plot_rec[p]] )));
-   y15_rel_p = to_vector(y_pred[(15+3),]) ./ thetaInf_s[site_plot_rec];
+  matrix[55, p] y_pred;
+  vector[p] y15_p;
+  real mu_tau = mu_tau0 + 3; // tau in real time
+  vector[s] tau_s = tau0_s + 3;
+  real mu_t90 = log(10) / mu_lambda + 3; // 90pct recovery time
+  vector[p] t90_p = log(10) / lambda_p + 3;
+  real mu_deltapct = mu_delta*100; // bump intensity in pct
+  vector[p] deltapct_p = delta_p*100;
+  real mu_phipct = (1-mu_phi)*100; // disturbance as a loss in pct
+  vector[p] phipct_p = (1-phi_p)*100;
+  for(i in 1:p)
+    y_pred[,i] = theta_s[site_plot[i]] .* 
+                  (phi_p[i] + 
+                  (1 - exp(-lambda_p[i] * t_pred)) 
+                  .* (1 - phi_p[i]) + 
+                  (delta_p[i] * 
+                 (t_pred / tau0_s[site_plot[i]] .* 
+                 exp( 1 - t_pred ./ tau0_s[site_plot[i]] )) .*
+                 (t_pred / tau0_s[site_plot[i]] .* 
+                 exp( 1 - t_pred ./ tau0_s[site_plot[i]] ))));
+   y15_p = to_vector(y_pred[(15+3),]) ./ theta_s[site_plot];
 }

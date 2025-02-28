@@ -219,12 +219,6 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./43_feve.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Div - FEve</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./51_wd.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Func - WD</span></a>
   </div>
@@ -233,12 +227,6 @@ div.csl-indent {
   <div class="sidebar-item-container"> 
   <a href="./52_sla.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Func - SLA</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./53_n.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Func - N</span></a>
   </div>
 </li>
       </ul>
@@ -311,7 +299,7 @@ div.csl-indent {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#data" id="toc-data" class="nav-link active" data-scroll-target="#data">Data</a></li>
+  <li><a href="#ogf" id="toc-ogf" class="nav-link active" data-scroll-target="#ogf">OGF</a></li>
   <li><a href="#stp" id="toc-stp" class="nav-link" data-scroll-target="#stp">STP</a></li>
   </ul>
 </nav>
@@ -336,43 +324,41 @@ div.csl-indent {
 
 </header>
 
-<p>Genus diversity is measured using Hill’s number with order <span class="math inline">\(q=1\)</span>. Hill’s numbers are parameterised by a diversity order <span class="math inline">\(q\)</span>, which determines the sensitivity of the measures to the relative abundances of species. Hill’s numbers include the three most commonly used measures of species diversity as special cases: species richness (q = 0), Shannon diversity (q = 1) and Simpson diversity (q = 2). The indices were derived from taxonomic censuses and cleaned taxonomies using the R package entropart <span class="citation" data-cites="marcon2015">(<a href="99_references.html#ref-marcon2015" role="doc-biblioref">Marcon and Hérault 2015</a>)</span>. Finally, to account for differences in species identification, the indices have been corrected by a rarefaction curve, taking into account the value at 80% coverage.</p>
-<section id="data" class="level2">
-<h2 class="anchored" data-anchor-id="data">Data</h2>
+<p>Genus diversity is measured using Hill’s number with order <span class="math inline">\(q=1\)</span>. Hill’s numbers are parameterised by a diversity order <span class="math inline">\(q\)</span>, which determines the sensitivity of the measures to the relative abundances of species. Hill’s numbers include the three most commonly used measures of species diversity as special cases: species richness (q = 0), Shannon diversity (q = 1) and Simpson diversity (q = 2). The indices were derived from taxonomic censuses and cleaned taxonomies using the R package entropart <span class="citation" data-cites="marcon2015">(<a href="#ref-marcon2015" role="doc-biblioref">Marcon and Hérault 2015</a>)</span>. Finally, to account for differences in species identification, the indices have been corrected by a rarefaction curve, taking into account the value at 80% coverage.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>var <span class="ot">&lt;-</span> <span class="st">"diversity_q1_gen"</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">exists</span>(<span class="fu">file.path</span>(<span class="st">"chains"</span>, var))) {</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(<span class="fu">file.path</span>(<span class="st">"chains"</span>, var))</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>lab <span class="ot">&lt;-</span> <span class="fu">expression</span>(<span class="st">"Genus diversity"</span> <span class="sc">~</span> q <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>data_rec <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">"data/derived_data/data_rec.tsv"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> var)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>data_pre <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">"data/derived_data/data_pre.tsv"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> var)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>data_old <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">"data/derived_data/data_old.tsv"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> var)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>lab <span class="ot">&lt;-</span> <span class="fu">expression</span>(<span class="st">"Genus diversity"</span> <span class="sc">~</span> q <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">load_all</span>(var, lab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<section id="ogf" class="level2">
+<h2 class="anchored" data-anchor-id="ogf">OGF</h2>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(data_rec, data_pre, data_old) <span class="sc">%&gt;%</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rel_year, y, <span class="at">group =</span> <span class="fu">paste</span>(site, plot), <span class="at">col =</span> treatment)) <span class="sc">+</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>site) <span class="sc">+</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(lab) <span class="sc">+</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ogf_data_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="41_gen_q1_files/figure-html/fig-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Modelled trajectories.</figcaption>
+<p><img src="41_gen_q1_files/figure-html/ogf_data-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Old growth forests data.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ogf_theta_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="41_gen_q1_files/figure-html/theta_ogf-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Theta posterior from old growth forests.</figcaption>
 </figure>
 </div>
 </div>
@@ -383,30 +369,28 @@ div.csl-indent {
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">"chains"</span>, var, <span class="st">"stp"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fit_stp <span class="ot">&lt;-</span> <span class="fu">as_cmdstan_fit</span>(<span class="fu">list.files</span>(path, <span class="at">full.names =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>fit_stp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fit_stp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>   variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
- lp__       2392.09 2399.96 65.42 63.74 2272.30 2489.52 1.14       22       39
- mu_dist       0.90    0.90  0.02  0.02    0.87    0.93 1.01      579      886
- sigma_dist    0.06    0.06  0.01  0.01    0.04    0.08 1.00      632     1387
- dist_p[1]     0.94    0.94  0.04  0.04    0.87    0.99 1.00      968      956
- dist_p[2]     0.66    0.66  0.05  0.05    0.59    0.74 1.00      864      466
- dist_p[3]     0.97    0.97  0.03  0.03    0.91    1.00 1.00     1237     1495
- dist_p[4]     0.74    0.74  0.05  0.05    0.66    0.82 1.01      925     1148
- dist_p[5]     0.92    0.92  0.04  0.04    0.86    0.98 1.00     1420     1296
- dist_p[6]     0.81    0.81  0.05  0.05    0.72    0.89 1.00     1020     1019
- dist_p[7]     0.57    0.57  0.04  0.05    0.50    0.65 1.00     1217     1187
+<pre><code> variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
+ lp__     1911.02 1904.62 68.10 85.42 1819.77 2024.45 1.79        5       51
+ phi_p[1]    0.94    0.95  0.04  0.04    0.87    1.00 1.02      531      456
+ phi_p[2]    0.66    0.66  0.05  0.05    0.58    0.73 1.11       25      588
+ phi_p[3]    0.96    0.96  0.03  0.03    0.89    1.00 1.00     1697     1734
+ phi_p[4]    0.75    0.75  0.05  0.05    0.68    0.83 1.03      134     2123
+ phi_p[5]    0.90    0.91  0.05  0.05    0.82    0.98 1.00     1213     1185
+ phi_p[6]    0.76    0.76  0.05  0.05    0.69    0.84 1.01     1066      910
+ phi_p[7]    0.53    0.53  0.04  0.04    0.47    0.59 1.01      996     1715
+ phi_p[8]    0.68    0.68  0.04  0.04    0.61    0.75 1.04       89     1844
+ phi_p[9]    0.42    0.42  0.03  0.03    0.38    0.47 1.00     1377     2348
 
- # showing 10 of 9832 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
+ # showing 10 of 8635 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
 </div>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvo_fig</span>(data_rec, data_pre, fit_stp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvo_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -420,7 +404,7 @@ div.csl-indent {
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proj_fig</span>(data_rec, data_pre, data_old, fit_stp, lab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proj_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -431,9 +415,23 @@ div.csl-indent {
 </div>
 </div>
 </div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rec_theta_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="41_gen_q1_files/figure-html/theta_stp-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Theta posterior from recovery trajectories against its posterior.</figcaption>
+</figure>
+</div>
+</div>
+</div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-marcon2015" class="csl-entry" role="listitem">
 Marcon, Eric, and Bruno Hérault. 2015. <span>“<span><strong>Entropart</strong></span>: An<span><em>R</em></span>Package to Measure and Partition Diversity.”</span> <em>Journal of Statistical Software</em> 67 (8). <a href="https://doi.org/10.18637/jss.v067.i08">https://doi.org/10.18637/jss.v067.i08</a>.
 </div>

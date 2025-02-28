@@ -1,28 +1,17 @@
-pvo_fig <- function(
-    data_rec,
-    data_pre,
-    fit) {
-  data_rec$preds <- fit$summary(c("mu_rec"), median)$median
-  data_pre$preds <- fit$summary(c("mu_pre"), median)$median
-  rmse_rec <- sqrt(mean((data_rec$preds - data_rec$y)^2, na.rm = TRUE))
-  rmse_pre <- sqrt(mean((data_pre$preds - data_pre$y)^2, na.rm = TRUE))
-  g_rec <- data_rec %>%
+pvo_fig <- function(data) {
+  data$data_rec %>%
+    arrange(sitenum, plotnum, rel_year) %>%
+    mutate(preds = data$fit_stp$summary(c("mu"), median)$median) %>%
     ggplot(aes(preds, y)) +
     geom_point(alpha = 0.25) +
     geom_abline(col = "red", linetype = "dashed") +
-    ggtitle("Recovery", paste("RMSE =", round(rmse_rec, 2))) +
+    ggtitle(paste(
+      "RMSE =",
+      round(sqrt(mean((data$fit_stp$summary(c("mu"), median)$median -
+                         arrange(data$data_rec, sitenum, plotnum,
+                                 rel_year)$y)^2, na.rm = TRUE)), 2)
+    )) +
     theme_bw() +
     xlab("Predicted") +
     ylab("Observed")
-  g_pre <- data_pre %>%
-    ggplot(aes(preds, y, col = site)) +
-    geom_point(alpha = 0.25) +
-    geom_abline(col = "red", linetype = "dashed") +
-    ggtitle("Prelogging", paste("RMSE =", round(rmse_pre, 2))) +
-    theme_bw() +
-    scale_color_discrete("") +
-    theme(legend.position = "bottom") +
-    xlab("Predicted") +
-    ylab("Observed")
-  g_pre + g_rec
 }

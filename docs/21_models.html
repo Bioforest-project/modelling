@@ -219,12 +219,6 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./43_feve.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Div - FEve</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./51_wd.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Func - WD</span></a>
   </div>
@@ -233,12 +227,6 @@ div.csl-indent {
   <div class="sidebar-item-container"> 
   <a href="./52_sla.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Func - SLA</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./53_n.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Func - N</span></a>
   </div>
 </li>
       </ul>
@@ -311,7 +299,7 @@ div.csl-indent {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#ltp" id="toc-ltp" class="nav-link active" data-scroll-target="#ltp">LTP</a></li>
+  <li><a href="#ogf" id="toc-ogf" class="nav-link active" data-scroll-target="#ogf">OGF</a></li>
   <li><a href="#stp" id="toc-stp" class="nav-link" data-scroll-target="#stp">STP</a></li>
   </ul>
 </nav>
@@ -336,17 +324,39 @@ div.csl-indent {
 
 </header>
 
-<p>Models description.</p>
-<section id="ltp" class="level2">
-<h2 class="anchored" data-anchor-id="ltp">LTP</h2>
-<p>Long term process only model:</p>
+<p>Models descriptions.</p>
+<section id="ogf" class="level2">
+<h2 class="anchored" data-anchor-id="ogf">OGF</h2>
+<p>Old growth forest model using control and pre-logging inventories to inform <span class="math inline">\(\theta\)</span> prior of the recovery trajectory:</p>
 <p><span class="math display">\[
 \begin{align}
-\mu_{rec} = \theta_{0,p} + (\theta_{\infty,s} - \theta_{0,p}) \times LTP \\
-LTP = 1 - e^{-\lambda_p \times time}
+y \sim \mathcal N (\mu_{site}+\delta_{plot}, \sigma)\\
+\delta_{plot} \sim \mathcal N(0,\sigma_{plot})
 \end{align}
 \]</span></p>
-<p>The model we use is derived from the common framework for modelling recovery in disturbed tropical forests <span class="citation" data-cites="maurent2023">(<a href="99_references.html#ref-maurent2023" role="doc-biblioref">Maurent et al. 2023</a>)</span>. The forest attribute is first disturbed at <span class="math inline">\(t=0\)</span> with either an increase or a decrease depending on the parameter <span class="math inline">\(dist\)</span>. Then the attributes recover asymptotically in the long term to an equilibrium value <span class="math inline">\(\theta_{Inf}\)</span> with a recovery rate <span class="math inline">\(\lambda\)</span>.</p>
+</section>
+<section id="stp" class="level2">
+<h2 class="anchored" data-anchor-id="stp">STP</h2>
+<p>Long term and short term processes model:</p>
+<p><span class="math display">\[
+\begin{align}
+log(y) \sim \mathcal N (log(\mu), \sigma)\\
+\mu = \theta_{site} \times (\phi_{plot} + LTP \times (1 - \phi_{plot}) + STP) \\
+LTP = 1 - e^{-\lambda_{plot} \times t} \\
+STP = \delta_{plot} \times (\frac{t}{\tau_{site}} \times e^{1-\frac{t}{\tau_{site}}})^2 \\
+\phi_{plot} \sim \mathcal N (\mu_{\phi}, \sigma_{\phi}) \\
+\lambda_{plot} \sim \mathcal N (\mu_{\lambda}, \sigma_{\lambda})\\
+\delta_{plot} \sim \mathcal N (\mu_{\delta}, \sigma_{\delta})\\
+\tau_{site} \sim \mathcal N (\mu_{\tau}, \sigma_{\tau}) \\
+(\sigma,\sigma_{\phi},\sigma_{\lambda},\sigma_{\delta},\sigma_{\tau}) \sim \mathcal N^5(0,1) \\
+\theta_{site} \sim \mathcal N (mean(y_{control,site}), sd(y_{control,site})) \\
+\phi_{plot} \sim \mathcal U(0.1,1.5) \\
+\lambda_{plot} \sim \mathcal U(0,0.5) \\
+\delta_{plot} \sim \mathcal U(-\phi_{plot},2) \\
+\tau_{site} \sim \mathcal U(5,40)
+\end{align}
+\]</span></p>
+<p>The model we use is derived from the common framework for modelling recovery in disturbed tropical forests <span class="citation" data-cites="maurent2023">(<a href="#ref-maurent2023" role="doc-biblioref">Maurent et al. 2023</a>)</span>. The forest attribute is first disturbed at <span class="math inline">\(t=0\)</span> with either an increase or a decrease depending on the parameter <span class="math inline">\(\phi\)</span>. Then the attributes recover asymptotically in the long term to an equilibrium value <span class="math inline">\(\theta\)</span> with a recovery rate <span class="math inline">\(\lambda\)</span>. But the recovery trajectory can also accommodate a short term increase of decrease of the attribute at a time <span class="math inline">\(\tau\)</span> with an intensity <span class="math inline">\(\delta\)</span>.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -355,116 +365,62 @@ LTP = 1 - e^{-\lambda_p \times time}
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  ltp <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>lambda <span class="sc">*</span> time)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  theta0 <span class="sc">+</span> (thetainf <span class="sc">-</span> theta0) <span class="sc">*</span> (ltp)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">time =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="dv">50</span>, <span class="at">length.out =</span> <span class="dv">100</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y_ltp =</span> <span class="fu">ltp</span>(time, <span class="at">dist =</span> <span class="fl">0.5</span>, <span class="at">thetainf =</span> <span class="dv">20</span>, <span class="at">lambda =</span> <span class="fl">0.05</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">data.frame</span>(<span class="at">time =</span> <span class="dv">0</span>, <span class="at">y_stp =</span> <span class="dv">20</span>, <span class="at">y_ltp =</span> <span class="dv">20</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(time)) <span class="sc">+</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> y_ltp)) <span class="sc">+</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="dv">52</span>, <span class="at">y =</span> <span class="fl">19.5</span>, <span class="at">label =</span> <span class="st">"theta[Inf]"</span>,</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"#9ea1d4"</span>, <span class="at">parse =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">5</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>,</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="dv">20</span>, <span class="at">y =</span> <span class="dv">15</span>, <span class="at">label =</span> <span class="st">"lambda"</span>,</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"#a8d2d1"</span>, <span class="at">parse =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">5</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>,</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="sc">-</span><span class="dv">4</span>, <span class="at">y =</span> <span class="dv">15</span>, <span class="at">label =</span> <span class="st">"dist"</span>,</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"#fc8a8a"</span>, <span class="at">parse =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">5</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">-</span><span class="dv">2</span>, <span class="at">y =</span> <span class="dv">10</span>, <span class="at">xend =</span> <span class="sc">-</span><span class="dv">2</span>, <span class="at">yend =</span> <span class="dv">20</span>),</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="st">"cm"</span>)), <span class="at">col =</span> <span class="st">"#fc8a8a"</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">-</span><span class="dv">2</span>, <span class="at">y =</span> <span class="dv">20</span>, <span class="at">xend =</span> <span class="sc">-</span><span class="dv">2</span>, <span class="at">yend =</span> <span class="dv">10</span>),</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="st">"cm"</span>)), <span class="at">col =</span> <span class="st">"#fc8a8a"</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>stp <span class="ot">&lt;-</span> <span class="cf">function</span>(time, dist, thetainf, lambda, tau, delta) {</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  theta0 <span class="ot">&lt;-</span> thetainf <span class="sc">*</span> dist</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  ltp <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>lambda <span class="sc">*</span> time)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  stp <span class="ot">&lt;-</span> delta <span class="sc">*</span> (time <span class="sc">/</span> tau <span class="sc">*</span> <span class="fu">exp</span>(<span class="dv">1</span> <span class="sc">-</span> time <span class="sc">/</span> tau))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  theta0 <span class="sc">+</span> ltp <span class="sc">*</span> (thetainf <span class="sc">-</span> theta0) <span class="sc">+</span> stp <span class="sc">*</span> thetainf</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">time =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="dv">50</span>, <span class="at">length.out =</span> <span class="dv">100</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y_stp =</span> <span class="fu">stp</span>(time,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">dist =</span> <span class="fl">0.5</span>, <span class="at">thetainf =</span> <span class="dv">20</span>, <span class="at">lambda =</span> <span class="fl">0.05</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">tau =</span> <span class="dv">5</span>, <span class="at">delta =</span> <span class="fl">0.5</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y_ltp =</span> <span class="fu">ltp</span>(time, <span class="at">dist =</span> <span class="fl">0.5</span>, <span class="at">thetainf =</span> <span class="dv">20</span>, <span class="at">lambda =</span> <span class="fl">0.05</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">data.frame</span>(<span class="at">time =</span> <span class="dv">0</span>, <span class="at">y_stp =</span> <span class="dv">20</span>, <span class="at">y_ltp =</span> <span class="dv">20</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(time)) <span class="sc">+</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> y_ltp), <span class="at">col =</span> <span class="st">"grey"</span>) <span class="sc">+</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> y_stp)) <span class="sc">+</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="dv">52</span>, <span class="at">y =</span> <span class="fl">19.5</span>, <span class="at">label =</span> <span class="st">"theta[site]"</span>,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"#9ea1d4"</span>, <span class="at">parse =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">5</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="dv">20</span>, <span class="at">y =</span> <span class="dv">15</span>, <span class="at">label =</span> <span class="st">"lambda[plot]"</span>,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"#a8d2d1"</span>, <span class="at">parse =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">5</span></span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">-</span><span class="dv">5</span>, <span class="at">y =</span> <span class="dv">20</span>, <span class="at">xend =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="dv">20</span>)) <span class="sc">+</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">7</span>, <span class="cn">NA</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="21_models_files/figure-html/ltp_proj-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">LTP proj with pars.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="stp" class="level2">
-<h2 class="anchored" data-anchor-id="stp">STP</h2>
-<p>Long term and short term processes model based on disturbance index <span class="math inline">\(dist\)</span>:</p>
-<p><span class="math display">\[
-\begin{align}
-\mu_{rec} = \theta_{0,p} + LTP \times (\theta_{\infty,s} - \theta_{0,p}) + STP \times \theta_{\infty,s} \\
-LTP = 1 - e^{-\lambda_p \times time} \\
-STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \\
-\theta_{0,p} = \theta_{\infty,s} \times dist_p
-\end{align}
-\]</span></p>
-<p>The model we use is derived from the common framework for modelling recovery in disturbed tropical forests <span class="citation" data-cites="maurent2023">(<a href="99_references.html#ref-maurent2023" role="doc-biblioref">Maurent et al. 2023</a>)</span>. The forest attribute is first disturbed at <span class="math inline">\(t=0\)</span> with either an increase or a decrease depending on the parameter <span class="math inline">\(dist\)</span>. Then the attributes recover asymptotically in the long term to an equilibrium value <span class="math inline">\(\theta_{Inf}\)</span> with a recovery rate <span class="math inline">\(\lambda\)</span>. But in this second version the recovery trajectory can also accommodate a short term increase of decrease of the attribute at a time <span class="math inline">\(\tau\)</span> with an intensity <span class="math inline">\(\delta\)</span>.</p>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>stp <span class="ot">&lt;-</span> <span class="cf">function</span>(time, dist, thetainf, lambda, tau, delta) {</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  theta0 <span class="ot">&lt;-</span> thetainf <span class="sc">*</span> dist</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  ltp <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>lambda <span class="sc">*</span> time)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  stp <span class="ot">&lt;-</span> delta <span class="sc">*</span> (time <span class="sc">/</span> tau <span class="sc">*</span> <span class="fu">exp</span>(<span class="dv">1</span> <span class="sc">-</span> time <span class="sc">/</span> tau))<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  theta0 <span class="sc">+</span> ltp <span class="sc">*</span> (thetainf <span class="sc">-</span> theta0) <span class="sc">+</span> stp <span class="sc">*</span> thetainf</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">time =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="dv">50</span>, <span class="at">length.out =</span> <span class="dv">100</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y_stp =</span> <span class="fu">stp</span>(time,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">dist =</span> <span class="fl">0.5</span>, <span class="at">thetainf =</span> <span class="dv">20</span>, <span class="at">lambda =</span> <span class="fl">0.05</span>,</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">tau =</span> <span class="dv">5</span>, <span class="at">delta =</span> <span class="fl">0.5</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y_ltp =</span> <span class="fu">ltp</span>(time, <span class="at">dist =</span> <span class="fl">0.5</span>, <span class="at">thetainf =</span> <span class="dv">20</span>, <span class="at">lambda =</span> <span class="fl">0.05</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">data.frame</span>(<span class="at">time =</span> <span class="dv">0</span>, <span class="at">y_stp =</span> <span class="dv">20</span>, <span class="at">y_ltp =</span> <span class="dv">20</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(time)) <span class="sc">+</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> y_ltp), <span class="at">col =</span> <span class="st">"grey"</span>) <span class="sc">+</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> y_stp)) <span class="sc">+</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>,</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="dv">52</span>, <span class="at">y =</span> <span class="fl">19.5</span>, <span class="at">label =</span> <span class="st">"theta[infinity]"</span>,</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"#9ea1d4"</span>, <span class="at">parse =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">5</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>,</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="dv">20</span>, <span class="at">y =</span> <span class="dv">15</span>, <span class="at">label =</span> <span class="st">"lambda"</span>,</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"#a8d2d1"</span>, <span class="at">parse =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">5</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>,</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="sc">-</span><span class="dv">4</span>, <span class="at">y =</span> <span class="dv">15</span>, <span class="at">label =</span> <span class="st">"dist"</span>,</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"#fc8a8a"</span>, <span class="at">parse =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">5</span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">-</span><span class="dv">2</span>, <span class="at">y =</span> <span class="dv">10</span>, <span class="at">xend =</span> <span class="sc">-</span><span class="dv">2</span>, <span class="at">yend =</span> <span class="dv">20</span>),</span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="st">"cm"</span>)), <span class="at">col =</span> <span class="st">"#fc8a8a"</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">-</span><span class="dv">2</span>, <span class="at">y =</span> <span class="dv">20</span>, <span class="at">xend =</span> <span class="sc">-</span><span class="dv">2</span>, <span class="at">yend =</span> <span class="dv">10</span>),</span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="st">"cm"</span>)), <span class="at">col =</span> <span class="st">"#fc8a8a"</span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>,</span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="dv">6</span>, <span class="at">y =</span> <span class="fl">9.3</span>, <span class="at">label =</span> <span class="st">"tau"</span>,</span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"#f2e5a9"</span>, <span class="at">parse =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">5</span></span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>,</span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="dv">5</span>, <span class="at">y =</span> <span class="fl">17.5</span>, <span class="at">label =</span> <span class="st">"delta"</span>,</span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"#a7d6ac"</span>, <span class="at">parse =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">5</span></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">6</span>, <span class="at">y =</span> <span class="dv">13</span>, <span class="at">xend =</span> <span class="dv">6</span>, <span class="at">yend =</span> <span class="dv">22</span>),</span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="st">"cm"</span>)), <span class="at">col =</span> <span class="st">"#a7d6ac"</span></span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">6</span>, <span class="at">y =</span> <span class="dv">22</span>, <span class="at">xend =</span> <span class="dv">6</span>, <span class="at">yend =</span> <span class="dv">13</span>),</span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="st">"cm"</span>)), <span class="at">col =</span> <span class="st">"#a7d6ac"</span></span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">6</span>, <span class="at">y =</span> <span class="dv">9</span>, <span class="at">xend =</span> <span class="dv">6</span>, <span class="at">yend =</span> <span class="dv">7</span>),</span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="st">"cm"</span>)), <span class="at">col =</span> <span class="st">"#f2e5a9"</span></span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">-</span><span class="dv">5</span>, <span class="at">y =</span> <span class="dv">20</span>, <span class="at">xend =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="dv">20</span>)) <span class="sc">+</span></span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">7</span>, <span class="cn">NA</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="sc">-</span><span class="dv">4</span>, <span class="at">y =</span> <span class="dv">15</span>, <span class="at">label =</span> <span class="st">"phi[plot]"</span>,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"#fc8a8a"</span>, <span class="at">parse =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">5</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">-</span><span class="dv">2</span>, <span class="at">y =</span> <span class="dv">10</span>, <span class="at">xend =</span> <span class="sc">-</span><span class="dv">2</span>, <span class="at">yend =</span> <span class="dv">20</span>),</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="st">"cm"</span>)), <span class="at">col =</span> <span class="st">"#fc8a8a"</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">-</span><span class="dv">2</span>, <span class="at">y =</span> <span class="dv">20</span>, <span class="at">xend =</span> <span class="sc">-</span><span class="dv">2</span>, <span class="at">yend =</span> <span class="dv">10</span>),</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="st">"cm"</span>)), <span class="at">col =</span> <span class="st">"#fc8a8a"</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>,</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="dv">6</span>, <span class="at">y =</span> <span class="fl">9.3</span>, <span class="at">label =</span> <span class="st">"tau[site]"</span>,</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"#f2e5a9"</span>, <span class="at">parse =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">5</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>,</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="dv">4</span>, <span class="at">y =</span> <span class="fl">17.5</span>, <span class="at">label =</span> <span class="st">"delta[plot]"</span>,</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"#a7d6ac"</span>, <span class="at">parse =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">5</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">6</span>, <span class="at">y =</span> <span class="dv">13</span>, <span class="at">xend =</span> <span class="dv">6</span>, <span class="at">yend =</span> <span class="dv">22</span>),</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="st">"cm"</span>)), <span class="at">col =</span> <span class="st">"#a7d6ac"</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">6</span>, <span class="at">y =</span> <span class="dv">22</span>, <span class="at">xend =</span> <span class="dv">6</span>, <span class="at">yend =</span> <span class="dv">13</span>),</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="st">"cm"</span>)), <span class="at">col =</span> <span class="st">"#a7d6ac"</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">6</span>, <span class="at">y =</span> <span class="dv">9</span>, <span class="at">xend =</span> <span class="dv">6</span>, <span class="at">yend =</span> <span class="dv">7</span>),</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="st">"cm"</span>)), <span class="at">col =</span> <span class="st">"#f2e5a9"</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">-</span><span class="dv">5</span>, <span class="at">y =</span> <span class="dv">20</span>, <span class="at">xend =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="dv">20</span>)) <span class="sc">+</span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">7</span>, <span class="cn">NA</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -489,7 +445,7 @@ STP = \delta_p \times (\frac{time}{\tau_s} \times e^{1-\frac{time}{\tau_s}})^2 \
 </blockquote>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-maurent2023" class="csl-entry" role="listitem">
 Maurent, Eliott, Bruno Hérault, Camille Piponiot, Géraldine Derroire, Diego Delgado, Bryan Finegan, Mélaine Aubry Kientz, Bienvenu H. K. Amani, and Marie Ange Ngo Bieng. 2023. <span>“A Common Framework to Model Recovery in Disturbed Tropical Forests.”</span> <em>Ecological Modelling</em> 483 (September): 110418. <a href="https://doi.org/10.1016/j.ecolmodel.2023.110418">https://doi.org/10.1016/j.ecolmodel.2023.110418</a>.
 </div>

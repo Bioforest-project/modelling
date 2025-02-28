@@ -17,10 +17,8 @@ book:
         - 34_gini.qmd
         - 41_gen_q1.qmd
         - 42_fdiv.qmd
-        - 43_feve.qmd
         - 51_wd.qmd
         - 52_sla.qmd
-        - 53_n.qmd
     - part: 60_parameters.qmd
       chapters:
         - 61_group1.qmd

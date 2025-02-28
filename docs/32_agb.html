@@ -217,12 +217,6 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./43_feve.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Div - FEve</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./51_wd.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Func - WD</span></a>
   </div>
@@ -231,12 +225,6 @@ div.csl-indent {
   <div class="sidebar-item-container"> 
   <a href="./52_sla.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Func - SLA</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./53_n.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Func - N</span></a>
   </div>
 </li>
       </ul>
@@ -309,7 +297,7 @@ div.csl-indent {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#data" id="toc-data" class="nav-link active" data-scroll-target="#data">Data</a></li>
+  <li><a href="#ogf" id="toc-ogf" class="nav-link active" data-scroll-target="#ogf">OGF</a></li>
   <li><a href="#stp" id="toc-stp" class="nav-link" data-scroll-target="#stp">STP</a></li>
   </ul>
 </nav>
@@ -334,9 +322,7 @@ div.csl-indent {
 
 </header>
 
-<p>Aboveground biomass recovery in tons per hectare derived from censuses using species names to derive first wood density and the biomass with the R package BIOMASS <span class="citation" data-cites="réjou-méchain2017">(<a href="99_references.html#ref-réjou-méchain2017" role="doc-biblioref">Réjou-Méchain et al. 2017</a>)</span>.</p>
-<section id="data" class="level2">
-<h2 class="anchored" data-anchor-id="data">Data</h2>
+<p>Aboveground biomass recovery in tons per hectare derived from censuses using species names to derive first wood density and the biomass with the R package BIOMASS <span class="citation" data-cites="réjou-méchain2017">(<a href="#ref-réjou-méchain2017" role="doc-biblioref">Réjou-Méchain et al. 2017</a>)</span>.</p>
 <blockquote class="blockquote">
 <p>We removed Kibale by setting all its AGB vales to 300.</p>
 </blockquote>
@@ -344,38 +330,38 @@ div.csl-indent {
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>var <span class="ot">&lt;-</span> <span class="st">"agb"</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">exists</span>(<span class="fu">file.path</span>(<span class="st">"chains"</span>, var))) {</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(<span class="fu">file.path</span>(<span class="st">"chains"</span>, var))</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>lab <span class="ot">&lt;-</span> <span class="fu">expression</span>(<span class="st">"AGB [ t"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>} <span class="sc">~</span> <span class="st">"]"</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>data_rec <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">"data/derived_data/data_rec.tsv"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> var)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>data_pre <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">"data/derived_data/data_pre.tsv"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> var)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>data_old <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">"data/derived_data/data_old.tsv"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> var)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>lab <span class="ot">&lt;-</span> <span class="fu">expression</span>(<span class="st">"AGB [ t"</span> <span class="sc">~</span> ha<span class="sc">^</span>{</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>} <span class="sc">~</span> <span class="st">"]"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">load_all</span>(var, lab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<section id="ogf" class="level2">
+<h2 class="anchored" data-anchor-id="ogf">OGF</h2>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(data_rec, data_pre, data_old) <span class="sc">%&gt;%</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rel_year, y, <span class="at">group =</span> <span class="fu">paste</span>(site, plot), <span class="at">col =</span> treatment)) <span class="sc">+</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>site) <span class="sc">+</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(lab) <span class="sc">+</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ogf_data_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="32_agb_files/figure-html/fig-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Modelled trajectories.</figcaption>
+<p><img src="32_agb_files/figure-html/ogf_data-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Old growth forests data.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ogf_theta_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="32_agb_files/figure-html/theta_ogf-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Theta posterior from old growth forests.</figcaption>
 </figure>
 </div>
 </div>
@@ -386,30 +372,28 @@ div.csl-indent {
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">"chains"</span>, var, <span class="st">"stp"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fit_stp <span class="ot">&lt;-</span> <span class="fu">as_cmdstan_fit</span>(<span class="fu">list.files</span>(path, <span class="at">full.names =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>fit_stp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fit_stp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>   variable    mean  median    sd    mad      q5     q95 rhat ess_bulk ess_tail
- lp__       2873.92 2858.92 92.60 105.55 2760.57 3033.45 2.13        5       30
- mu_dist       0.67    0.67  0.04   0.04    0.61    0.74 1.29       10       40
- sigma_dist    0.13    0.13  0.02   0.02    0.10    0.17 1.03      103     1169
- dist_p[1]     0.52    0.51  0.03   0.03    0.47    0.57 1.02      455      950
- dist_p[2]     0.68    0.68  0.07   0.06    0.56    0.76 1.03      213      555
- dist_p[3]     0.71    0.71  0.05   0.04    0.64    0.79 1.02      452      456
- dist_p[4]     0.69    0.70  0.08   0.07    0.55    0.79 1.04      128      341
- dist_p[5]     0.69    0.69  0.03   0.03    0.64    0.73 1.02      410      374
- dist_p[6]     0.83    0.83  0.05   0.05    0.76    0.93 1.01      514      452
- dist_p[7]     0.83    0.83  0.05   0.05    0.75    0.93 1.01      497      336
+<pre><code> variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
+ lp__     2336.70 2337.62 22.44 22.60 2298.78 2371.12 1.05      131      283
+ phi_p[1]    0.49    0.49  0.03  0.03    0.44    0.55 1.05       62      160
+ phi_p[2]    0.69    0.68  0.05  0.04    0.62    0.79 1.04      103      451
+ phi_p[3]    0.70    0.69  0.05  0.04    0.63    0.78 1.03      267      355
+ phi_p[4]    0.71    0.71  0.05  0.04    0.64    0.80 1.02      377      470
+ phi_p[5]    0.71    0.70  0.05  0.04    0.65    0.80 1.04       76      427
+ phi_p[6]    0.82    0.81  0.05  0.05    0.74    0.90 1.01      736      459
+ phi_p[7]    0.82    0.82  0.05  0.05    0.75    0.91 1.02      557      545
+ phi_p[8]    0.61    0.60  0.04  0.03    0.55    0.67 1.03      422      420
+ phi_p[9]    0.66    0.66  0.04  0.03    0.61    0.72 1.03      281      500
 
- # showing 10 of 9832 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
+ # showing 10 of 8635 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
 </div>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvo_fig</span>(data_rec, data_pre, fit_stp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvo_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -423,7 +407,7 @@ div.csl-indent {
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proj_fig</span>(data_rec, data_pre, data_old, fit_stp, lab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proj_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -434,9 +418,23 @@ div.csl-indent {
 </div>
 </div>
 </div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rec_theta_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="32_agb_files/figure-html/theta_stp-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Theta posterior from recovery trajectories against its posterior.</figcaption>
+</figure>
+</div>
+</div>
+</div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-réjou-méchain2017" class="csl-entry" role="listitem">
 Réjou-Méchain, Maxime, Ariane Tanguy, Camille Piponiot, Jérôme Chave, and Bruno Hérault. 2017. <span>“Biomass: An r Package for Estimating Above<span>-</span>Ground Biomass and Its Uncertainty in Tropical Forests.”</span> Edited by Sarah Goslee. <em>Methods in Ecology and Evolution</em> 8 (9): 1163–67. <a href="https://doi.org/10.1111/2041-210x.12753">https://doi.org/10.1111/2041-210x.12753</a>.
 </div>

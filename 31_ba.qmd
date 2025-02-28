@@ -5,7 +5,6 @@ library(tidyverse)
 library(knitr)
 library(cmdstanr)
 library(bayesplot)
-library(patchwork)
 list.files("r", full.names = TRUE, pattern = ".R") %>%
   lapply(source)
 ```
@@ -14,37 +13,30 @@ list.files("r", full.names = TRUE, pattern = ".R") %>%
 
 Basal areas in square meter per square meter directly derived from diameter censuses.
 
-## Data
-
-```{r data}
+```{r load_all}
 #| message: false
 #| warning: false
 var <- "ba"
-if (!exists(file.path("chains", var))) {
-  dir.create(file.path("chains", var))
-}
 lab <- expression("BA [" ~ m^2 ~ m^{
   -2
 } ~ "]")
-data_rec <- read_tsv("data/derived_data/data_rec.tsv") %>%
-  filter(variable == var)
-data_pre <- read_tsv("data/derived_data/data_pre.tsv") %>%
-  filter(variable == var)
-data_old <- read_tsv("data/derived_data/data_old.tsv") %>%
-  filter(variable == var)
+data <- load_all(var, lab)
 ```
 
-```{r fig}
-#| fig-cap: "Modelled trajectories."
-bind_rows(data_rec, data_pre, data_old) %>%
-  ggplot(aes(rel_year, y, group = paste(site, plot), col = treatment)) +
-  geom_line() +
-  facet_wrap(~site) +
-  theme_bw() +
-  xlab("") +
-  ylab(lab) +
-  theme(legend.position = "bottom") +
-  scale_color_discrete("")
+## OGF
+
+```{r ogf_data}
+#| message: false
+#| warning: false
+#| fig-cap: "Old growth forests data."
+ogf_data_fig(data)
+```
+
+```{r theta_ogf}
+#| message: false
+#| warning: false
+#| fig-cap: "Theta posterior from old growth forests."
+ogf_theta_fig(data)
 ```
 
 ## STP
@@ -52,49 +44,26 @@ bind_rows(data_rec, data_pre, data_old) %>%
 ```{r load_stp}
 #| message: false
 #| warning: false
-path <- file.path("chains", var, "stp")
-fit_stp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
-fit_stp
+data$fit_stp
 ```
 
 ```{r pvo_stp}
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted versus observed."
-pvo_fig(data_rec, data_pre, fit_stp)
+pvo_fig(data)
 ```
 
 ```{r preds_stp}
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted trajectories."
-proj_fig(data_rec, data_pre, data_old, fit_stp, lab)
+proj_fig(data)
 ```
 
-```{r}
-t1 <- data_rec %>% 
-  select(plotnum_rec, site) %>% 
-  unique() %>% 
-  rename(plotnum = plotnum_rec)
-t2 <- data_old %>% 
-  select(plotnum_old, site) %>% 
-  unique() %>% 
-  rename(plotnum = plotnum_old)
-pars1 <- fit_stp$summary("noiserec_p") %>% 
-  separate(variable, c("theta", "plot", "plotnum"), convert = TRUE) %>% 
-  left_join(t1) %>% 
-  mutate(type = "rec")
-pars2 <- fit_stp$summary("noiseold_p") %>% 
-  separate(variable, c("theta", "plot", "plotnum"), convert = TRUE) %>% 
-  left_join(t2) %>% 
-  mutate(type = "old")
-
-bind_rows(pars1, pars2) %>% 
-  ggplot(aes(exp(median), as.character(plotnum), col = as.character(type))) +
-  # geom_segment(aes(x = median - sd, xend = median + sd)) +
-  geom_segment(aes(x = exp(q5), xend = exp(q95)), size = .1) +
-  geom_point() +
-  facet_wrap(~site, scales = "free") +
-  theme_bw() +
-  geom_vline(xintercept = exp(0))
+```{r theta_stp}
+#| message: false
+#| warning: false
+#| fig-cap: "Theta posterior from recovery trajectories against its posterior."
+rec_theta_fig(data)
 ```
