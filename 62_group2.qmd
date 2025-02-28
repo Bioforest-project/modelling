@@ -25,18 +25,7 @@ read_tsv("outputs/parameters.tsv") %>%
     level == "inter",
     parameter != "lp__", parameter == "mu_lambda"
   ) %>%
-  mutate(attribute = recode(attribute,
-    "ba" = "Str - BA",
-    "agb" = "Str - AGB",
-    "nstem" = "Str - Stem",
-    "gini" = "Str - Gini",
-    "diversity_q1_gen" = "Div - Genus q=1",
-    "FDiv" = "Div - FDiv",
-    "WD_cwm_ba" = "Func - WD",
-    "SLA_cwm_ba" = "Func - SLA",
-    "N_cwm_ba" = "Func - N"
-  )) %>%
-  ggplot(aes(x = attribute, col = type)) +
+  ggplot(aes(x = attr_long, col = type)) +
   geom_point(aes(y = median)) +
   geom_segment(aes(y = median - sd, yend = median + sd)) +
   geom_segment(aes(y = q5, yend = q95), size = .1) +
@@ -55,18 +44,7 @@ read_tsv("outputs/parameters.tsv") %>%
     level == "inter",
     parameter != "lp__", parameter == "mu_t90"
   ) %>%
-  mutate(attribute = recode(attribute,
-    "ba" = "Str - BA",
-    "agb" = "Str - AGB",
-    "nstem" = "Str - Stem",
-    "gini" = "Str - Gini",
-    "diversity_q1_gen" = "Div - Genus q=1",
-    "FDiv" = "Div - FDiv",
-    "WD_cwm_ba" = "Func - WD",
-    "SLA_cwm_ba" = "Func - SLA",
-    "N_cwm_ba" = "Func - N"
-  )) %>%
-  ggplot(aes(x = attribute, col = type)) +
+  ggplot(aes(x = attr_long, col = type)) +
   geom_point(aes(y = median)) +
   geom_segment(aes(y = median - sd, yend = median + sd)) +
   geom_segment(aes(y = q5, yend = q95), size = .1) +
@@ -87,7 +65,7 @@ read_tsv("outputs/parameters.tsv") %>%
 #| fig-width: 10
 #| fig-height: 8
 dist_p <- read_tsv("outputs/parameters.tsv") %>%
-  filter(parameter == "dist_pct", attribute == "ba") %>%
+  filter(parameter == "phipct", attribute == "ba") %>%
   select(site, plot, median, sd, q5, q95) %>%
   unique() %>%
   rename_at(c("median", "sd", "q5", "q95"), ~ paste0(., "_dist_ba"))
@@ -100,7 +78,7 @@ read_tsv("outputs/parameters.tsv") %>%
   facet_wrap(~attribute, scales = "free_y") +
   scale_y_log10() +
   theme_bw() +
-  xlab(expression(dist[BA] ~ "[ % lost ]")) +
+  xlab(expression(phi[BA] ~ "[ % lost ]")) +
   ylab(expression(lambda)) +
   scale_color_discrete("") +
   theme(legend.position = "bottom")
@@ -120,7 +98,7 @@ read_tsv("outputs/parameters.tsv") %>%
   facet_wrap(~attribute, scales = "free_y") +
   scale_y_log10() +
   theme_bw() +
-  xlab(expression(dist[BA] ~ "[ % lost ]")) +
+  xlab(expression(phi[BA] ~ "[ % lost ]")) +
   ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
   scale_color_discrete("") +
   theme(legend.position = "bottom")

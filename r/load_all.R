@@ -6,7 +6,8 @@ load_all <- function(var, lab) {
     unique()
   path <- file.path("chains", paste0("ogf_", var))
   fit_ogf <- as_cmdstan_fit(list.files(path,
-                                       full.names = TRUE, pattern = "csv"))
+    full.names = TRUE, pattern = "csv"
+  ))
   data_rec <- read_tsv("data/derived_data/data_rec.tsv", col_types = cols()) %>%
     filter(variable == var)
   ind_rec <- data_rec %>%

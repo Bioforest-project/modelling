@@ -1,3 +1,4 @@
+-   modelling 0.1.0.9036: parameters & groups update
 -   modelling 0.1.0.9035: new modelling framework ogf+stp, all vars to check, parameters & groups to update
 -   modelling 0.1.0.9034: observed & inferred dist\_{BA}
 -   modelling 0.1.0.9033: control pre data only in pre; delta relative to thetaInf; tau=tau_0+3; adding t90, delta_pct, dist_pct, y15_rel; updated boundaries tau; updated boundaries delta strictly positive (todo explore negative for gini, wd, fdiv but beware negative); update & restructure all pre-model pages; run, update & restructure all model pages (increased rhat and sla, n, feve better); update & restructure all post-model pages (increased rhat and sla, n, feve better)

@@ -8,8 +8,10 @@ pvo_fig <- function(data) {
     ggtitle(paste(
       "RMSE =",
       round(sqrt(mean((data$fit_stp$summary(c("mu"), median)$median -
-                         arrange(data$data_rec, sitenum, plotnum,
-                                 rel_year)$y)^2, na.rm = TRUE)), 2)
+        arrange(
+          data$data_rec, sitenum, plotnum,
+          rel_year
+        )$y)^2, na.rm = TRUE)), 2)
     )) +
     theme_bw() +
     xlab("Predicted") +
