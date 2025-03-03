@@ -119,6 +119,41 @@ read_tsv("outputs/parameters.tsv") %>%
   ylab(expression(dist[BA] ~ "observed [ % lost ]"))
 ```
 
+```{r}
+#| message: false
+#| warning: false
+read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "phipct", attribute == "ba") %>%
+  select(site, plot, median, sd, q5, q95) %>%
+  unique() %>%
+  left_join(dist_obs) %>%
+  na.omit() %>%
+  group_by(site) %>%
+  summarise(r = cor(median, dist_obs)) %>%
+  mutate(plot_area = c(1, 4, 1, 0.25, 6.25)) %>%
+  left_join(
+    read_tsv("data/derived_data/data.tsv") %>%
+      filter(variable == "ba") %>%
+      filter(rel_year > 0) %>%
+      group_by(site) %>%
+      summarise(first_inventory = min(rel_year))
+  ) %>%
+  left_join(
+    read_tsv("data/derived_data/data.tsv") %>%
+      filter(variable == "ba") %>%
+      filter(rel_year <= 0) %>%
+      group_by(site) %>%
+      summarise(delta_ba_pre = sd(value))
+  ) %>%
+  ggplot(aes(delta_ba_pre, r, size = plot_area, label = site)) +
+  geom_point() +
+  ggrepel::geom_text_repel(size = 5) +
+  theme_bw() +
+  xlab("Variation in pre-logging basal area") +
+  ylab("Observed and inferred disturbance correlation") +
+  scale_size("Plot area [ ha ]")
+```
+
 ## H2 - Diversity & intensity
 
 > **H2**: tree diversity also shows a non-linear response to increased intensity of logging: lightly logged forests show a transient increase in tree diversity, but more intensively logged forests show a strong negative effect on diversity

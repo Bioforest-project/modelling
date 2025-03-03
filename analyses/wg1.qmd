@@ -9,7 +9,7 @@ format:
     colorlinks: true
     fig-pos: H
 params:
-  site: "Paracou"
+  site: "Misiones"
 execute:
   echo: false
 bibliography: ../references.bib
@@ -47,7 +47,7 @@ read_tsv("../data/derived_data/data.tsv") %>%
 
 ## Model
 
-The model we use is derived from the common framework for modelling recovery in disturbed tropical forests [@maurent2023]. The forest attribute is first disturbed at $t=0$ with either an increase or a decrease depending on the parameter $dist$ that compares recovery trajectory to control and pre-logging inventories values. Then the attributes recover asymptotically in the long term to an equilibrium value $\theta_{Inf}$ with a recovery rate $\lambda$. But the recovery trajectory can also accommodate a short term increase of decrease of the attribute at a time $\tau$ with an intensity $\delta$.
+The model we use is derived from the common framework for modelling recovery in disturbed tropical forests [@maurent2023]. The forest attribute is first disturbed at $t=0$ with either an increase or a decrease depending on the parameter $phi$ that compares recovery trajectory to control and pre-logging inventories values. Then the attributes recover asymptotically in the long term to an equilibrium value $\theta$ with a recovery rate $\lambda$. But the recovery trajectory can also accommodate a short term increase of decrease of the attribute at a time $\tau$ with an intensity $\delta$.
 
 ```{r model_fig}
 #| warning: false
@@ -63,12 +63,12 @@ stp <- function(time, dist, thetainf, lambda, tau, delta) {
   theta0 <- thetainf * dist
   ltp <- 1 - exp(-lambda * time)
   stp <- delta * (time / tau * exp(1 - time / tau))^2
-  theta0 + (thetainf - theta0) * (ltp + stp)
+  theta0 + ltp * (thetainf - theta0) + stp * thetainf
 }
 data.frame(time = seq(0.1, 50, length.out = 100)) %>%
   mutate(y_stp = stp(time,
     dist = 0.5, thetainf = 20, lambda = 0.05,
-    tau = 5, delta = 1
+    tau = 5, delta = 0.5
   )) %>%
   mutate(y_ltp = ltp(time, dist = 0.5, thetainf = 20, lambda = 0.05)) %>%
   bind_rows(data.frame(time = 0, y_stp = 20, y_ltp = 20)) %>%
@@ -77,15 +77,15 @@ data.frame(time = seq(0.1, 50, length.out = 100)) %>%
   geom_line(aes(y = y_stp)) +
   theme_bw() +
   annotate("text",
-    x = 52, y = 19.5, label = "theta[infinity]",
+    x = 52, y = 19.5, label = "theta[site]",
     col = "#9ea1d4", parse = TRUE, size = 5
   ) +
   annotate("text",
-    x = 20, y = 15, label = "lambda",
+    x = 20, y = 15, label = "lambda[plot]",
     col = "#a8d2d1", parse = TRUE, size = 5
   ) +
   annotate("text",
-    x = -4, y = 15, label = "dist",
+    x = -4, y = 15, label = "phi[plot]",
     col = "#fc8a8a", parse = TRUE, size = 5
   ) +
   theme(axis.title = element_blank()) +
@@ -96,11 +96,11 @@ data.frame(time = seq(0.1, 50, length.out = 100)) %>%
     arrow = arrow(length = unit(0.2, "cm")), col = "#fc8a8a"
   ) +
   annotate("text",
-    x = 6, y = 9.3, label = "tau",
-    col = "#a6d7eb", parse = TRUE, size = 5
+    x = 6, y = 9.3, label = "tau[site]",
+    col = "#f2e5a9", parse = TRUE, size = 5
   ) +
   annotate("text",
-    x = 5, y = 17.5, label = "delta",
+    x = 4, y = 17.5, label = "delta[plot]",
     col = "#a7d6ac", parse = TRUE, size = 5
   ) +
   geom_segment(aes(x = 6, y = 13, xend = 6, yend = 22),
@@ -110,62 +110,73 @@ data.frame(time = seq(0.1, 50, length.out = 100)) %>%
     arrow = arrow(length = unit(0.2, "cm")), col = "#a7d6ac"
   ) +
   geom_segment(aes(x = 6, y = 9, xend = 6, yend = 7),
-    arrow = arrow(length = unit(0.2, "cm")), col = "#a6d7eb"
+    arrow = arrow(length = unit(0.2, "cm")), col = "#f2e5a9"
   ) +
   theme(axis.title = element_blank()) +
   geom_segment(aes(x = -5, y = 20, xend = 0, yend = 20)) +
   ylim(7, NA)
 ```
 
-## Basal area
+## Disturbance
 
 Basal areas in square meter per square meter directly derived from diameter censuses.
 
-```{r ba}
+```{r ba_rec}
 #| message: false
 #| warning: false
 #| fig-cap: "Recovery trajectory of basal area. Lines represent inferred recovery trajectories using the above model. Points represent observed values from inventories. Colours correspond to the different plots. The box plot at year zero represents the basal area variation in all prelogging inventories. The box plot at 50 years represents the  basal area in all inventories of the control plots." #nolint
-data_rec <- read_tsv("../data/derived_data/data_rec.tsv") %>%
-  filter(variable == "ba")
-data_pre <- read_tsv("../data/derived_data/data_pre.tsv") %>%
-  filter(variable == "ba")
-data_old <- read_tsv("../data/derived_data/data_old.tsv") %>%
-  filter(variable == "ba")
-path <- file.path("..", "chains", "ba", "stp")
+data_ogf <- read_tsv("../data/derived_data/data_ogf.tsv") %>%
+  filter(variable == "ba") %>%
+  filter(site == params$site)
+ind_ogf <- data_ogf %>%
+  select(sitenum, site) %>%
+  unique()
+data_rec <- read_tsv("../data/derived_data/data_rec.tsv",
+                     col_types = cols()) %>%
+  filter(variable == "ba") %>%
+  filter(site == params$site)
+ind_rec <- data_rec %>%
+  select(site, plot, sitenum, plotnum) %>%
+  unique() %>%
+  arrange(plotnum)
+path <- file.path("..", "chains", paste0("stp_", "ba"))
 fit_stp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
 projs <- fit_stp$summary("y_pred", "median") %>%
   separate(variable,
-    c("y", "pred", "rel_year", "plotnum_rec"),
+    c("y", "pred", "rel_year", "plotnum"),
     convert = TRUE
   ) %>%
   select(-y, -pred) %>%
   rename(y = median) %>%
   mutate(rel_year = rel_year + 3) %>%
-  left_join(data_rec %>%
-              select(site, plot, plotnum_rec) %>%
-              unique()) %>%
+  left_join(ind_rec) %>%
   filter(site == params$site) %>%
   filter(rel_year <= 40)
-data_pre <- filter(data_pre, site == params$site)
-data_rec <- filter(data_rec, site == params$site)
-data_old <- filter(data_old, site == params$site)
 projs %>%
   ggplot(aes(rel_year, y)) +
   geom_boxplot(
-    data = data_old %>% mutate(rel_year = 50),
+    data = data_ogf %>%
+      filter(treatment == "control") %>%
+      mutate(rel_year = 50),
     width = 4, fill = NA
   ) +
   geom_jitter(
-    data = data_old %>% mutate(rel_year = 50),
+    data = data_ogf %>%
+      filter(treatment == "control") %>%
+      mutate(rel_year = 50),
     width = 4, fill = NA
   ) +
   geom_boxplot(
-    data = data_pre %>% mutate(rel_year = 0),
+    data = data_ogf %>%
+      filter(treatment == "logged") %>%
+      mutate(rel_year = 0),
     width = 4, fill = NA
   ) +
   geom_point(
     aes(col = plot),
-    data = data_pre %>% mutate(rel_year = 0),
+    data = data_ogf %>%
+      filter(treatment == "logged") %>%
+      mutate(rel_year = 0),
     width = 4, fill = NA
   ) +
   geom_point(aes(group = paste(site, plot), col = plot),
@@ -186,14 +197,14 @@ projs %>%
   )
 ```
 
-```{r dist}
+```{r phi}
 #| message: false
 #| warning: false
 #| fig-cap: "Disturbance index for basal area dist_BA per plot in % of area lost. The point represents the median value of the parameter, while the line represents the 90% confidence interval. The colour refers to the convergence metric Rhat for diagnosis, with Rhat above 1.1 indicating poor exploration of the parameter (lack of chain mixing)."#nolint
 dist <- read_tsv("../outputs/parameters.tsv") %>%
-  filter(attribute == "ba", parameter == "dist_pct", site == params$site)
+  filter(attribute == "ba", parameter == "phipct", site == params$site)
 ggplot(dist, aes(plot, median,
-  label = paste0(round(median), "%"), col = rhat
+  label = paste0(round(median), "%")
 )) +
   geom_point() +
   geom_text(nudge_x = .4) +
@@ -201,12 +212,11 @@ ggplot(dist, aes(plot, median,
   geom_segment(aes(y = q5, yend = q95), size = .1) +
   theme_bw() +
   coord_flip() +
-  ylab(expression(dist[BA] ~ "[ % lost ]")) +
-  xlab("Plot") +
-  scale_color_viridis_c(expression(hat(R)))
+  ylab(expression(phi[BA] ~ "[ % lost ]")) +
+  xlab("Plot")
 ```
 
-## Genus diversity
+## Diversity
 
 Genus diversity is measured using Hill's number with order $q=1$. Hill's numbers are parameterised by a diversity order $q$, which determines the sensitivity of the measures to the relative abundances of species. Hill's numbers include the three most commonly used measures of species diversity as special cases: species richness (q = 0), Shannon diversity (q = 1) and Simpson diversity (q = 2). The indices were derived from taxonomic censuses and cleaned taxonomies using the R package entropart [@marcon2015]. Finally, to account for differences in species identification, the indices have been corrected by a rarefaction curve, taking into account the value at 80% coverage.
 
@@ -214,47 +224,58 @@ Genus diversity is measured using Hill's number with order $q=1$. Hill's numbers
 #| message: false
 #| warning: false
 #| fig-cap: "Recovery trajectory of forest genus diversity. Lines represent inferred recovery trajectories using the above model. Points represent observed values from inventories. Colours correspond to the different plots. The box plot at year zero represents the genus diversity variation in all prelogging inventories. The box plot at 50 years represents the  genus diversity in all inventories fo the control plots." #nolint
-data_rec <- read_tsv("../data/derived_data/data_rec.tsv") %>%
-  filter(variable == "diversity_q1_gen")
-data_pre <- read_tsv("../data/derived_data/data_pre.tsv") %>%
-  filter(variable == "diversity_q1_gen")
-data_old <- read_tsv("../data/derived_data/data_old.tsv") %>%
-  filter(variable == "diversity_q1_gen")
-path <- file.path("..", "chains", "diversity_q1_gen", "stp")
+data_ogf <- read_tsv("../data/derived_data/data_ogf.tsv") %>%
+  filter(variable == "diversity_q1_gen") %>%
+  filter(site == params$site)
+ind_ogf <- data_ogf %>%
+  select(sitenum, site) %>%
+  unique()
+data_rec <- read_tsv("../data/derived_data/data_rec.tsv",
+                     col_types = cols()) %>%
+  filter(variable == "diversity_q1_gen") %>%
+  filter(site == params$site)
+ind_rec <- data_rec %>%
+  select(site, plot, sitenum, plotnum) %>%
+  unique() %>%
+  arrange(plotnum)
+path <- file.path("..", "chains", paste0("stp_", "diversity_q1_gen"))
 fit_stp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
 projs <- fit_stp$summary("y_pred", "median") %>%
   separate(variable,
-    c("y", "pred", "rel_year", "plotnum_rec"),
+    c("y", "pred", "rel_year", "plotnum"),
     convert = TRUE
   ) %>%
   select(-y, -pred) %>%
   rename(y = median) %>%
   mutate(rel_year = rel_year + 3) %>%
-  left_join(data_rec %>%
-              select(site, plot, plotnum_rec) %>%
-              unique()) %>%
+  left_join(ind_rec) %>%
   filter(site == params$site) %>%
   filter(rel_year <= 40)
-data_pre <- filter(data_pre, site == params$site)
-data_rec <- filter(data_rec, site == params$site)
-data_old <- filter(data_old, site == params$site)
 projs %>%
   ggplot(aes(rel_year, y)) +
   geom_boxplot(
-    data = data_old %>% mutate(rel_year = 50),
+    data = data_ogf %>%
+      filter(treatment == "control") %>%
+      mutate(rel_year = 50),
     width = 4, fill = NA
   ) +
   geom_jitter(
-    data = data_old %>% mutate(rel_year = 50),
+    data = data_ogf %>%
+      filter(treatment == "control") %>%
+      mutate(rel_year = 50),
     width = 4, fill = NA
   ) +
   geom_boxplot(
-    data = data_pre %>% mutate(rel_year = 0),
+    data = data_ogf %>%
+      filter(treatment == "logged") %>%
+      mutate(rel_year = 0),
     width = 4, fill = NA
   ) +
   geom_point(
     aes(col = plot),
-    data = data_pre %>% mutate(rel_year = 0),
+    data = data_ogf %>%
+      filter(treatment == "logged") %>%
+      mutate(rel_year = 0),
     width = 4, fill = NA
   ) +
   geom_point(aes(group = paste(site, plot), col = plot),
@@ -280,10 +301,10 @@ projs %>%
 delta <- read_tsv("../outputs/parameters.tsv") %>%
   filter(
     attribute == "diversity_q1_gen",
-    parameter == "delta_pct", site == params$site
+    parameter == "deltapct", site == params$site
   )
 ggplot(delta, aes(plot, median,
-  label = paste0(round(median), "%"), col = rhat
+  label = paste0(round(median), "%"),
 )) +
   geom_point() +
   geom_text(nudge_x = .4) +
@@ -291,12 +312,11 @@ ggplot(delta, aes(plot, median,
   geom_segment(aes(y = q5, yend = q95), size = .1) +
   theme_bw() +
   coord_flip() +
-  ylab(expression(dist[BA] ~ "[ % lost ]")) +
-  xlab("Plot") +
-  scale_color_viridis_c(expression(hat(R)))
+  ylab(expression(delta ~ "[ % ]")) +
+  xlab("Plot")
 ```
 
-## Diveristy & intensity
+## Diversity & Disturbance
 
 ```{r divint}
 #| message: false
@@ -322,7 +342,7 @@ dist %>%
   geom_segment(aes(x = q5_dist_ba, xend = q95_dist_ba), alpha = .5, size = .1) +
   ggrepel::geom_text_repel() +
   theme_bw() +
-  xlab(expression(dist[BA] ~ "[ % lost ]")) +
+  xlab(expression(phi[BA] ~ "[ % lost ]")) +
   ylab(expression(delta ~ "[ % ]")) +
   scale_color_discrete("") +
   ggpubr::stat_cor(aes(group = NA))

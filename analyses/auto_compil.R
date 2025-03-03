@@ -20,7 +20,7 @@ for (site in sites) {
 
 sites <- c(
   "Kabo", "Lesong", "Malinau", "Mbaiki", "Misiones",
-  "Paracou", "Sg Lalang", "Ulu Muda"
+  "Paracou", "Ulu Muda"
 )
 for (site in sites) {
   print(site)
