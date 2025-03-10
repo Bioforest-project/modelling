@@ -24,23 +24,12 @@ lab <- expression("Stem [ trees" ~ ha^{
 data <- load_all(var, lab)
 ```
 
-## OGF
-
-```{r ogf_data}
+```{r theta_equ}
 #| message: false
 #| warning: false
-#| fig-cap: "Old growth forests data."
-ogf_data_fig(data)
+#| fig-cap: "Theta posterior from forests at equilibirum."
+equ_theta_fig(data)
 ```
-
-```{r theta_ogf}
-#| message: false
-#| warning: false
-#| fig-cap: "Theta posterior from old growth forests."
-ogf_theta_fig(data)
-```
-
-## STP
 
 ```{r load_stp}
 #| message: false

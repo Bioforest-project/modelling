@@ -8,9 +8,9 @@ library(tidyverse)
 
 Models descriptions.
 
-## OGF
+## Equilibirum
 
-Old growth forest model using control and pre-logging inventories to inform $\theta$ prior of the recovery trajectory:
+Equilibrium model using control and pre-logging inventories to inform $\theta$ prior of the recovery trajectory:
 
 $$
 \begin{align}
@@ -19,9 +19,9 @@ y \sim \mathcal N (\mu_{site}+\delta_{plot}, \sigma)\\
 \end{align}
 $$
 
-## STP
+## Recovery
 
-Long term and short term processes model:
+Recovery trajectory model:
 
 $$
 \begin{align}
@@ -44,7 +44,7 @@ $$
 
 The model we use is derived from the common framework for modelling recovery in disturbed tropical forests [@maurent2023]. The forest attribute is first disturbed at $t=0$ with either an increase or a decrease depending on the parameter $\phi$. Then the attributes recover asymptotically in the long term to an equilibrium value $\theta$ with a recovery rate $\lambda$. But the recovery trajectory can also accommodate a short term increase of decrease of the attribute at a time $\tau$ with an intensity $\delta$.
 
-```{r stp_proj}
+```{r recovery}
 #| warning: false
 #| message: false
 #| fig-cap: "STP proj with pars."

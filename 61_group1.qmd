@@ -86,6 +86,7 @@ read_tsv("outputs/parameters.tsv") %>%
 ```{r dist_ba}
 #| message: false
 #| warning: false
+#| eval: false
 data_rec <- read_tsv("data/derived_data/data_rec.tsv", col_types = cols()) %>%
   filter(variable == "ba") %>%
   filter(variable == "ba") %>%
@@ -122,6 +123,7 @@ read_tsv("outputs/parameters.tsv") %>%
 ```{r}
 #| message: false
 #| warning: false
+#| eval: false
 read_tsv("outputs/parameters.tsv") %>%
   filter(parameter == "phipct", attribute == "ba") %>%
   select(site, plot, median, sd, q5, q95) %>%

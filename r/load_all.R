@@ -1,28 +1,30 @@
 load_all <- function(var, lab) {
-  data_ogf <- read_tsv("data/derived_data/data_ogf.tsv") %>%
-    filter(variable == var)
-  ind_ogf <- data_ogf %>%
+  data_equ <- read_tsv("data/derived_data/data_equ.tsv") %>%
+    filter(variable == var) %>%
+    mutate(plot = as.character(plot))
+  ind_equ <- data_equ %>%
     select(sitenum, site) %>%
     unique()
-  path <- file.path("chains", paste0("ogf_", var))
-  fit_ogf <- as_cmdstan_fit(list.files(path,
+  path <- file.path("chains", paste0("equ_", var))
+  fit_equ <- as_cmdstan_fit(list.files(path,
     full.names = TRUE, pattern = "csv"
   ))
   data_rec <- read_tsv("data/derived_data/data_rec.tsv", col_types = cols()) %>%
-    filter(variable == var)
+    filter(variable == var) %>%
+    mutate(plot = as.character(plot))
   ind_rec <- data_rec %>%
     select(site, plot, sitenum, plotnum) %>%
     unique() %>%
     arrange(plotnum)
-  path <- file.path("chains", paste0("stp_", var))
-  fit_stp <- as_cmdstan_fit(list.files(path, full.names = TRUE))
+  path <- file.path("chains", paste0("rec_", var))
+  fit_rec <- as_cmdstan_fit(list.files(path, full.names = TRUE))
   list(
-    data_ogf = data_ogf,
-    ind_ogf = ind_ogf,
-    fit_ogf = fit_ogf,
+    data_equ = data_equ,
+    ind_equ = ind_equ,
+    fit_equ = fit_equ,
     data_rec = data_rec,
     ind_rec = ind_rec,
-    fit_stp = fit_stp,
+    fit_rec = fit_rec,
     lab = lab
   )
 }

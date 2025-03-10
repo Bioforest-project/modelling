@@ -20,11 +20,11 @@ Data check.
 #| eval: false
 library(googlesheets4)
 read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?usp=sharing", 2) %>% # nolint
-  separate_rows(site_raw, sep = ",") %>% 
+  separate_rows(site_raw, sep = ",") %>%
   write_tsv("data/raw_data/sites.tsv")
 read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?gid=0#gid=0", col_types = "c") %>% # nolint
   rename_all(tolower) %>%
-  select(site, plot, treatment, year_of_harvest) %>% 
+  select(site, plot, treatment, year_of_harvest) %>%
   write_tsv("data/raw_data/metadata.tsv")
 ```
 
@@ -33,12 +33,12 @@ The following site names in metadata need to be fixed:
 ```{r metadata_sitenames}
 #| message: false
 #| warning: false
-read_tsv("data/raw_data/metadata.tsv") %>% 
-  select(site) %>% 
-  rename(site_raw = site) %>% 
-  unique() %>% 
-  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
-  filter(site_raw != site) %>% 
+read_tsv("data/raw_data/metadata.tsv") %>%
+  select(site) %>%
+  rename(site_raw = site) %>%
+  unique() %>%
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>%
+  filter(site_raw != site) %>%
   kable()
 ```
 
@@ -47,15 +47,18 @@ The following treatments need to be checked, e.g. To be logged - 2024, To be log
 ```{r metadat_treatments}
 #| message: false
 #| warning: false
-control_names <- c("control", "Control", "Natural_Forest",
-                   "To be logged - 2024", "To be logged (year unknown)")
-read_tsv("data/raw_data/metadata.tsv") %>% 
-  select(treatment) %>% 
-  unique() %>% 
+control_names <- c(
+  "control", "Control", "Natural_Forest",
+  "To be logged - 2024", "To be logged (year unknown)"
+)
+read_tsv("data/raw_data/metadata.tsv") %>%
+  select(treatment) %>%
+  unique() %>%
   mutate(treatment_simpified = ifelse(
-    treatment %in% control_names, "control", "logged")) %>%
-  group_by(treatment_simpified) %>% 
-  summarise(treatments = paste(treatment, collapse = ", ")) %>% 
+    treatment %in% control_names, "control", "logged"
+  )) %>%
+  group_by(treatment_simpified) %>%
+  summarise(treatments = paste(treatment, collapse = ", ")) %>%
   kable()
 ```
 
@@ -64,11 +67,11 @@ The following sites have non machine readable year of harvest:
 ```{r metadat_year}
 #| message: false
 #| warning: false
-read_tsv("data/raw_data/metadata.tsv") %>% 
-  select(site, year_of_harvest) %>% 
-  unique() %>% 
-  na.omit() %>% 
-  filter(is.na(as.numeric(year_of_harvest))) %>% 
+read_tsv("data/raw_data/metadata.tsv") %>%
+  select(site, year_of_harvest) %>%
+  unique() %>%
+  na.omit() %>%
+  filter(is.na(as.numeric(year_of_harvest))) %>%
   kable()
 ```
 
@@ -79,13 +82,13 @@ The following site names in data need to be fixed:
 ```{r data_sitenames}
 #| message: false
 #| warning: false
-read_csv("data/raw_data/aggregated_data.csv") %>% 
-  rename_all(tolower) %>% 
-  select(site) %>% 
-  rename(site_raw = site) %>% 
-  unique() %>% 
-  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
-  filter(site_raw != site) %>% 
+read_csv("data/raw_data/aggregated_data.csv") %>%
+  rename_all(tolower) %>%
+  select(site) %>%
+  rename(site_raw = site) %>%
+  unique() %>%
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>%
+  filter(site_raw != site) %>%
   kable()
 ```
 
@@ -94,17 +97,17 @@ Missing values (NA) across variables of interest:
 ```{r data_na}
 #| message: false
 #| warning: false
-read_csv("data/raw_data/aggregated_data.csv") %>% 
-  rename_all(tolower) %>% 
-  rename(site_raw = site) %>% 
-  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
-  select(-site_raw) %>% 
-  filter(variable %in% vars) %>% 
-  filter(is.na(value)) %>% 
-  group_by(variable, site) %>% 
-  summarise(N = n()) %>% 
-  pivot_wider(names_from = variable, values_from = N) %>% 
-  kable()
+na_data <- read_csv("data/raw_data/aggregated_data.csv") %>%
+  rename_all(tolower) %>%
+  rename(site_raw = site) %>%
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>%
+  select(-site_raw) %>%
+  filter(variable %in% vars) %>%
+  filter(is.na(value)) %>%
+  group_by(variable, site) %>%
+  summarise(N = n()) %>%
+  pivot_wider(names_from = variable, values_from = N)
+kable(na_data)
 ```
 
 Infinite values (Inf) across variables of interest:
@@ -112,17 +115,17 @@ Infinite values (Inf) across variables of interest:
 ```{r data_inf}
 #| message: false
 #| warning: false
-read_csv("data/raw_data/aggregated_data.csv") %>% 
-  rename_all(tolower) %>% 
-  rename(site_raw = site) %>% 
-  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
-  select(-site_raw) %>% 
-  filter(variable %in% vars) %>% 
-  filter(is.infinite(value)) %>% 
-  group_by(variable, site) %>% 
-  summarise(N = n()) %>% 
-  pivot_wider(names_from = variable, values_from = N) %>% 
-  kable()
+inf_data <- read_csv("data/raw_data/aggregated_data.csv") %>%
+  rename_all(tolower) %>%
+  rename(site_raw = site) %>%
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>%
+  select(-site_raw) %>%
+  filter(variable %in% vars) %>%
+  filter(is.infinite(value)) %>%
+  group_by(variable, site) %>%
+  summarise(N = n()) %>%
+  pivot_wider(names_from = variable, values_from = N)
+kable(inf_data)
 ```
 
 Zero values across variables of interest:
@@ -130,17 +133,17 @@ Zero values across variables of interest:
 ```{r data_zero}
 #| message: false
 #| warning: false
-read_csv("data/raw_data/aggregated_data.csv") %>% 
-  rename_all(tolower) %>% 
-  rename(site_raw = site) %>% 
-  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
-  select(-site_raw) %>% 
-  filter(variable %in% vars) %>% 
-  filter(value == 0) %>% 
-  group_by(variable, site) %>% 
-  summarise(N = n()) %>% 
-  pivot_wider(names_from = variable, values_from = N) %>% 
-  kable()
+zero_data <- read_csv("data/raw_data/aggregated_data.csv") %>%
+  rename_all(tolower) %>%
+  rename(site_raw = site) %>%
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>%
+  select(-site_raw) %>%
+  filter(variable %in% vars) %>%
+  filter(value == 0) %>%
+  group_by(variable, site) %>%
+  summarise(N = n()) %>%
+  pivot_wider(names_from = variable, values_from = N)
+kable(zero_data)
 ```
 
 Spurious values across variables of interest with plot names and the number of spurious values in brackets:
@@ -151,28 +154,57 @@ Spurious values across variables of interest with plot names and the number of s
 lims <- tribble(
   ~variable, ~min, ~max,
   "ba", 5, 80,
-  "agb",  50, 800,
-  "nstem",  50, 1000,
+  "agb", 50, 800,
+  "nstem", 50, 1000,
   "gini", 0, 1,
   "diversity_q1_gen", 10, 100,
   "FDiv", 0, 1,
-  "WD_cwm_ba", 0, 1, 
+  "WD_cwm_ba", 0, 1,
   "SLA_cwm_ba", 5, 30
 )
-read_csv("data/raw_data/aggregated_data.csv") %>% 
-  rename_all(tolower) %>% 
-  rename(site_raw = site) %>% 
-  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
-  select(-site_raw) %>% 
-  filter(variable %in% vars) %>% 
-  left_join(lims) %>% 
-  filter(value < min | value > max) %>% 
-  group_by(variable, site, plot) %>% 
-  summarise(N = n()) %>% 
-  mutate(value = paste0(plot, " (", N, ")")) %>% 
-  group_by(variable, site) %>% 
-  summarise(plot = paste(value, collapse = ", ")) %>% 
-  kable()
+spurious_data <- read_csv("data/raw_data/aggregated_data.csv") %>%
+  rename_all(tolower) %>%
+  rename(site_raw = site) %>%
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>%
+  select(-site_raw) %>%
+  filter(variable %in% vars) %>%
+  left_join(lims) %>%
+  filter(value < min | value > max) %>%
+  group_by(variable, site, plot) %>%
+  summarise(N = n()) %>%
+  mutate(value = paste0(plot, " (", N, ")")) %>%
+  group_by(variable, site) %>%
+  summarise(plot = paste(value, collapse = ", ")) %>%
+  ungroup()
+kable(spurious_data)
 ```
 
-All sites with NA, infinite, zeros or spurious values will be removed for now.
+All sites with NA, infinite, zeros or spurious values will be removed for now:
+
+```{r spurious_sites}
+spurious_sites <- bind_rows(
+  na_data %>% select(site),
+  inf_data %>% select(site),
+  zero_data %>% select(site),
+  spurious_data %>% select(site)
+) %>%
+  unique() %>%
+  arrange()
+kable(spurious_sites)
+```
+
+Remaining sites are:
+
+```{r data_remaining}
+#| message: false
+#| warning: false
+read_csv("data/raw_data/aggregated_data.csv") %>%
+  rename_all(tolower) %>%
+  rename(site_raw = site) %>%
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>%
+  select(-site_raw) %>%
+  filter(!(site %in% spurious_sites$site)) %>%
+  select(site) %>%
+  unique() %>%
+  kable()
+```

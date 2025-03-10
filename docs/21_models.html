@@ -84,7 +84,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./30_trajectories.html" rel="next">
-<link href="./11_observations.html" rel="prev">
+<link href="./12_data_prep.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -162,8 +162,14 @@ div.csl-indent {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./11_observations.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Observations</span></a>
+  <a href="./11_data_check.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data check</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12_data_prep.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data prep</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -299,8 +305,8 @@ div.csl-indent {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#ogf" id="toc-ogf" class="nav-link active" data-scroll-target="#ogf">OGF</a></li>
-  <li><a href="#stp" id="toc-stp" class="nav-link" data-scroll-target="#stp">STP</a></li>
+  <li><a href="#equilibirum" id="toc-equilibirum" class="nav-link active" data-scroll-target="#equilibirum">Equilibirum</a></li>
+  <li><a href="#recovery" id="toc-recovery" class="nav-link" data-scroll-target="#recovery">Recovery</a></li>
   </ul>
 </nav>
     </div>
@@ -325,9 +331,9 @@ div.csl-indent {
 </header>
 
 <p>Models descriptions.</p>
-<section id="ogf" class="level2">
-<h2 class="anchored" data-anchor-id="ogf">OGF</h2>
-<p>Old growth forest model using control and pre-logging inventories to inform <span class="math inline">\(\theta\)</span> prior of the recovery trajectory:</p>
+<section id="equilibirum" class="level2">
+<h2 class="anchored" data-anchor-id="equilibirum">Equilibirum</h2>
+<p>Equilibrium model using control and pre-logging inventories to inform <span class="math inline">\(\theta\)</span> prior of the recovery trajectory:</p>
 <p><span class="math display">\[
 \begin{align}
 y \sim \mathcal N (\mu_{site}+\delta_{plot}, \sigma)\\
@@ -335,9 +341,9 @@ y \sim \mathcal N (\mu_{site}+\delta_{plot}, \sigma)\\
 \end{align}
 \]</span></p>
 </section>
-<section id="stp" class="level2">
-<h2 class="anchored" data-anchor-id="stp">STP</h2>
-<p>Long term and short term processes model:</p>
+<section id="recovery" class="level2">
+<h2 class="anchored" data-anchor-id="recovery">Recovery</h2>
+<p>Recovery trajectory model:</p>
 <p><span class="math display">\[
 \begin{align}
 log(y) \sim \mathcal N (log(\mu), \sigma)\\
@@ -425,7 +431,7 @@ STP = \delta_{plot} \times (\frac{t}{\tau_{site}} \times e^{1-\frac{t}{\tau_{sit
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="21_models_files/figure-html/stp_proj-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="21_models_files/figure-html/recovery-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption class="figure-caption">STP proj with pars.</figcaption>
 </figure>
 </div>
@@ -688,8 +694,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./11_observations.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Observations</span>
+      <a href="./12_data_prep.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Data prep</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

@@ -132,7 +132,8 @@ ind_ogf <- data_ogf %>%
   select(sitenum, site) %>%
   unique()
 data_rec <- read_tsv("../data/derived_data/data_rec.tsv",
-                     col_types = cols()) %>%
+  col_types = cols()
+) %>%
   filter(variable == "ba") %>%
   filter(site == params$site)
 ind_rec <- data_rec %>%
@@ -231,7 +232,8 @@ ind_ogf <- data_ogf %>%
   select(sitenum, site) %>%
   unique()
 data_rec <- read_tsv("../data/derived_data/data_rec.tsv",
-                     col_types = cols()) %>%
+  col_types = cols()
+) %>%
   filter(variable == "diversity_q1_gen") %>%
   filter(site == params$site)
 ind_rec <- data_rec %>%

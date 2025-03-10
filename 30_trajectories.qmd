@@ -14,14 +14,18 @@ This section develop trajectories per attributes.
 
 ```{r fit_all}
 #| eval: false
-ogf <- cmdstan_model("models/ogf.stan")
-stp <- cmdstan_model("models/stp.stan")
+equ <- cmdstan_model("models/equilibirum.stan")
+rec <- cmdstan_model("models/recovery.stan")
 vars <- c(
   "ba", "agb", "nstem", "gini",
   "diversity_q1_gen", "FDiv",
   "WD_cwm_ba", "SLA_cwm_ba"
 )
-vars <- "agb"
-lapply(vars, sample_ogf)
-lapply(vars, sample_stp)
+vars <- c(
+  "ba", "nstem", "gini",
+  "diversity_q1_gen", "FDiv",
+  "WD_cwm_ba", "SLA_cwm_ba"
+)
+lapply(vars, sample_equ)
+lapply(vars, sample_rec)
 ```

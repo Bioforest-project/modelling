@@ -299,14 +299,7 @@ div.csl-indent {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#ogf" id="toc-ogf" class="nav-link active" data-scroll-target="#ogf">OGF</a></li>
-  <li><a href="#stp" id="toc-stp" class="nav-link" data-scroll-target="#stp">STP</a></li>
-  </ul>
-</nav>
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -339,18 +332,16 @@ div.csl-indent {
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">load_all</span>(var, lab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<section id="ogf" class="level2">
-<h2 class="anchored" data-anchor-id="ogf">OGF</h2>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ogf_data_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">equ_theta_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="32_agb_files/figure-html/ogf_data-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Old growth forests data.</figcaption>
+<p><img src="32_agb_files/figure-html/theta_equ-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Theta posterior from forests at equilibirum.</figcaption>
 </figure>
 </div>
 </div>
@@ -358,91 +349,33 @@ div.csl-indent {
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ogf_theta_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="32_agb_files/figure-html/theta_ogf-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Theta posterior from old growth forests.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> data<span class="sc">$</span>data_ogf <span class="sc">%&gt;%</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(site, sitenum) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median =</span> <span class="fu">median</span>(value),</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd =</span> <span class="fu">sd</span>(value), </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">q5 =</span> <span class="fu">quantile</span>(value, .<span class="dv">0</span>),</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">q95 =</span> <span class="fu">quantile</span>(value, <span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type =</span> <span class="st">"data"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'site'. You can override using the
-`.groups` argument.</code></pre>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fit_ogf<span class="sc">$</span><span class="fu">summary</span>(<span class="st">"mu"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">separate</span>(variable, <span class="fu">c</span>(<span class="st">"mu"</span>, <span class="st">"sitenum"</span>), <span class="at">convert =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(data<span class="sc">$</span>ind_ogf) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type =</span> <span class="st">"posterior"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(t) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(median, <span class="fu">paste</span>(site, type), <span class="at">col =</span> type)) <span class="sc">+</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> median <span class="sc">-</span> sd, <span class="at">xend =</span> median <span class="sc">+</span> sd)) <span class="sc">+</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> q5, <span class="at">xend =</span> q95), <span class="at">size =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(data<span class="sc">$</span>lab) <span class="sc">+</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="fu">expression</span>(theta[OGF]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Expected 2 pieces. Additional pieces discarded in 15 rows [1, 2, 3, 4, 5, 6, 7,
-8, 9, 10, 11, 12, 13, 14, 15].</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Joining with `by = join_by(sitenum)`</code></pre>
-</div>
-<div class="cell-output-display">
-<p><img src="32_agb_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-</section>
-<section id="stp" class="level2">
-<h2 class="anchored" data-anchor-id="stp">STP</h2>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fit_stp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fit_rec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> variable    mean  median     sd    mad      q5     q95 rhat ess_bulk ess_tail
- lp__     3247.25 3235.70 110.07 125.38 3100.28 3442.69 1.43        8       49
- phi_p[1]    0.71    0.70   0.03   0.03    0.65    0.76 1.00     1017     1765
- phi_p[2]    0.76    0.76   0.03   0.03    0.70    0.82 1.00      994     2205
- phi_p[3]    0.94    0.94   0.04   0.04    0.87    0.99 1.00     1028     1406
- phi_p[4]    0.65    0.65   0.03   0.03    0.60    0.71 1.01      995     2105
- phi_p[5]    0.64    0.64   0.03   0.03    0.59    0.69 1.00     1222     2018
- phi_p[6]    0.78    0.78   0.04   0.04    0.73    0.84 1.00     1208     1609
- phi_p[7]    0.92    0.93   0.04   0.04    0.86    0.98 1.01      939      969
- phi_p[8]    0.79    0.79   0.04   0.04    0.73    0.85 1.00     1191     2066
- phi_p[9]    0.67    0.67   0.03   0.03    0.61    0.72 1.00     1062     2100
+<pre><code> variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
+ lp__     2961.38 2945.77 88.57 89.82 2837.97 3123.90 1.13       24       56
+ phi_p[1]    0.70    0.70  0.03  0.03    0.65    0.75 1.00      917     1685
+ phi_p[2]    0.76    0.75  0.03  0.03    0.70    0.81 1.00     1046     2063
+ phi_p[3]    0.93    0.93  0.04  0.04    0.87    0.99 1.00      795     1238
+ phi_p[4]    0.65    0.65  0.03  0.03    0.60    0.70 1.00      943     2303
+ phi_p[5]    0.63    0.63  0.03  0.03    0.58    0.68 1.00      916     1916
+ phi_p[6]    0.78    0.78  0.04  0.04    0.72    0.84 1.00      955     1801
+ phi_p[7]    0.91    0.92  0.04  0.04    0.85    0.98 1.00      967     1621
+ phi_p[8]    0.78    0.78  0.04  0.04    0.72    0.84 1.00      936     1891
+ phi_p[9]    0.66    0.66  0.03  0.03    0.61    0.71 1.00      969     2016
 
- # showing 10 of 16429 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
+ # showing 10 of 12658 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
 </div>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvo_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvo_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="32_agb_files/figure-html/pvo_stp-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="32_agb_files/figure-html/pvo-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption class="figure-caption">Predicted versus observed.</figcaption>
 </figure>
 </div>
@@ -451,7 +384,7 @@ div.csl-indent {
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proj_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proj_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -465,7 +398,7 @@ div.csl-indent {
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rec_theta_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rec_theta_fig</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -483,7 +416,6 @@ div.csl-indent {
 Réjou-Méchain, Maxime, Ariane Tanguy, Camille Piponiot, Jérôme Chave, and Bruno Hérault. 2017. <span>“Biomass: An r Package for Estimating Above<span>-</span>Ground Biomass and Its Uncertainty in Tropical Forests.”</span> Edited by Sarah Goslee. <em>Methods in Ecology and Evolution</em> 8 (9): 1163–67. <a href="https://doi.org/10.1111/2041-210x.12753">https://doi.org/10.1111/2041-210x.12753</a>.
 </div>
 </div>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

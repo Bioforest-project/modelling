@@ -189,8 +189,10 @@ read_tsv("outputs/parameters.tsv") %>%
     level == "inter",
     parameter != "lp__",
   ) %>%
-  filter(!(parameter %in% c("mu_deltapct", "mu_phipct",
-                            "mu_t90", "mu_tau0"))) %>%
+  filter(!(parameter %in% c(
+    "mu_deltapct", "mu_phipct",
+    "mu_t90", "mu_tau0"
+  ))) %>%
   ggplot(aes(x = attr_long, col = type)) +
   geom_point(aes(y = median)) +
   geom_segment(aes(y = median - sd, yend = median + sd)) +

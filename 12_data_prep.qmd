@@ -13,42 +13,47 @@ Data exploration.
 #| message: false
 #| warning: false
 #| eval: false
-control_names <- c("control", "Control", "Natural_Forest",
-                   "To be logged - 2024", "To be logged (year unknown)")
+control_names <- c(
+  "control", "Control", "Natural_Forest",
+  "To be logged - 2024", "To be logged (year unknown)"
+)
 metadata <- read_tsv("data/raw_data/metadata.tsv") %>%
-  rename(site_raw = site) %>% 
-  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
-  select(-site_raw) %>% 
+  rename(site_raw = site) %>%
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>%
+  select(-site_raw) %>%
   separate(year_of_harvest, "year_of_harvest") %>%
   mutate(year_of_harvest = as.numeric(year_of_harvest)) %>%
   rename(harvest_year = year_of_harvest) %>%
-  mutate(treatment_simpified = ifelse(
-    treatment %in% control_names, "control", "logged")) %>%
+  mutate(treatment = ifelse(treatment %in% control_names,
+                            "control", "logged")) %>%
   group_by(site) %>%
   mutate(harvest_year_min = min(harvest_year, na.rm = TRUE)) %>%
   mutate(harvest_year = ifelse(site == "Paracou", 1986, harvest_year)) %>%
   mutate(harvest_year_min = ifelse(site == "Paracou", 1986, harvest_year_min))
-
+vars <- c(
+  "ba", "agb", "nstem", "gini",
+  "diversity_q1_gen", "FDiv",
+  "WD_cwm_ba", "SLA_cwm_ba"
+)
+sites <- c(
+  "Ecosilva", "Jari", "Lesong", "Mbaiki", "Moju", "Paracou",
+  "Peteco", "Sao Nicolau", "Sungai Lalang", "Ulu Muda", "Uppangala"
+)
 data <- read_csv("data/raw_data/aggregated_data.csv") %>%
-  rename_all(tolower) %>% 
-  rename(site_raw = site) %>% 
-  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
-  select(-site_raw) %>% 
+  rename_all(tolower) %>%
+  rename(site_raw = site) %>%
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>%
+  select(-site_raw) %>%
   left_join(metadata) %>%
-  filter(!(site %in% c("STREK", "BAFOG", "Kibale",
-                       "Tapajos Km114", "Tapajos Km67", 
-                       "Tene", "Manare",
-                       "Jenaro Herrera", "Montagne Tortue"))) %>%
-  filter(!is.na(site)) %>% 
-  filter(variable == "agb") %>% 
-  filter(!is.na(value)) %>% 
+  filter(site %in% sites) %>%
+  filter(variable %in% vars) %>%
   mutate(rel_year = ifelse(treatment == "control",
     year - harvest_year_min,
     year - harvest_year
   )) %>%
-  mutate(y = value) %>% 
+  mutate(y = value) %>%
   mutate(sitenum = as.numeric(as.factor(site)))
-data_ogf <- data %>%
+data_equ <- data %>%
   filter((rel_year <= 0 & treatment == "logged") | treatment == "control") %>%
   mutate(plotnum = as.numeric(as.factor(paste(site, plot))))
 data_rec <- data %>%
@@ -56,45 +61,21 @@ data_rec <- data %>%
   mutate(plotnum = as.numeric(as.factor(paste0(site, "_", plot))))
 write_tsv(data, "data/derived_data/data.tsv")
 write_tsv(data_rec, "data/derived_data/data_rec.tsv")
-write_tsv(data_ogf, "data/derived_data/data_ogf.tsv")
+write_tsv(data_ogf, "data/derived_data/data_equ.tsv")
 ```
 
-Computed variables are:
-
-```{r vars}
-#| output: asis
-read_tsv("data/derived_data/data.tsv", col_types = cols()) %>%
-  select(variable) %>%
-  unique() %>%
-  unlist() %>%
-  paste0(collapse = ", ")
-```
-
-```{r fig1}
+```{r figs}
 #| message: false
 #| warning: false
-#| fig-cap: "All modeled attributes trajectories."
-vars <- c( # nolint
-  "nstem", "agb", "ba", "gini", # nolint
-  "diversity_q1_gen", "FDiv", # nolint
-  "WD_cwm_ba", "SLA_cwm_ba" # nolint
+#| fig-cap: "Trajectories across sites and treatments."
+vars <- c(
+  "ba", "agb", "nstem", "gini",
+  "diversity_q1_gen", "FDiv",
+  "WD_cwm_ba", "SLA_cwm_ba"
 )
-read_tsv("data/derived_data/data.tsv") %>%
-  filter(variable %in% vars) %>%
-  ggplot(aes(year, value, group = paste(site, plot))) +
-  geom_line() +
-  theme_bw() +
-  facet_wrap(~variable, scales = "free_y") +
-  theme(
-    axis.title = element_blank(),
-    strip.text = element_text(size = 6)
-  )
-```
-
-```{r figs_out}
-#| eval: false
+names(vars) <- vars
 make_fig <- function(var) {
-  g <- read_tsv("data/derived_data/data.tsv") %>%
+  read_tsv("data/derived_data/data.tsv") %>%
     filter(variable == var) %>%
     ggplot(aes(year, value, group = paste(site, plot), col = treatment)) +
     geom_line() +
@@ -103,28 +84,7 @@ make_fig <- function(var) {
     ylab("") +
     facet_wrap(~site, scales = "free") +
     geom_vline(aes(xintercept = harvest_year)) +
-    theme(legend.position = "bottom") +
-    ggtitle(var)
-  ggsave(plot = g, filename = paste0("figures/obs/", var, ".png"))
+    theme(legend.position = "bottom")
 }
-unique(read_tsv("data/derived_data/data.tsv")$variable) %>%
-  lapply(make_fig)
-```
-
-```{r fig3}
-#| message: false
-#| warning: false
-#| fig-cap: "AGB trajectories across sites and treatments."
-read_tsv("data/derived_data/data.tsv") %>%
-  filter(variable == "agb") %>%
-  ggplot(aes(year, value, group = paste(site, plot), col = treatment)) +
-  geom_line() +
-  theme_bw() +
-  xlab("") +
-  ylab(expression("AGB [" ~ Mg ~ ha^{
-    -1
-  } ~ "]")) +
-  facet_wrap(~site, scales = "free") +
-  geom_vline(aes(xintercept = harvest_year)) +
-  theme(legend.position = "bottom")
+lapply(vars, make_fig)
 ```
