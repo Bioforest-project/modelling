@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>modelling - Div - Genus q=1</title>
+<title>modelling - Div - Genus</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -129,7 +129,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_trajectories.html">Trajectories</a></li><li class="breadcrumb-item"><a href="./41_gen_q1.html">Div - Genus q=1</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_trajectories.html">Trajectories</a></li><li class="breadcrumb-item"><a href="./41_gen_q1.html">Div - Genus</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -214,7 +214,7 @@ div.csl-indent {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./41_gen_q1.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Div - Genus q=1</span></a>
+ <span class="menu-text">Div - Genus</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -308,7 +308,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Div - Genus q=1</h1>
+<h1 class="title">Div - Genus</h1>
 </div>
 
 
@@ -349,10 +349,22 @@ div.csl-indent {
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fit_stp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fit_rec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>NULL</code></pre>
+<pre><code> variable    mean  median     sd    mad      q5     q95 rhat ess_bulk ess_tail
+ lp__     2291.94 2269.20 107.25 101.48 2150.32 2509.49 1.27       12       55
+ phi_p[1]    0.58    0.58   0.04   0.04    0.52    0.65 1.00     2080     2594
+ phi_p[2]    0.66    0.66   0.04   0.04    0.59    0.73 1.00     2057     2449
+ phi_p[3]    0.85    0.85   0.05   0.05    0.77    0.94 1.00     1552     1602
+ phi_p[4]    0.80    0.80   0.05   0.05    0.72    0.88 1.00     1460     2117
+ phi_p[5]    0.89    0.90   0.05   0.05    0.81    0.98 1.01      782      246
+ phi_p[6]    0.97    0.97   0.03   0.03    0.91    1.00 1.00     2849     2067
+ phi_p[7]    0.65    0.65   0.04   0.04    0.58    0.72 1.00     1575     1164
+ phi_p[8]    0.63    0.63   0.04   0.04    0.57    0.71 1.00     2724     2435
+ phi_p[9]    0.74    0.74   0.05   0.05    0.67    0.82 1.00     1842     2372
+
+ # showing 10 of 12658 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
 </div>
 <div class="cell">

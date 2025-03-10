@@ -193,7 +193,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./41_gen_q1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Div - Genus q=1</span></a>
+ <span class="menu-text">Div - Genus</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -330,10 +330,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fit_stp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fit_rec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>NULL</code></pre>
+<pre><code> variable    mean  median     sd    mad      q5     q95 rhat ess_bulk ess_tail
+ lp__     5049.01 4986.86 172.61 166.31 4843.15 5367.70 2.05        5       22
+ phi_p[1]    0.98    0.98   0.01   0.01    0.97    1.00 1.38        8       36
+ phi_p[2]    0.97    0.98   0.01   0.01    0.95    0.99 1.47        7       32
+ phi_p[3]    0.96    0.96   0.01   0.01    0.95    0.98 1.05       65      610
+ phi_p[4]    0.94    0.94   0.01   0.01    0.93    0.95 1.01      592     1749
+ phi_p[5]    0.93    0.93   0.01   0.01    0.91    0.94 1.33        9       39
+ phi_p[6]    0.94    0.94   0.01   0.01    0.92    0.95 1.15       18      113
+ phi_p[7]    0.99    0.99   0.00   0.00    0.98    1.00 1.03      111     1523
+ phi_p[8]    0.94    0.94   0.01   0.01    0.93    0.96 1.21       14       41
+ phi_p[9]    0.94    0.94   0.01   0.01    0.93    0.96 1.15       19      104
+
+ # showing 10 of 12658 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
 </div>
 <div class="cell">

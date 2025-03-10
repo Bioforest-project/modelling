@@ -30,10 +30,10 @@ data <- load_all(var, lab)
 equ_theta_fig(data)
 ```
 
-```{r load_stp}
+```{r fit_rec}
 #| message: false
 #| warning: false
-data$fit_stp
+data$fit_rec
 ```
 
 ```{r pvo_stp}
