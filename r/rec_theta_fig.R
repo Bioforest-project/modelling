@@ -11,6 +11,7 @@ rec_theta_fig <- function(data) {
       select(site, mu, median, sd, q5, q95) %>%
       mutate(type = "prior")
   ) %>%
+    na.omit() %>% 
     ggplot(aes(median, site, col = type)) +
     geom_segment(aes(x = median - sd, xend = median + sd)) +
     geom_segment(aes(x = q5, xend = q95), size = .1) +

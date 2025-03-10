@@ -1,0 +1,67 @@
+```{r set}
+#| message: false
+#| include: false
+library(tidyverse)
+library(knitr)
+```
+
+# Data check {.unnumbered}
+
+Data check.
+
+## Metadata
+
+```{r metadata_sites_dl}
+#| eval: false
+library(googlesheets4)
+read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?usp=sharing", 2) %>% 
+  separate_rows(site_raw, sep = ",") %>% 
+  write_tsv("data/raw_data/sites.tsv")
+read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?gid=0#gid=0", col_types = "c") %>% # nolint
+  rename_all(tolower) %>%
+  select(site, plot, treatment, year_of_harvest) %>% 
+  write_tsv("data/raw_data/metadata.tsv")
+```
+
+The following site names in Metadata need to be fixed:
+
+```{r metadat_sitenames}
+#| message: false
+#| warning: false
+read_tsv("data/raw_data/metadata.tsv") %>% 
+  select(site) %>% 
+  rename(site_raw = site) %>% 
+  unique() %>% 
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
+  filter(site_raw != site) %>% 
+  kable()
+```
+
+The following treatments need to be checked, e.g. To be logged - 2024, To be logged (year unknown) should be controls:
+
+```{r metadat_treatments}
+#| message: false
+#| warning: false
+control_names <- c("control", "Control", "Natural_Forest")
+read_tsv("data/raw_data/metadata.tsv") %>% 
+  select(treatment) %>% 
+  unique() %>% 
+  mutate(treatment_simpified = ifelse(
+    treatment %in% control_names, "control", "logged")) %>%
+  group_by(treatment_simpified) %>% 
+  summarise(treatments = paste(treatment, collapse = ", ")) %>% 
+  kable()
+```
+
+The following sites have non human readable year of harvest:
+
+```{r metadat_year}
+#| message: false
+#| warning: false
+read_tsv("data/raw_data/metadata.tsv") %>% 
+  select(site, year_of_harvest) %>% 
+  unique() %>% 
+  na.omit() %>% 
+  filter(is.na(as.numeric(year_of_harvest))) %>% 
+  kable()
+```

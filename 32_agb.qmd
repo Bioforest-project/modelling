@@ -5,7 +5,6 @@ library(tidyverse)
 library(knitr)
 library(cmdstanr)
 library(bayesplot)
-library(loo)
 library(patchwork)
 list.files("r", full.names = TRUE, pattern = ".R") %>%
   lapply(source)
@@ -14,8 +13,6 @@ list.files("r", full.names = TRUE, pattern = ".R") %>%
 # Str - AGB {.unnumbered}
 
 Aboveground biomass recovery in tons per hectare derived from censuses using species names to derive first wood density and the biomass with the R package BIOMASS [@réjou-méchain2017].
-
-> We removed Kibale by setting all its AGB vales to 300.
 
 ```{r data}
 #| message: false
@@ -41,6 +38,29 @@ ogf_data_fig(data)
 #| warning: false
 #| fig-cap: "Theta posterior from old growth forests."
 ogf_theta_fig(data)
+```
+
+```{r}
+t <- data$data_ogf %>% 
+  group_by(site, sitenum) %>% 
+  summarise(median = median(value),
+            sd = sd(value), 
+            q5 = quantile(value, .0),
+            q95 = quantile(value, 1)) %>% 
+  mutate(type = "data")
+data$fit_ogf$summary("mu") %>%
+    separate(variable, c("mu", "sitenum"), convert = TRUE) %>%
+    left_join(data$ind_ogf) %>% 
+  mutate(type = "posterior") %>% 
+  bind_rows(t) %>% 
+    ggplot(aes(median, paste(site, type), col = type)) +
+    geom_segment(aes(x = median - sd, xend = median + sd)) +
+    geom_segment(aes(x = q5, xend = q95), size = .5) +
+    geom_point() +
+    theme_bw() +
+    xlab(data$lab) +
+    ylab(expression(theta[OGF]))
+
 ```
 
 ## STP

@@ -3,10 +3,9 @@
 #| include: false
 library(tidyverse)
 library(knitr)
-library(googlesheets4)
 ```
 
-# Observations {.unnumbered}
+# Data prep {.unnumbered}
 
 Data exploration.
 
@@ -28,24 +27,27 @@ metadata <- read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcd
   mutate(harvest_year_min = min(harvest_year, na.rm = TRUE)) %>%
   mutate(harvest_year = ifelse(site == "Paracou", 1986, harvest_year)) %>%
   mutate(harvest_year_min = ifelse(site == "Paracou", 1986, harvest_year_min))
+sites <- read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?usp=sharing", 2) %>% 
+  separate_rows(site_raw, sep = ",")
 data <- read_csv("data/raw_data/aggregated_data.csv") %>%
-  rename_all(tolower) %>%
+  rename_all(tolower) %>% 
+  rename(site_raw = site) %>% 
+  left_join(sites) %>% 
+  select(-site_raw) %>% 
   left_join(metadata) %>%
-  filter(!(site %in% c(
-    "Peteco", "Bafog", "Tene", "Sg Lalang",
-    "Montagne_Tortue", "Manare"
-  ))) %>%
-  filter(!(site == "Kabo" & year < 1980)) %>%
+  filter(!(site %in% c("STREK", "BAFOG", "Kibale",
+                       "Tapajos Km114", "Tapajos Km67", 
+                       "Tene", "Manare",
+                       "Jenaro Herrera", "Montagne Tortue"))) %>%
+  filter(!is.na(site)) %>% 
+  filter(variable == "agb") %>% 
+  filter(!is.na(value)) %>% 
   mutate(rel_year = ifelse(treatment == "control",
     year - harvest_year_min,
     year - harvest_year
   )) %>%
-  mutate(sitenum = as.numeric(as.factor(site))) %>%
-  group_by(site) %>%
-  mutate(y = ifelse(variable == "agb" & site == "Kibale",
-    300, value
-  )) %>%
-  ungroup()
+  mutate(y = value) %>% 
+  mutate(sitenum = as.numeric(as.factor(site)))
 data_ogf <- data %>%
   filter((rel_year <= 0 & treatment == "logged") | treatment == "control") %>%
   mutate(plotnum = as.numeric(as.factor(paste(site, plot))))
@@ -74,8 +76,8 @@ read_tsv("data/derived_data/data.tsv", col_types = cols()) %>%
 #| fig-cap: "All modeled attributes trajectories."
 vars <- c( # nolint
   "nstem", "agb", "ba", "gini", # nolint
-  "diversity_q1_gen", "FDiv", "FEve", # nolint
-  "WD_cwm_ba", "SLA_cwm_ba", "N_cwm_ba" # nolint
+  "diversity_q1_gen", "FDiv", # nolint
+  "WD_cwm_ba", "SLA_cwm_ba" # nolint
 )
 read_tsv("data/derived_data/data.tsv") %>%
   filter(variable %in% vars) %>%

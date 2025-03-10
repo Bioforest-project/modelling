@@ -7,7 +7,8 @@ book:
   date: last-modified
   chapters:
     - index.qmd
-    - 11_observations.qmd
+    - 11_data_check.qmd
+    - 12_data_prep.qmd
     - 21_models.qmd
     - part: 30_trajectories.qmd
       chapters:
