@@ -3,6 +3,11 @@
 #| include: false
 library(tidyverse)
 library(knitr)
+vars <- c(
+  "ba", "agb", "nstem", "gini",
+  "diversity_q1_gen", "FDiv",
+  "WD_cwm_ba", "SLA_cwm_ba"
+)
 ```
 
 # Data check {.unnumbered}
@@ -14,7 +19,7 @@ Data check.
 ```{r metadata_sites_dl}
 #| eval: false
 library(googlesheets4)
-read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?usp=sharing", 2) %>% 
+read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?usp=sharing", 2) %>% # nolint
   separate_rows(site_raw, sep = ",") %>% 
   write_tsv("data/raw_data/sites.tsv")
 read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?gid=0#gid=0", col_types = "c") %>% # nolint
@@ -23,9 +28,9 @@ read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsM
   write_tsv("data/raw_data/metadata.tsv")
 ```
 
-The following site names in Metadata need to be fixed:
+The following site names in metadata need to be fixed:
 
-```{r metadat_sitenames}
+```{r metadata_sitenames}
 #| message: false
 #| warning: false
 read_tsv("data/raw_data/metadata.tsv") %>% 
@@ -42,7 +47,8 @@ The following treatments need to be checked, e.g. To be logged - 2024, To be log
 ```{r metadat_treatments}
 #| message: false
 #| warning: false
-control_names <- c("control", "Control", "Natural_Forest")
+control_names <- c("control", "Control", "Natural_Forest",
+                   "To be logged - 2024", "To be logged (year unknown)")
 read_tsv("data/raw_data/metadata.tsv") %>% 
   select(treatment) %>% 
   unique() %>% 
@@ -53,7 +59,7 @@ read_tsv("data/raw_data/metadata.tsv") %>%
   kable()
 ```
 
-The following sites have non human readable year of harvest:
+The following sites have non machine readable year of harvest:
 
 ```{r metadat_year}
 #| message: false
@@ -65,3 +71,108 @@ read_tsv("data/raw_data/metadata.tsv") %>%
   filter(is.na(as.numeric(year_of_harvest))) %>% 
   kable()
 ```
+
+## Aggregated data
+
+The following site names in data need to be fixed:
+
+```{r data_sitenames}
+#| message: false
+#| warning: false
+read_csv("data/raw_data/aggregated_data.csv") %>% 
+  rename_all(tolower) %>% 
+  select(site) %>% 
+  rename(site_raw = site) %>% 
+  unique() %>% 
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
+  filter(site_raw != site) %>% 
+  kable()
+```
+
+Missing values (NA) across variables of interest:
+
+```{r data_na}
+#| message: false
+#| warning: false
+read_csv("data/raw_data/aggregated_data.csv") %>% 
+  rename_all(tolower) %>% 
+  rename(site_raw = site) %>% 
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
+  select(-site_raw) %>% 
+  filter(variable %in% vars) %>% 
+  filter(is.na(value)) %>% 
+  group_by(variable, site) %>% 
+  summarise(N = n()) %>% 
+  pivot_wider(names_from = variable, values_from = N) %>% 
+  kable()
+```
+
+Infinite values (Inf) across variables of interest:
+
+```{r data_inf}
+#| message: false
+#| warning: false
+read_csv("data/raw_data/aggregated_data.csv") %>% 
+  rename_all(tolower) %>% 
+  rename(site_raw = site) %>% 
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
+  select(-site_raw) %>% 
+  filter(variable %in% vars) %>% 
+  filter(is.infinite(value)) %>% 
+  group_by(variable, site) %>% 
+  summarise(N = n()) %>% 
+  pivot_wider(names_from = variable, values_from = N) %>% 
+  kable()
+```
+
+Zero values across variables of interest:
+
+```{r data_zero}
+#| message: false
+#| warning: false
+read_csv("data/raw_data/aggregated_data.csv") %>% 
+  rename_all(tolower) %>% 
+  rename(site_raw = site) %>% 
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
+  select(-site_raw) %>% 
+  filter(variable %in% vars) %>% 
+  filter(value == 0) %>% 
+  group_by(variable, site) %>% 
+  summarise(N = n()) %>% 
+  pivot_wider(names_from = variable, values_from = N) %>% 
+  kable()
+```
+
+Spurious values across variables of interest with plot names and the number of spurious values in brackets:
+
+```{r data_spurious}
+#| message: false
+#| warning: false
+lims <- tribble(
+  ~variable, ~min, ~max,
+  "ba", 5, 80,
+  "agb",  50, 800,
+  "nstem",  50, 1000,
+  "gini", 0, 1,
+  "diversity_q1_gen", 10, 100,
+  "FDiv", 0, 1,
+  "WD_cwm_ba", 0, 1, 
+  "SLA_cwm_ba", 5, 30
+)
+read_csv("data/raw_data/aggregated_data.csv") %>% 
+  rename_all(tolower) %>% 
+  rename(site_raw = site) %>% 
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
+  select(-site_raw) %>% 
+  filter(variable %in% vars) %>% 
+  left_join(lims) %>% 
+  filter(value < min | value > max) %>% 
+  group_by(variable, site, plot) %>% 
+  summarise(N = n()) %>% 
+  mutate(value = paste0(plot, " (", N, ")")) %>% 
+  group_by(variable, site) %>% 
+  summarise(plot = paste(value, collapse = ", ")) %>% 
+  kable()
+```
+
+All sites with NA, infinite, zeros or spurious values will be removed for now.

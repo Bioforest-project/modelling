@@ -285,6 +285,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#metadata" id="toc-metadata" class="nav-link active" data-scroll-target="#metadata">Metadata</a></li>
+  <li><a href="#aggregated-data" id="toc-aggregated-data" class="nav-link" data-scroll-target="#aggregated-data">Aggregated data</a></li>
   </ul>
 </nav>
     </div>
@@ -315,7 +316,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googlesheets4)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">read_sheet</span>(<span class="st">"https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?usp=sharing"</span>, <span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">read_sheet</span>(<span class="st">"https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?usp=sharing"</span>, <span class="dv">2</span>) <span class="sc">%&gt;%</span> <span class="co"># nolint</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_rows</span>(site_raw, <span class="at">sep =</span> <span class="st">","</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_tsv</span>(<span class="st">"data/raw_data/sites.tsv"</span>)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">read_sheet</span>(<span class="st">"https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?gid=0#gid=0"</span>, <span class="at">col_types =</span> <span class="st">"c"</span>) <span class="sc">%&gt;%</span> <span class="co"># nolint</span></span>
@@ -324,7 +325,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_tsv</span>(<span class="st">"data/raw_data/metadata.tsv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>The following site names in Metadata need to be fixed:</p>
+<p>The following site names in metadata need to be fixed:</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -357,21 +358,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>control_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"control"</span>, <span class="st">"Control"</span>, <span class="st">"Natural_Forest"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">read_tsv</span>(<span class="st">"data/raw_data/metadata.tsv"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(treatment) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">treatment_simpified =</span> <span class="fu">ifelse</span>(</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    treatment <span class="sc">%in%</span> control_names, <span class="st">"control"</span>, <span class="st">"logged"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(treatment_simpified) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">treatments =</span> <span class="fu">paste</span>(treatment, <span class="at">collapse =</span> <span class="st">", "</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>control_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"control"</span>, <span class="st">"Control"</span>, <span class="st">"Natural_Forest"</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"To be logged - 2024"</span>, <span class="st">"To be logged (year unknown)"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">read_tsv</span>(<span class="st">"data/raw_data/metadata.tsv"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(treatment) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">treatment_simpified =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    treatment <span class="sc">%in%</span> control_names, <span class="st">"control"</span>, <span class="st">"logged"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(treatment_simpified) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">treatments =</span> <span class="fu">paste</span>(treatment, <span class="at">collapse =</span> <span class="st">", "</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <colgroup>
-<col style="width: 4%">
-<col style="width: 95%">
+<col style="width: 5%">
+<col style="width: 94%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -382,17 +384,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">control</td>
-<td style="text-align: left;">Control, Natural_Forest</td>
+<td style="text-align: left;">Control, To be logged - 2024, To be logged (year unknown), Natural_Forest</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">logged</td>
-<td style="text-align: left;">Logging, Logged, To be logged - 2024, To be logged (year unknown), Logged by FV Village, Logging + treatments, Moderate intensity logging, High intensity logging, Low-intensity logging, CELOS harvesting System, Logging and thinning, Selective logging, Conventional logging, RIL, Logging and Devitalization, Intensive Logging and Devitalization, RIL &gt; 50 cm, RIL &gt; 60 cm, Thinning, Logging + thinning, logging + canopy, logging</td>
+<td style="text-align: left;">Logging, Logged, Logged by FV Village, Logging + treatments, Moderate intensity logging, High intensity logging, Low-intensity logging, CELOS harvesting System, Logging and thinning, Selective logging, Conventional logging, RIL, Logging and Devitalization, Intensive Logging and Devitalization, RIL &gt; 50 cm, RIL &gt; 60 cm, Thinning, Logging + thinning, logging + canopy, logging</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>The following sites have non human readable year of harvest:</p>
+<p>The following sites have non machine readable year of harvest:</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -452,6 +454,415 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 </div>
 </div>
+</section>
+<section id="aggregated-data" class="level2">
+<h2 class="anchored" data-anchor-id="aggregated-data">Aggregated data</h2>
+<p>The following site names in data need to be fixed:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(<span class="st">"data/raw_data/aggregated_data.csv"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(tolower) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(site) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">site_raw =</span> site) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">read_tsv</span>(<span class="st">"data/raw_data/sites.tsv"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(site_raw <span class="sc">!=</span> site) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">site_raw</th>
+<th style="text-align: left;">site</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">bafog</td>
+<td style="text-align: left;">BAFOG</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ecosilva</td>
+<td style="text-align: left;">Ecosilva</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">iwokrama</td>
+<td style="text-align: left;">Iwokrama</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">iwokrama</td>
+<td style="text-align: left;">Iwokrama</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">jari</td>
+<td style="text-align: left;">Jari</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">jenaroherrera</td>
+<td style="text-align: left;">Jenaro Herrera</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">kabo</td>
+<td style="text-align: left;">Kabo</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">kibale</td>
+<td style="text-align: left;">Kibale</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">km114</td>
+<td style="text-align: left;">Tapajos Km114</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">km67</td>
+<td style="text-align: left;">Tapajos Km67</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">lesong</td>
+<td style="text-align: left;">Lesong</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">malinau</td>
+<td style="text-align: left;">Malinau</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">manare</td>
+<td style="text-align: left;">Manare</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">mbaiki</td>
+<td style="text-align: left;">Mbaiki</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">misiones</td>
+<td style="text-align: left;">Misiones</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">moju</td>
+<td style="text-align: left;">Moju</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">montagnetortue</td>
+<td style="text-align: left;">Montagne Tortue</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">paracou</td>
+<td style="text-align: left;">Paracou</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">peteco</td>
+<td style="text-align: left;">Peteco</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">saonicolau</td>
+<td style="text-align: left;">Sao Nicolau</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">strek</td>
+<td style="text-align: left;">STREK</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sungailalang</td>
+<td style="text-align: left;">Sungai Lalang</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">tene</td>
+<td style="text-align: left;">Tene</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ulu muda</td>
+<td style="text-align: left;">Ulu Muda</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ulumuda</td>
+<td style="text-align: left;">Ulu Muda</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">uppangala</td>
+<td style="text-align: left;">Uppangala</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Missing values (NA) across variables of interest:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(<span class="st">"data/raw_data/aggregated_data.csv"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(tolower) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">site_raw =</span> site) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">read_tsv</span>(<span class="st">"data/raw_data/sites.tsv"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>site_raw) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> vars) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(value)) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, site) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">N =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> variable, <span class="at">values_from =</span> N) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">site</th>
+<th style="text-align: right;">agb</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Malinau</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Manare</td>
+<td style="text-align: right;">14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Montagne Tortue</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tapajos Km67</td>
+<td style="text-align: right;">9</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Infinite values (Inf) across variables of interest:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(<span class="st">"data/raw_data/aggregated_data.csv"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(tolower) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">site_raw =</span> site) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">read_tsv</span>(<span class="st">"data/raw_data/sites.tsv"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>site_raw) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> vars) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.infinite</span>(value)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, site) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">N =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> variable, <span class="at">values_from =</span> N) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">site</th>
+<th style="text-align: right;">agb</th>
+<th style="text-align: right;">ba</th>
+<th style="text-align: right;">nstem</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Tapajos Km114</td>
+<td style="text-align: right;">288</td>
+<td style="text-align: right;">288</td>
+<td style="text-align: right;">288</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tapajos Km67</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">27</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Zero values across variables of interest:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(<span class="st">"data/raw_data/aggregated_data.csv"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(tolower) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">site_raw =</span> site) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">read_tsv</span>(<span class="st">"data/raw_data/sites.tsv"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>site_raw) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> vars) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(value <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, site) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">N =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> variable, <span class="at">values_from =</span> N) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">site</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+</div>
+</div>
+<p>Spurious values across variables of interest with plot names and the number of spurious values in brackets:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>lims <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>variable, <span class="sc">~</span>min, <span class="sc">~</span>max,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ba"</span>, <span class="dv">5</span>, <span class="dv">80</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"agb"</span>,  <span class="dv">50</span>, <span class="dv">800</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"nstem"</span>,  <span class="dv">50</span>, <span class="dv">1000</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"gini"</span>, <span class="dv">0</span>, <span class="dv">1</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"diversity_q1_gen"</span>, <span class="dv">10</span>, <span class="dv">100</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"FDiv"</span>, <span class="dv">0</span>, <span class="dv">1</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"WD_cwm_ba"</span>, <span class="dv">0</span>, <span class="dv">1</span>, </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SLA_cwm_ba"</span>, <span class="dv">5</span>, <span class="dv">30</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(<span class="st">"data/raw_data/aggregated_data.csv"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(tolower) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">site_raw =</span> site) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">read_tsv</span>(<span class="st">"data/raw_data/sites.tsv"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>site_raw) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> vars) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(lims) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(value <span class="sc">&lt;</span> min <span class="sc">|</span> value <span class="sc">&gt;</span> max) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, site, plot) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">N =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value =</span> <span class="fu">paste0</span>(plot, <span class="st">" ("</span>, N, <span class="st">")"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, site) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">plot =</span> <span class="fu">paste</span>(value, <span class="at">collapse =</span> <span class="st">", "</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 90%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">variable</th>
+<th style="text-align: left;">site</th>
+<th style="text-align: left;">plot</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">SLA_cwm_ba</td>
+<td style="text-align: left;">Jenaro Herrera</td>
+<td style="text-align: left;">2 (1), 3 (8), 4 (6)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SLA_cwm_ba</td>
+<td style="text-align: left;">Kibale</td>
+<td style="text-align: left;">11 (1), 9 (1)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SLA_cwm_ba</td>
+<td style="text-align: left;">Misiones</td>
+<td style="text-align: left;">19 (2)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">agb</td>
+<td style="text-align: left;">BAFOG</td>
+<td style="text-align: left;">VI (1)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">agb</td>
+<td style="text-align: left;">Kibale</td>
+<td style="text-align: left;">1 (3), 19 (1), 6 (1), 7 (6), 8 (4)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">agb</td>
+<td style="text-align: left;">STREK</td>
+<td style="text-align: left;">1 (6), 10 (6), 11 (6), 12 (6), 2 (6), 3 (6), 4 (6), 5 (6), 6 (6), 7 (6), 8 (6), 9 (6)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">agb</td>
+<td style="text-align: left;">Tapajos Km114</td>
+<td style="text-align: left;">101 (8), 102 (8), 103 (8), 104 (8), 105 (8), 106 (8), 107 (8), 108 (8), 109 (8), 201 (8), 202 (8), 203 (8), 207 (8), 208 (8), 209 (8), 210 (8), 211 (8), 212 (8), 301 (8), 302 (8), 303 (8), 307 (8), 308 (8), 309 (8), 310 (8), 311 (8), 312 (8), 404 (8), 405 (8), 406 (8), 407 (8), 408 (8), 409 (8), 410 (8), 411 (8), 412 (8)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">agb</td>
+<td style="text-align: left;">Tapajos Km67</td>
+<td style="text-align: left;">10T (2), 11T (2), 12T (2), 13T (2), 14T (2), 15T (2), 16T (2), 17T (2), 18T (2)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ba</td>
+<td style="text-align: left;">BAFOG</td>
+<td style="text-align: left;">VI (1)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ba</td>
+<td style="text-align: left;">Kibale</td>
+<td style="text-align: left;">7 (3)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ba</td>
+<td style="text-align: left;">Malinau</td>
+<td style="text-align: left;">RIL01 (1)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ba</td>
+<td style="text-align: left;">STREK</td>
+<td style="text-align: left;">1 (6), 10 (6), 11 (6), 12 (6), 2 (6), 3 (6), 4 (6), 5 (6), 6 (6), 7 (6), 8 (6), 9 (6)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ba</td>
+<td style="text-align: left;">Tapajos Km114</td>
+<td style="text-align: left;">101 (8), 102 (8), 103 (8), 104 (8), 105 (8), 106 (8), 107 (8), 108 (8), 109 (8), 201 (8), 202 (8), 203 (8), 207 (8), 208 (8), 209 (8), 210 (8), 211 (8), 212 (8), 301 (8), 302 (8), 303 (8), 307 (8), 308 (8), 309 (8), 310 (8), 311 (8), 312 (8), 404 (8), 405 (8), 406 (8), 407 (8), 408 (8), 409 (8), 410 (8), 411 (8), 412 (8)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ba</td>
+<td style="text-align: left;">Tapajos Km67</td>
+<td style="text-align: left;">10T (3), 11T (3), 12T (3), 13T (3), 14T (3), 15T (3), 16T (3), 17T (3), 18T (3)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">diversity_q1_gen</td>
+<td style="text-align: left;">Iwokrama</td>
+<td style="text-align: left;">1 (2), 10 (6), 11 (4), 13 (8), 14 (6), 15 (6), 16 (6), 17 (6), 2 (8), 21 (2), 22 (4), 3 (4), 4 (6), 5 (4), 6 (4), 7 (8), 8 (8), 9 (6)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">diversity_q1_gen</td>
+<td style="text-align: left;">Kabo</td>
+<td style="text-align: left;">14 (1), 22 (1), 28 (1), 32 (1)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">diversity_q1_gen</td>
+<td style="text-align: left;">Kibale</td>
+<td style="text-align: left;">1 (1), 2 (4), 3 (6), 6 (3)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">diversity_q1_gen</td>
+<td style="text-align: left;">Tene</td>
+<td style="text-align: left;">16 (1)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">nstem</td>
+<td style="text-align: left;">BAFOG</td>
+<td style="text-align: left;">VI (1)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">nstem</td>
+<td style="text-align: left;">Malinau</td>
+<td style="text-align: left;">RIL01 (1)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">nstem</td>
+<td style="text-align: left;">Tapajos Km114</td>
+<td style="text-align: left;">101 (8), 102 (8), 103 (8), 104 (8), 105 (8), 106 (8), 107 (8), 108 (8), 109 (8), 201 (8), 202 (8), 203 (8), 207 (8), 208 (8), 209 (8), 210 (8), 211 (8), 212 (8), 301 (8), 302 (8), 303 (8), 307 (8), 308 (8), 309 (8), 310 (8), 311 (8), 312 (8), 404 (8), 405 (8), 406 (8), 407 (8), 408 (8), 409 (8), 410 (8), 411 (8), 412 (8)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">nstem</td>
+<td style="text-align: left;">Tapajos Km67</td>
+<td style="text-align: left;">10T (3), 11T (3), 12T (3), 13T (3), 14T (3), 15T (3), 16T (3), 17T (3), 18T (3)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>All sites with NA, infinite, zeros or spurious values will be removed for now.</p>
 
 
 </section>

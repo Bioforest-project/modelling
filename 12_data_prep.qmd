@@ -13,26 +13,26 @@ Data exploration.
 #| message: false
 #| warning: false
 #| eval: false
-metadata <- read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?gid=0#gid=0", col_types = "c") %>% # nolint
-  rename_all(tolower) %>%
-  select(site, plot, treatment, year_of_harvest) %>%
+control_names <- c("control", "Control", "Natural_Forest",
+                   "To be logged - 2024", "To be logged (year unknown)")
+metadata <- read_tsv("data/raw_data/metadata.tsv") %>%
+  rename(site_raw = site) %>% 
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
+  select(-site_raw) %>% 
   separate(year_of_harvest, "year_of_harvest") %>%
   mutate(year_of_harvest = as.numeric(year_of_harvest)) %>%
   rename(harvest_year = year_of_harvest) %>%
-  mutate(treatment = ifelse(
-    treatment %in% c("control", "Control", "Natural_Forest"),
-    "control", "logged"
-  )) %>%
+  mutate(treatment_simpified = ifelse(
+    treatment %in% control_names, "control", "logged")) %>%
   group_by(site) %>%
   mutate(harvest_year_min = min(harvest_year, na.rm = TRUE)) %>%
   mutate(harvest_year = ifelse(site == "Paracou", 1986, harvest_year)) %>%
   mutate(harvest_year_min = ifelse(site == "Paracou", 1986, harvest_year_min))
-sites <- read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?usp=sharing", 2) %>% 
-  separate_rows(site_raw, sep = ",")
+
 data <- read_csv("data/raw_data/aggregated_data.csv") %>%
   rename_all(tolower) %>% 
   rename(site_raw = site) %>% 
-  left_join(sites) %>% 
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>% 
   select(-site_raw) %>% 
   left_join(metadata) %>%
   filter(!(site %in% c("STREK", "BAFOG", "Kibale",
