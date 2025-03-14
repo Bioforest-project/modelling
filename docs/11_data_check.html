@@ -338,7 +338,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table>
 <thead>
 <tr class="header">
 <th style="text-align: left;">site_raw</th>
@@ -346,38 +346,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">Bafog</td>
-<td style="text-align: left;">BAFOG</td>
-</tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>The following treatments need to be checked, e.g.&nbsp;To be logged - 2024, To be logged (year unknown) should be controls:</p>
+<p>The following treatments are present:</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>control_names <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"control"</span>, <span class="st">"Control"</span>, <span class="st">"Natural_Forest"</span>,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"To be logged - 2024"</span>, <span class="st">"To be logged (year unknown)"</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">read_tsv</span>(<span class="st">"data/raw_data/metadata.tsv"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(treatment) <span class="sc">%&gt;%</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">treatment_simpified =</span> <span class="fu">ifelse</span>(</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    treatment <span class="sc">%in%</span> control_names, <span class="st">"control"</span>, <span class="st">"logged"</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(treatment_simpified) <span class="sc">%&gt;%</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">treatments =</span> <span class="fu">paste</span>(treatment, <span class="at">collapse =</span> <span class="st">", "</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>control_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Control"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">read_tsv</span>(<span class="st">"data/raw_data/metadata.tsv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(treatment) <span class="sc">%&gt;%</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">treatment_simpified =</span> <span class="fu">ifelse</span>(treatment <span class="sc">%in%</span> control_names,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">"control"</span>, <span class="st">"logged"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(treatment_simpified) <span class="sc">%&gt;%</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">treatments =</span> <span class="fu">paste</span>(treatment, <span class="at">collapse =</span> <span class="st">", "</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
-<colgroup>
-<col style="width: 5%">
-<col style="width: 94%">
-</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">treatment_simpified</th>
@@ -387,11 +375,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">control</td>
-<td style="text-align: left;">Control, To be logged - 2024, To be logged (year unknown), Natural_Forest</td>
+<td style="text-align: left;">Control</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">logged</td>
-<td style="text-align: left;">Logging, Logged, Logged by FV Village, Logging + treatments, Moderate intensity logging, High intensity logging, Low-intensity logging, CELOS harvesting System, Logging and thinning, Selective logging, Conventional logging, RIL, Logging and Devitalization, Intensive Logging and Devitalization, RIL &gt; 50 cm, RIL &gt; 60 cm, Thinning, Logging + thinning, logging + canopy, logging</td>
+<td style="text-align: left;">Logging</td>
 </tr>
 </tbody>
 </table>
@@ -409,50 +397,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
-<colgroup>
-<col style="width: 14%">
-<col style="width: 85%">
-</colgroup>
+<table>
 <thead>
 <tr class="header">
 <th style="text-align: left;">site</th>
-<th style="text-align: left;">year_of_harvest</th>
+<th style="text-align: right;">year_of_harvest</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">Kabo</td>
-<td style="text-align: left;">1979-1980</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Nelliyampathy</td>
-<td style="text-align: left;">1980-1985</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Paracou</td>
-<td style="text-align: left;">1986 (logging from 10/1986 to 02/1987)</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Paracou</td>
-<td style="text-align: left;">1986 (logging from 10/1986 to 02/1987) and thinning in 1987 (12/1987 to 01/1988)</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Tapajos Km67</td>
-<td style="text-align: left;">1979 and 2015</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Uppangala</td>
-<td style="text-align: left;">1974-1983</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Corinto</td>
-<td style="text-align: left;">1992 + 1996</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Tirimbina</td>
-<td style="text-align: left;">1990 + 1991</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -474,7 +426,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table>
 <thead>
 <tr class="header">
 <th style="text-align: left;">site_raw</th>
@@ -482,110 +434,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">bafog</td>
-<td style="text-align: left;">BAFOG</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ecosilva</td>
-<td style="text-align: left;">Ecosilva</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">iwokrama</td>
-<td style="text-align: left;">Iwokrama</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">iwokrama</td>
-<td style="text-align: left;">Iwokrama</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">jari</td>
-<td style="text-align: left;">Jari</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">jenaroherrera</td>
-<td style="text-align: left;">Jenaro Herrera</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">kabo</td>
-<td style="text-align: left;">Kabo</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">kibale</td>
-<td style="text-align: left;">Kibale</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">km114</td>
-<td style="text-align: left;">Tapajos Km114</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">km67</td>
-<td style="text-align: left;">Tapajos Km67</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">lesong</td>
-<td style="text-align: left;">Lesong</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">malinau</td>
-<td style="text-align: left;">Malinau</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">manare</td>
-<td style="text-align: left;">Manare</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">mbaiki</td>
-<td style="text-align: left;">Mbaiki</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">misiones</td>
-<td style="text-align: left;">Misiones</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">moju</td>
-<td style="text-align: left;">Moju</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">montagnetortue</td>
-<td style="text-align: left;">Montagne Tortue</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">paracou</td>
-<td style="text-align: left;">Paracou</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">peteco</td>
-<td style="text-align: left;">Peteco</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">saonicolau</td>
-<td style="text-align: left;">Sao Nicolau</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">strek</td>
-<td style="text-align: left;">STREK</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">sungailalang</td>
-<td style="text-align: left;">Sungai Lalang</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">tene</td>
-<td style="text-align: left;">Tene</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ulu muda</td>
-<td style="text-align: left;">Ulu Muda</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ulumuda</td>
-<td style="text-align: left;">Ulu Muda</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">uppangala</td>
-<td style="text-align: left;">Uppangala</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -607,30 +455,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(na_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table>
 <thead>
 <tr class="header">
 <th style="text-align: left;">site</th>
-<th style="text-align: right;">agb</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">Malinau</td>
-<td style="text-align: right;">1</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Manare</td>
-<td style="text-align: right;">14</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Montagne Tortue</td>
-<td style="text-align: right;">10</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Tapajos Km67</td>
-<td style="text-align: right;">9</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -652,28 +483,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(inf_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table>
 <thead>
 <tr class="header">
 <th style="text-align: left;">site</th>
-<th style="text-align: right;">agb</th>
-<th style="text-align: right;">ba</th>
-<th style="text-align: right;">nstem</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">Tapajos Km114</td>
-<td style="text-align: right;">288</td>
-<td style="text-align: right;">288</td>
-<td style="text-align: right;">288</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Tapajos Km67</td>
-<td style="text-align: right;">18</td>
-<td style="text-align: right;">27</td>
-<td style="text-align: right;">27</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -706,7 +522,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 </div>
 </div>
-<p>Spurious values across variables of interest with plot names and the number of spurious values in brackets:</p>
+<p>Spurious structure values across variables of interest:</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -715,152 +531,264 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ba"</span>, <span class="dv">5</span>, <span class="dv">80</span>,</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"agb"</span>, <span class="dv">50</span>, <span class="dv">800</span>,</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"nstem"</span>, <span class="dv">50</span>, <span class="dv">1000</span>,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"gini"</span>, <span class="dv">0</span>, <span class="dv">1</span>,</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"diversity_q1_gen"</span>, <span class="dv">10</span>, <span class="dv">100</span>,</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"FDiv"</span>, <span class="dv">0</span>, <span class="dv">1</span>,</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"WD_cwm_ba"</span>, <span class="dv">0</span>, <span class="dv">1</span>,</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SLA_cwm_ba"</span>, <span class="dv">5</span>, <span class="dv">30</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>spurious_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/raw_data/aggregated_data.csv"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(tolower) <span class="sc">%&gt;%</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">site_raw =</span> site) <span class="sc">%&gt;%</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">read_tsv</span>(<span class="st">"data/raw_data/sites.tsv"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>site_raw) <span class="sc">%&gt;%</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> vars) <span class="sc">%&gt;%</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(lims) <span class="sc">%&gt;%</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(value <span class="sc">&lt;</span> min <span class="sc">|</span> value <span class="sc">&gt;</span> max) <span class="sc">%&gt;%</span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, site, plot) <span class="sc">%&gt;%</span></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">N =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value =</span> <span class="fu">paste0</span>(plot, <span class="st">" ("</span>, N, <span class="st">")"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, site) <span class="sc">%&gt;%</span></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">plot =</span> <span class="fu">paste</span>(value, <span class="at">collapse =</span> <span class="st">", "</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(spurious_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"gini"</span>, <span class="dv">0</span>, <span class="dv">1</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>spurious_data_str <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/raw_data/aggregated_data.csv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(tolower) <span class="sc">%&gt;%</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">site_raw =</span> site) <span class="sc">%&gt;%</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">read_tsv</span>(<span class="st">"data/raw_data/sites.tsv"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>site_raw) <span class="sc">%&gt;%</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> lims<span class="sc">$</span>variable) <span class="sc">%&gt;%</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(lims) <span class="sc">%&gt;%</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(value <span class="sc">&lt;</span> min <span class="sc">|</span> value <span class="sc">&gt;</span> max) <span class="sc">%&gt;%</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, site) <span class="sc">%&gt;%</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">N =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> variable, <span class="at">values_from =</span> N)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(spurious_data_str)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
-<colgroup>
-<col style="width: 4%">
-<col style="width: 4%">
-<col style="width: 90%">
-</colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">variable</th>
 <th style="text-align: left;">site</th>
-<th style="text-align: left;">plot</th>
+<th style="text-align: right;">agb</th>
+<th style="text-align: right;">ba</th>
+<th style="text-align: right;">nstem</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">SLA_cwm_ba</td>
-<td style="text-align: left;">Jenaro Herrera</td>
-<td style="text-align: left;">2 (1), 3 (8), 4 (6)</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">SLA_cwm_ba</td>
-<td style="text-align: left;">Kibale</td>
-<td style="text-align: left;">11 (1), 9 (1)</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">SLA_cwm_ba</td>
-<td style="text-align: left;">Misiones</td>
-<td style="text-align: left;">19 (2)</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">agb</td>
 <td style="text-align: left;">BAFOG</td>
-<td style="text-align: left;">VI (1)</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">agb</td>
+<tr class="even">
 <td style="text-align: left;">Kibale</td>
-<td style="text-align: left;">1 (3), 19 (1), 6 (1), 7 (6), 8 (4)</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">agb</td>
-<td style="text-align: left;">STREK</td>
-<td style="text-align: left;">1 (6), 10 (6), 11 (6), 12 (6), 2 (6), 3 (6), 4 (6), 5 (6), 6 (6), 7 (6), 8 (6), 9 (6)</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;"></td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">agb</td>
-<td style="text-align: left;">Tapajos Km114</td>
-<td style="text-align: left;">101 (8), 102 (8), 103 (8), 104 (8), 105 (8), 106 (8), 107 (8), 108 (8), 109 (8), 201 (8), 202 (8), 203 (8), 207 (8), 208 (8), 209 (8), 210 (8), 211 (8), 212 (8), 301 (8), 302 (8), 303 (8), 307 (8), 308 (8), 309 (8), 310 (8), 311 (8), 312 (8), 404 (8), 405 (8), 406 (8), 407 (8), 408 (8), 409 (8), 410 (8), 411 (8), 412 (8)</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">agb</td>
-<td style="text-align: left;">Tapajos Km67</td>
-<td style="text-align: left;">10T (2), 11T (2), 12T (2), 13T (2), 14T (2), 15T (2), 16T (2), 17T (2), 18T (2)</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ba</td>
-<td style="text-align: left;">BAFOG</td>
-<td style="text-align: left;">VI (1)</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ba</td>
-<td style="text-align: left;">Kibale</td>
-<td style="text-align: left;">7 (3)</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ba</td>
 <td style="text-align: left;">Malinau</td>
-<td style="text-align: left;">RIL01 (1)</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">ba</td>
-<td style="text-align: left;">STREK</td>
-<td style="text-align: left;">1 (6), 10 (6), 11 (6), 12 (6), 2 (6), 3 (6), 4 (6), 5 (6), 6 (6), 7 (6), 8 (6), 9 (6)</td>
+<td style="text-align: left;">Nelliyampathy</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">ba</td>
-<td style="text-align: left;">Tapajos Km114</td>
-<td style="text-align: left;">101 (8), 102 (8), 103 (8), 104 (8), 105 (8), 106 (8), 107 (8), 108 (8), 109 (8), 201 (8), 202 (8), 203 (8), 207 (8), 208 (8), 209 (8), 210 (8), 211 (8), 212 (8), 301 (8), 302 (8), 303 (8), 307 (8), 308 (8), 309 (8), 310 (8), 311 (8), 312 (8), 404 (8), 405 (8), 406 (8), 407 (8), 408 (8), 409 (8), 410 (8), 411 (8), 412 (8)</td>
+<td style="text-align: left;">Peteco</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">ba</td>
-<td style="text-align: left;">Tapajos Km67</td>
-<td style="text-align: left;">10T (3), 11T (3), 12T (3), 13T (3), 14T (3), 15T (3), 16T (3), 17T (3), 18T (3)</td>
+</tbody>
+</table>
+</div>
+</div>
+<p>Spurious diversity values across variables of interest:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>lims <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>variable, <span class="sc">~</span>min, <span class="sc">~</span>max,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"diversity_q1_gen"</span>, <span class="dv">10</span>, <span class="dv">100</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"FDiv"</span>, <span class="dv">0</span>, <span class="dv">1</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>spurious_data_div <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/raw_data/aggregated_data.csv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(tolower) <span class="sc">%&gt;%</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">site_raw =</span> site) <span class="sc">%&gt;%</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">read_tsv</span>(<span class="st">"data/raw_data/sites.tsv"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>site_raw) <span class="sc">%&gt;%</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> lims<span class="sc">$</span>variable) <span class="sc">%&gt;%</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(lims) <span class="sc">%&gt;%</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(value <span class="sc">&lt;</span> min <span class="sc">|</span> value <span class="sc">&gt;</span> max) <span class="sc">%&gt;%</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, site) <span class="sc">%&gt;%</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">N =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> variable, <span class="at">values_from =</span> N)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(spurious_data_div)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">site</th>
+<th style="text-align: right;">diversity_q1_gen</th>
 </tr>
+</thead>
+<tbody>
 <tr class="odd">
-<td style="text-align: left;">diversity_q1_gen</td>
-<td style="text-align: left;">Iwokrama</td>
-<td style="text-align: left;">1 (2), 10 (6), 11 (4), 13 (8), 14 (6), 15 (6), 16 (6), 17 (6), 2 (8), 21 (2), 22 (4), 3 (4), 4 (6), 5 (4), 6 (4), 7 (8), 8 (8), 9 (6)</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">diversity_q1_gen</td>
 <td style="text-align: left;">Kabo</td>
-<td style="text-align: left;">14 (1), 22 (1), 28 (1), 32 (1)</td>
+<td style="text-align: right;">9</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">diversity_q1_gen</td>
+<tr class="even">
 <td style="text-align: left;">Kibale</td>
-<td style="text-align: left;">1 (1), 2 (4), 3 (6), 6 (3)</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">diversity_q1_gen</td>
-<td style="text-align: left;">Tene</td>
-<td style="text-align: left;">16 (1)</td>
+<td style="text-align: right;">60</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">nstem</td>
-<td style="text-align: left;">BAFOG</td>
-<td style="text-align: left;">VI (1)</td>
+<td style="text-align: left;">Lesong</td>
+<td style="text-align: right;">98</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">nstem</td>
 <td style="text-align: left;">Malinau</td>
-<td style="text-align: left;">RIL01 (1)</td>
+<td style="text-align: right;">1</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">nstem</td>
-<td style="text-align: left;">Tapajos Km114</td>
-<td style="text-align: left;">101 (8), 102 (8), 103 (8), 104 (8), 105 (8), 106 (8), 107 (8), 108 (8), 109 (8), 201 (8), 202 (8), 203 (8), 207 (8), 208 (8), 209 (8), 210 (8), 211 (8), 212 (8), 301 (8), 302 (8), 303 (8), 307 (8), 308 (8), 309 (8), 310 (8), 311 (8), 312 (8), 404 (8), 405 (8), 406 (8), 407 (8), 408 (8), 409 (8), 410 (8), 411 (8), 412 (8)</td>
+<td style="text-align: left;">Peteco</td>
+<td style="text-align: right;">2</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">nstem</td>
-<td style="text-align: left;">Tapajos Km67</td>
-<td style="text-align: left;">10T (3), 11T (3), 12T (3), 13T (3), 14T (3), 15T (3), 16T (3), 17T (3), 18T (3)</td>
+<td style="text-align: left;">Sungai Lalang</td>
+<td style="text-align: right;">26</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tene</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ulu Muda</td>
+<td style="text-align: right;">61</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Spurious functional values across variables of interest:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>lims <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>variable, <span class="sc">~</span>min, <span class="sc">~</span>max,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"WD_cwm_ba"</span>, <span class="dv">0</span>, <span class="dv">1</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SLA_cwm_ba"</span>, <span class="dv">5</span>, <span class="dv">30</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>spurious_data_func <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/raw_data/aggregated_data.csv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(tolower) <span class="sc">%&gt;%</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">site_raw =</span> site) <span class="sc">%&gt;%</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">read_tsv</span>(<span class="st">"data/raw_data/sites.tsv"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>site_raw) <span class="sc">%&gt;%</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> lims<span class="sc">$</span>variable) <span class="sc">%&gt;%</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(lims) <span class="sc">%&gt;%</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(value <span class="sc">&lt;</span> min <span class="sc">|</span> value <span class="sc">&gt;</span> max) <span class="sc">%&gt;%</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, site) <span class="sc">%&gt;%</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">N =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> variable, <span class="at">values_from =</span> N)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(spurious_data_func)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">site</th>
+<th style="text-align: right;">SLA_cwm_ba</th>
+<th style="text-align: right;">WD_cwm_ba</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">BAFOG</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">43</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ecosilva</td>
+<td style="text-align: right;">198</td>
+<td style="text-align: right;">185</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Jari</td>
+<td style="text-align: right;">317</td>
+<td style="text-align: right;">314</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jenaro Herrera</td>
+<td style="text-align: right;">83</td>
+<td style="text-align: right;">82</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Kabo</td>
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">53</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Kibale</td>
+<td style="text-align: right;">156</td>
+<td style="text-align: right;">151</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lesong</td>
+<td style="text-align: right;">144</td>
+<td style="text-align: right;">140</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Malinau</td>
+<td style="text-align: right;">139</td>
+<td style="text-align: right;">134</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Manare</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mbaiki</td>
+<td style="text-align: right;">245</td>
+<td style="text-align: right;">243</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Misiones</td>
+<td style="text-align: right;">142</td>
+<td style="text-align: right;">140</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Moju</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">108</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Nelliyampathy</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Paracou</td>
+<td style="text-align: right;">401</td>
+<td style="text-align: right;">401</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Peteco</td>
+<td style="text-align: right;">210</td>
+<td style="text-align: right;">208</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sao Nicolau</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">18</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sungai Lalang</td>
+<td style="text-align: right;">95</td>
+<td style="text-align: right;">92</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tene</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">24</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ulu Muda</td>
+<td style="text-align: right;">108</td>
+<td style="text-align: right;">108</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Uppangala</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">10</td>
 </tr>
 </tbody>
 </table>
@@ -870,62 +798,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>spurious_sites <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  na_data <span class="sc">%&gt;%</span> <span class="fu">select</span>(site),</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  inf_data <span class="sc">%&gt;%</span> <span class="fu">select</span>(site),</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  zero_data <span class="sc">%&gt;%</span> <span class="fu">select</span>(site),</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  spurious_data <span class="sc">%&gt;%</span> <span class="fu">select</span>(site)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>()</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(spurious_sites)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>spurious_sites <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  na_data <span class="sc">%&gt;%</span> <span class="fu">select</span>(site),</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  inf_data <span class="sc">%&gt;%</span> <span class="fu">select</span>(site),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  zero_data <span class="sc">%&gt;%</span> <span class="fu">select</span>(site),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  spurious_data_str <span class="sc">%&gt;%</span> <span class="fu">select</span>(site)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># spurious_data_div %&gt;% select(site),</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># spurious_data_func %&gt;% select(site)</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">N =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>())</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(spurious_sites)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">site</th>
+<th style="text-align: right;">N</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Malinau</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Manare</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Montagne Tortue</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Tapajos Km67</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Tapajos Km114</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Jenaro Herrera</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Kibale</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Misiones</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">BAFOG</td>
+<td style="text-align: right;">1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">STREK</td>
+<td style="text-align: left;">Kibale</td>
+<td style="text-align: right;">2</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Iwokrama</td>
+<td style="text-align: left;">Malinau</td>
+<td style="text-align: right;">3</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Kabo</td>
+<td style="text-align: left;">Nelliyampathy</td>
+<td style="text-align: right;">4</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Tene</td>
+<td style="text-align: left;">Peteco</td>
+<td style="text-align: right;">5</td>
 </tr>
 </tbody>
 </table>
@@ -935,56 +848,86 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(<span class="st">"data/raw_data/aggregated_data.csv"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(tolower) <span class="sc">%&gt;%</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">site_raw =</span> site) <span class="sc">%&gt;%</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">read_tsv</span>(<span class="st">"data/raw_data/sites.tsv"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>site_raw) <span class="sc">%&gt;%</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(site <span class="sc">%in%</span> spurious_sites<span class="sc">$</span>site)) <span class="sc">%&gt;%</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(site) <span class="sc">%&gt;%</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(<span class="st">"data/raw_data/aggregated_data.csv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(tolower) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">site_raw =</span> site) <span class="sc">%&gt;%</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">read_tsv</span>(<span class="st">"data/raw_data/sites.tsv"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>site_raw) <span class="sc">%&gt;%</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(site <span class="sc">%in%</span> spurious_sites<span class="sc">$</span>site)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(site) <span class="sc">%&gt;%</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>()  <span class="sc">%&gt;%</span> </span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">N =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">site</th>
+<th style="text-align: right;">N</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Ecosilva</td>
+<td style="text-align: right;">1</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Jari</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Jenaro Herrera</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Kabo</td>
+<td style="text-align: right;">4</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Lesong</td>
+<td style="text-align: right;">5</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">Manare</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">Mbaiki</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Misiones</td>
+<td style="text-align: right;">8</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Moju</td>
+<td style="text-align: right;">9</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Paracou</td>
+<td style="text-align: right;">10</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Peteco</td>
+<td style="text-align: left;">Sao Nicolau</td>
+<td style="text-align: right;">11</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Sao Nicolau</td>
+<td style="text-align: left;">Sungai Lalang</td>
+<td style="text-align: right;">12</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Sungai Lalang</td>
+<td style="text-align: left;">Tene</td>
+<td style="text-align: right;">13</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Ulu Muda</td>
+<td style="text-align: right;">14</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Uppangala</td>
+<td style="text-align: right;">15</td>
 </tr>
 </tbody>
 </table>

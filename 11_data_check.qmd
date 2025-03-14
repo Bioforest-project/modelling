@@ -8,6 +8,7 @@ vars <- c(
   "diversity_q1_gen", "FDiv",
   "WD_cwm_ba", "SLA_cwm_ba"
 )
+options(knitr.kable.NA = "")
 ```
 
 # Data check {.unnumbered}
@@ -42,20 +43,17 @@ read_tsv("data/raw_data/metadata.tsv") %>%
   kable()
 ```
 
-The following treatments need to be checked, e.g. To be logged - 2024, To be logged (year unknown) should be controls:
+The following treatments are present:
 
 ```{r metadat_treatments}
 #| message: false
 #| warning: false
-control_names <- c(
-  "control", "Control", "Natural_Forest",
-  "To be logged - 2024", "To be logged (year unknown)"
-)
+control_names <- c("Control")
 read_tsv("data/raw_data/metadata.tsv") %>%
   select(treatment) %>%
   unique() %>%
-  mutate(treatment_simpified = ifelse(
-    treatment %in% control_names, "control", "logged"
+  mutate(treatment_simpified = ifelse(treatment %in% control_names,
+    "control", "logged"
   )) %>%
   group_by(treatment_simpified) %>%
   summarise(treatments = paste(treatment, collapse = ", ")) %>%
@@ -146,9 +144,9 @@ zero_data <- read_csv("data/raw_data/aggregated_data.csv") %>%
 kable(zero_data)
 ```
 
-Spurious values across variables of interest with plot names and the number of spurious values in brackets:
+Spurious structure values across variables of interest:
 
-```{r data_spurious}
+```{r data_spurious_str}
 #| message: false
 #| warning: false
 lims <- tribble(
@@ -156,27 +154,68 @@ lims <- tribble(
   "ba", 5, 80,
   "agb", 50, 800,
   "nstem", 50, 1000,
-  "gini", 0, 1,
-  "diversity_q1_gen", 10, 100,
-  "FDiv", 0, 1,
-  "WD_cwm_ba", 0, 1,
-  "SLA_cwm_ba", 5, 30
+  "gini", 0, 1
 )
-spurious_data <- read_csv("data/raw_data/aggregated_data.csv") %>%
+spurious_data_str <- read_csv("data/raw_data/aggregated_data.csv") %>%
   rename_all(tolower) %>%
   rename(site_raw = site) %>%
   left_join(read_tsv("data/raw_data/sites.tsv")) %>%
   select(-site_raw) %>%
-  filter(variable %in% vars) %>%
+  filter(variable %in% lims$variable) %>%
   left_join(lims) %>%
   filter(value < min | value > max) %>%
-  group_by(variable, site, plot) %>%
-  summarise(N = n()) %>%
-  mutate(value = paste0(plot, " (", N, ")")) %>%
   group_by(variable, site) %>%
-  summarise(plot = paste(value, collapse = ", ")) %>%
-  ungroup()
-kable(spurious_data)
+  summarise(N = n()) %>%
+  pivot_wider(names_from = variable, values_from = N)
+kable(spurious_data_str)
+```
+
+Spurious diversity values across variables of interest:
+
+```{r data_spurious_div}
+#| message: false
+#| warning: false
+lims <- tribble(
+  ~variable, ~min, ~max,
+  "diversity_q1_gen", 10, 100,
+  "FDiv", 0, 1
+)
+spurious_data_div <- read_csv("data/raw_data/aggregated_data.csv") %>%
+  rename_all(tolower) %>%
+  rename(site_raw = site) %>%
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>%
+  select(-site_raw) %>%
+  filter(variable %in% lims$variable) %>%
+  left_join(lims) %>%
+  filter(value < min | value > max) %>%
+  group_by(variable, site) %>%
+  summarise(N = n()) %>%
+  pivot_wider(names_from = variable, values_from = N)
+kable(spurious_data_div)
+```
+
+Spurious functional values across variables of interest:
+
+```{r data_spurious_func}
+#| message: false
+#| warning: false
+lims <- tribble(
+  ~variable, ~min, ~max,
+  "WD_cwm_ba", 0, 1,
+  "SLA_cwm_ba", 5, 30
+)
+spurious_data_func <- read_csv("data/raw_data/aggregated_data.csv") %>%
+  rename_all(tolower) %>%
+  rename(site_raw = site) %>%
+  left_join(read_tsv("data/raw_data/sites.tsv")) %>%
+  select(-site_raw) %>%
+  filter(variable %in% lims$variable) %>%
+  left_join(lims) %>%
+  filter(value < min | value > max) %>%
+  group_by(variable, site) %>%
+  summarise(N = n()) %>%
+  pivot_wider(names_from = variable, values_from = N)
+kable(spurious_data_func)
 ```
 
 All sites with NA, infinite, zeros or spurious values will be removed for now:
@@ -186,10 +225,13 @@ spurious_sites <- bind_rows(
   na_data %>% select(site),
   inf_data %>% select(site),
   zero_data %>% select(site),
-  spurious_data %>% select(site)
+  spurious_data_str %>% select(site)
+  # spurious_data_div %>% select(site), #nolint
+  # spurious_data_func %>% select(site) #nolint
 ) %>%
   unique() %>%
-  arrange()
+  arrange() %>%
+  mutate(N = seq_len(n()))
 kable(spurious_sites)
 ```
 
@@ -206,5 +248,7 @@ read_csv("data/raw_data/aggregated_data.csv") %>%
   filter(!(site %in% spurious_sites$site)) %>%
   select(site) %>%
   unique() %>%
+  arrange() %>%
+  mutate(N = seq_len(n())) %>%
   kable()
 ```

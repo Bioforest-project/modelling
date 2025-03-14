@@ -13,10 +13,7 @@ Data exploration.
 #| message: false
 #| warning: false
 #| eval: false
-control_names <- c(
-  "control", "Control", "Natural_Forest",
-  "To be logged - 2024", "To be logged (year unknown)"
-)
+control_names <- c("Control")
 metadata <- read_tsv("data/raw_data/metadata.tsv") %>%
   rename(site_raw = site) %>%
   left_join(read_tsv("data/raw_data/sites.tsv")) %>%
@@ -25,7 +22,8 @@ metadata <- read_tsv("data/raw_data/metadata.tsv") %>%
   mutate(year_of_harvest = as.numeric(year_of_harvest)) %>%
   rename(harvest_year = year_of_harvest) %>%
   mutate(treatment = ifelse(treatment %in% control_names,
-                            "control", "logged")) %>%
+    "control", "logged"
+  )) %>%
   group_by(site) %>%
   mutate(harvest_year_min = min(harvest_year, na.rm = TRUE)) %>%
   mutate(harvest_year = ifelse(site == "Paracou", 1986, harvest_year)) %>%
@@ -38,6 +36,12 @@ vars <- c(
 sites <- c(
   "Ecosilva", "Jari", "Lesong", "Mbaiki", "Moju", "Paracou",
   "Peteco", "Sao Nicolau", "Sungai Lalang", "Ulu Muda", "Uppangala"
+)
+sites <- c(
+  "Ecosilva", "Jari", "Jenaro Herrera", "Kabo", "Kibale",
+  "Lesong", "Malinau", "Manare", "Mbaiki", "Misiones", "Moju",
+  "Paracou", "Peteco", "Sungai Lalang",
+  "Ulu Muda", "Uppangala"
 )
 data <- read_csv("data/raw_data/aggregated_data.csv") %>%
   rename_all(tolower) %>%
@@ -55,13 +59,15 @@ data <- read_csv("data/raw_data/aggregated_data.csv") %>%
   mutate(sitenum = as.numeric(as.factor(site)))
 data_equ <- data %>%
   filter((rel_year <= 0 & treatment == "logged") | treatment == "control") %>%
+  group_by(variable) %>%
   mutate(plotnum = as.numeric(as.factor(paste(site, plot))))
 data_rec <- data %>%
   filter(treatment == "logged", rel_year > 2) %>%
+  group_by(variable) %>%
   mutate(plotnum = as.numeric(as.factor(paste0(site, "_", plot))))
 write_tsv(data, "data/derived_data/data.tsv")
 write_tsv(data_rec, "data/derived_data/data_rec.tsv")
-write_tsv(data_ogf, "data/derived_data/data_equ.tsv")
+write_tsv(data_equ, "data/derived_data/data_equ.tsv")
 ```
 
 ```{r figs}

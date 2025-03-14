@@ -22,7 +22,6 @@ vars <- c(
   "WD_cwm_ba", "SLA_cwm_ba"
 )
 vars <- c(
-  "ba", "nstem", "gini",
   "diversity_q1_gen", "FDiv",
   "WD_cwm_ba", "SLA_cwm_ba"
 )
