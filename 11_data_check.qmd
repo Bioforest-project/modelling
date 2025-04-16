@@ -8,6 +8,7 @@ vars <- c(
   "diversity_q1_gen", "FDiv",
   "WD_cwm_ba", "SLA_cwm_ba"
 )
+aggregated_file <- "data/raw_data/aggregated_data_v5.csv"
 options(knitr.kable.NA = "")
 ```
 
@@ -80,7 +81,7 @@ The following site names in data need to be fixed:
 ```{r data_sitenames}
 #| message: false
 #| warning: false
-read_csv("data/raw_data/aggregated_data.csv") %>%
+read_csv(aggregated_file) %>%
   rename_all(tolower) %>%
   select(site) %>%
   rename(site_raw = site) %>%
@@ -95,7 +96,7 @@ Missing values (NA) across variables of interest:
 ```{r data_na}
 #| message: false
 #| warning: false
-na_data <- read_csv("data/raw_data/aggregated_data.csv") %>%
+na_data <- read_csv(aggregated_file) %>%
   rename_all(tolower) %>%
   rename(site_raw = site) %>%
   left_join(read_tsv("data/raw_data/sites.tsv")) %>%
@@ -113,7 +114,7 @@ Infinite values (Inf) across variables of interest:
 ```{r data_inf}
 #| message: false
 #| warning: false
-inf_data <- read_csv("data/raw_data/aggregated_data.csv") %>%
+inf_data <- read_csv(aggregated_file) %>%
   rename_all(tolower) %>%
   rename(site_raw = site) %>%
   left_join(read_tsv("data/raw_data/sites.tsv")) %>%
@@ -131,7 +132,7 @@ Zero values across variables of interest:
 ```{r data_zero}
 #| message: false
 #| warning: false
-zero_data <- read_csv("data/raw_data/aggregated_data.csv") %>%
+zero_data <- read_csv(aggregated_file) %>%
   rename_all(tolower) %>%
   rename(site_raw = site) %>%
   left_join(read_tsv("data/raw_data/sites.tsv")) %>%
@@ -156,7 +157,7 @@ lims <- tribble(
   "nstem", 50, 1000,
   "gini", 0, 1
 )
-spurious_data_str <- read_csv("data/raw_data/aggregated_data.csv") %>%
+spurious_data_str <- read_csv(aggregated_file) %>%
   rename_all(tolower) %>%
   rename(site_raw = site) %>%
   left_join(read_tsv("data/raw_data/sites.tsv")) %>%
@@ -180,7 +181,7 @@ lims <- tribble(
   "diversity_q1_gen", 10, 100,
   "FDiv", 0, 1
 )
-spurious_data_div <- read_csv("data/raw_data/aggregated_data.csv") %>%
+spurious_data_div <- read_csv(aggregated_file) %>%
   rename_all(tolower) %>%
   rename(site_raw = site) %>%
   left_join(read_tsv("data/raw_data/sites.tsv")) %>%
@@ -204,7 +205,7 @@ lims <- tribble(
   "WD_cwm_ba", 0, 1,
   "SLA_cwm_ba", 5, 30
 )
-spurious_data_func <- read_csv("data/raw_data/aggregated_data.csv") %>%
+spurious_data_func <- read_csv(aggregated_file) %>%
   rename_all(tolower) %>%
   rename(site_raw = site) %>%
   left_join(read_tsv("data/raw_data/sites.tsv")) %>%
@@ -240,7 +241,7 @@ Remaining sites are:
 ```{r data_remaining}
 #| message: false
 #| warning: false
-read_csv("data/raw_data/aggregated_data.csv") %>%
+read_csv(aggregated_file) %>%
   rename_all(tolower) %>%
   rename(site_raw = site) %>%
   left_join(read_tsv("data/raw_data/sites.tsv")) %>%
