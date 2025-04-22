@@ -66,12 +66,12 @@ read_tsv("outputs/parameters.tsv") %>%
   filter(
     type == "diversity", attribute == "diversity_q1_gen",
     parameter %in% c("deltapct", "tau")
-  ) %>% 
+  ) %>%
   filter(!(site %in% c("Kibale", "Uppangala"))) %>%
-  select(attr_long, parameter, site, median) %>% 
-  pivot_wider(names_from = parameter, values_from = median) %>% 
-  unnest(deltapct) %>% 
-  unnest(tau) %>% 
+  select(attr_long, parameter, site, median) %>%
+  pivot_wider(names_from = parameter, values_from = median) %>%
+  unnest(deltapct) %>%
+  unnest(tau) %>%
   ggplot(aes(tau, deltapct, col = site)) +
   geom_point() +
   theme_bw() +
