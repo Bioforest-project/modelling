@@ -108,7 +108,7 @@ read_tsv("outputs/parameters.tsv") %>%
 
 > Q3. How do abiotic and biotic factors modify recovery rates?
 
-abiotic factors = soil fertility + climate stress + landscape connectivity
+abiotic factors = soil fertility + climate stress
 
 biotic factors = biodiversity + Ecological strategy (acquisitive versus conservative) + structural diversity
 

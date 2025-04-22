@@ -8,7 +8,7 @@ vars <- c(
   "diversity_q1_gen", "FDiv",
   "WD_cwm_ba", "SLA_cwm_ba"
 )
-aggregated_file <- "data/raw_data/aggregated_data_v5.csv"
+aggregated_file <- "data/raw_data/aggregated_data_v6.csv"
 options(knitr.kable.NA = "")
 ```
 

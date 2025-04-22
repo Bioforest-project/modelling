@@ -146,10 +146,6 @@ env <- read_tsv("data/raw_data/environment.tsv") %>%
   rename(site_raw = site) %>%
   left_join(read_tsv("data/raw_data/sites.tsv")) %>%
   select(-site_raw) %>%
-  mutate(plot = ifelse(site %in% c(pad_sites, antimary_sites),
-    paste(site, plot),
-    plot
-  )) %>%
   mutate(site = ifelse(site %in% pad_sites, "Pad Limo", site)) %>%
   mutate(site = ifelse(site %in% antimary_sites, "Antimary", site))
 pars <- raw_pars %>%

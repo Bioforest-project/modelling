@@ -50,10 +50,14 @@ pad_sites <- c(
   "Pad Limo 2 Barracos", "Pad Limo Chico Bocao", "Pad Limo Cumaru",
   "Pad Limo Jatoba", "Pad Limo Pocao", "Pad Limo STCP"
 )
-data <- read_csv("data/raw_data/aggregated_data_v5.csv") %>%
+data <- read_csv("data/raw_data/aggregated_data_v6.csv") %>%
   na.omit() %>%
   rename_all(tolower) %>%
   rename(site_raw = site) %>%
+  mutate(plot = ifelse(
+    site_raw %in% c("BAFOG", "Paracou", "Manare", "Montagne Tortue"),
+    paste0(site_raw, "-", plot, "-Treatment"), plot
+  )) %>% 
   separate(plot, c("X1", "plot", "X2"), sep = "-") %>%
   select(-X1, -X2) %>%
   left_join(read_tsv("data/raw_data/sites.tsv")) %>%
