@@ -34,35 +34,44 @@ vars <- c(
   "WD_cwm_ba", "SLA_cwm_ba"
 )
 sites <- c(
-  "Antimary APU2", "Antimary APU3", "BAFOG", "Corinto", "Ecosilva", "Gola", "Iracema", "Iwokrama", "Jari", "Jenaro Herrera", "Kabo", "Kibale", "Lesong", "Malinau", "Manare", "Mbaiki", "Mil", "Misiones", "Moju", "Montagne Tortue", "Nelliyampathy", "Pad Limo 2 Barracos", "Pad Limo Chico Bocao", "Pad Limo Cumaru", "Pad Limo Jatoba", "Pad Limo Pocao", "Pad Limo STCP", "Paracou", "Peixoto", "Peteco", "Sao Nicolau", "Ser Filipinas", "Sungai Lalang", "Tapajos Km114", "Tapajos Km67", "Tirimbina", "Ulu Muda", "Uppangala"
+  "Antimary APU2", "Antimary APU3", "BAFOG", "Corinto", "Ecosilva", "Gola",
+  "Iracema", "Iwokrama", "Jari", "Jenaro Herrera", "Kabo", "Kibale", "Lesong",
+  "Malinau", "Manare", "Mbaiki", "Mil", "Misiones", "Moju", "Montagne Tortue",
+  "Nelliyampathy", "Pad Limo 2 Barracos", "Pad Limo Chico Bocao",
+  "Pad Limo Cumaru",
+  "Pad Limo Jatoba", "Pad Limo Pocao", "Pad Limo STCP", "Paracou", "Peixoto",
+  "Peteco", "Sao Nicolau", "Ser Filipinas", "Sungai Lalang", "Tapajos Km114",
+  "Tapajos Km67", "Tirimbina", "Ulu Muda", "Uppangala"
 )
 antimary_sites <- c(
   "Antimary APU2", "Antimary APU3"
 )
 pad_sites <- c(
-  "Pad Limo 2 Barracos", "Pad Limo Chico Bocao", "Pad Limo Cumaru", "Pad Limo Jatoba", "Pad Limo Pocao", "Pad Limo STCP"
+  "Pad Limo 2 Barracos", "Pad Limo Chico Bocao", "Pad Limo Cumaru",
+  "Pad Limo Jatoba", "Pad Limo Pocao", "Pad Limo STCP"
 )
 data <- read_csv("data/raw_data/aggregated_data_v5.csv") %>%
-  na.omit() %>% 
+  na.omit() %>%
   rename_all(tolower) %>%
   rename(site_raw = site) %>%
-  separate(plot, c("X1", "plot", "X2"), sep = "-") %>% 
-  select(-X1, -X2) %>% 
+  separate(plot, c("X1", "plot", "X2"), sep = "-") %>%
+  select(-X1, -X2) %>%
   left_join(read_tsv("data/raw_data/sites.tsv")) %>%
   select(-site_raw) %>%
   left_join(metadata) %>%
   filter(site %in% sites) %>%
   mutate(plot = ifelse(site %in% c(pad_sites, antimary_sites),
-                       paste(site, plot), 
-                       plot)) %>% 
-  mutate(site = ifelse(site %in% pad_sites, "Pad Limo", site)) %>% 
-  mutate(site = ifelse(site %in% antimary_sites, "Antimary", site)) %>% 
+    paste(site, plot),
+    plot
+  )) %>%
+  mutate(site = ifelse(site %in% pad_sites, "Pad Limo", site)) %>%
+  mutate(site = ifelse(site %in% antimary_sites, "Antimary", site)) %>%
   filter(variable %in% vars) %>%
   mutate(rel_year = ifelse(treatment == "control",
     year - harvest_year_min,
     year - harvest_year
   )) %>%
-  mutate(y = value) %>% 
+  mutate(y = value) %>%
   mutate(sitenum = as.numeric(as.factor(site)))
 data_equ <- data %>%
   filter((rel_year <= 0 & treatment == "logged") | treatment == "control") %>%

@@ -26,7 +26,7 @@ read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsM
   write_tsv("data/raw_data/sites.tsv")
 read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?gid=0#gid=0", col_types = "c") %>% # nolint
   rename_all(tolower) %>%
-  select(site, plot, treatment, year_of_harvest) %>%
+  select(site, plot, treatment, year_of_harvest, longitude) %>%
   write_tsv("data/raw_data/metadata.tsv")
 ```
 

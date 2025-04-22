@@ -80,7 +80,7 @@ read_tsv("outputs/parameters.tsv") %>%
   theme_bw() +
   xlab(expression(phi[BA] ~ "[ % lost ]")) +
   ylab(expression(lambda)) +
-  scale_color_discrete("") +
+  scale_color_discrete(guide = "none") +
   theme(legend.position = "bottom")
 ```
 
@@ -100,7 +100,7 @@ read_tsv("outputs/parameters.tsv") %>%
   theme_bw() +
   xlab(expression(phi[BA] ~ "[ % lost ]")) +
   ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
-  scale_color_discrete("") +
+  scale_color_discrete(guide = "none") +
   theme(legend.position = "bottom")
 ```
 
@@ -129,7 +129,7 @@ read_tsv("outputs/parameters.tsv") %>%
   theme_bw() +
   ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
   scale_x_log10() +
-  scale_color_discrete("") +
+  scale_color_discrete(guide = "none") +
   theme(legend.position = "bottom") +
   xlab(expression(Climate ~ Water ~ Deficit ~ "[" ~ mm ~ year^{
     -1
@@ -150,7 +150,7 @@ read_tsv("outputs/parameters.tsv") %>%
   scale_y_log10() +
   theme_bw() +
   ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
-  scale_color_discrete("") +
+  scale_color_discrete(guide = "none") +
   theme(legend.position = "bottom") +
   xlab(expression(Maximum ~ Temperature ~ "[" ~ "°" ~ "]"))
 ```
@@ -169,7 +169,7 @@ read_tsv("outputs/parameters.tsv") %>%
   scale_y_log10() +
   theme_bw() +
   ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
-  scale_color_discrete("") +
+  scale_color_discrete(guide = "none") +
   theme(legend.position = "bottom") +
   xlab(expression(Bulk ~ Density ~ "[" ~ kg ~ dm^{
     -3
@@ -190,31 +190,11 @@ read_tsv("outputs/parameters.tsv") %>%
   scale_y_log10() +
   theme_bw() +
   ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
-  scale_color_discrete("") +
+  scale_color_discrete(guide = "none") +
   theme(legend.position = "bottom") +
   xlab(expression(Soil ~ organic ~ Carbon ~ "[" ~ g ~ kg^{
     -1
   } ~ "]"))
-```
-
-```{r t90_deforested}
-#| message: false
-#| warning: false
-#| fig-width: 10
-#| fig-height: 8
-read_tsv("outputs/parameters.tsv") %>%
-  filter(parameter == "t90") %>%
-  ggplot(aes(deforested, median)) +
-  geom_smooth(method = "lm", se = FALSE) +
-  geom_point(aes(col = site)) +
-  facet_wrap(~attribute, scales = "free_y") +
-  scale_y_log10() +
-  theme_bw() +
-  ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
-  scale_color_discrete("") +
-  theme(legend.position = "bottom") +
-  xlab(expression(Deforested ~ landscape ~ "[" ~ "%" ~ "]")) +
-  scale_x_log10()
 ```
 
 ### Biotic
@@ -236,7 +216,7 @@ read_tsv("outputs/parameters.tsv") %>%
   theme_bw() +
   ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
   xlab(expression(Gini[s])) +
-  scale_color_discrete("") +
+  scale_color_discrete(guide = "none") +
   theme(legend.position = "bottom")
 ```
 
@@ -257,7 +237,7 @@ read_tsv("outputs/parameters.tsv") %>%
   xlab(expression(SLA ~ "[" ~ mm^2 ~ mg^{
     -1
   } ~ "]")) +
-  scale_color_discrete("") +
+  scale_color_discrete(guide = "none") +
   theme(legend.position = "bottom")
 ```
 
@@ -278,7 +258,7 @@ read_tsv("outputs/parameters.tsv") %>%
   xlab(expression(WD ~ "[" ~ g ~ cm^{
     -3
   } ~ "]")) +
-  scale_color_discrete("") +
+  scale_color_discrete(guide = "none") +
   theme(legend.position = "bottom")
 ```
 
@@ -297,6 +277,6 @@ read_tsv("outputs/parameters.tsv") %>%
   theme_bw() +
   ylab(expression(t[90] ~ "[" ~ years ~ "]")) +
   xlab(expression("Genus diversity" ~ q == 1)) +
-  scale_color_discrete("") +
+  scale_color_discrete(guide = "none") +
   theme(legend.position = "bottom")
 ```

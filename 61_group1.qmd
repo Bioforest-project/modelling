@@ -27,7 +27,7 @@ read_tsv("outputs/parameters.tsv") %>%
   filter(level == "site") %>%
   filter(!(site %in% c("Kibale", "Uppangala"))) %>%
   filter(type == "diversity" & parameter == "tau") %>%
-  ggplot(aes(x = site, col = continent)) +
+  ggplot(aes(x = site, col = region)) +
   geom_point(aes(y = median)) +
   geom_segment(aes(y = median - sd, yend = median + sd)) +
   geom_segment(aes(y = q5, yend = q95), size = .1) +
@@ -48,7 +48,7 @@ read_tsv("outputs/parameters.tsv") %>%
   filter(level == "plot") %>%
   filter(!(site %in% c("Kibale", "Uppangala"))) %>%
   filter(type == "diversity" & parameter == "deltapct") %>%
-  ggplot(aes(x = median, y = site, fill = continent)) +
+  ggplot(aes(x = median, y = site, fill = region)) +
   ggridges::geom_density_ridges() +
   facet_wrap(~attr_long) +
   theme_bw() +
@@ -64,7 +64,7 @@ read_tsv("outputs/parameters.tsv") %>%
 #| warning: false
 read_tsv("outputs/parameters.tsv") %>%
   filter(
-    type == "diversity",
+    type == "diversity", attribute == "diversity_q1_gen",
     parameter %in% c("deltapct", "tau")
   ) %>%
   filter(!(site %in% c("Kibale", "Uppangala"))) %>%
@@ -78,7 +78,8 @@ read_tsv("outputs/parameters.tsv") %>%
   xlab(expression(tau ~ "[ year ]")) +
   scale_color_discrete("") +
   ggtitle(expression(Plot ~ delta ~ "~" ~ Site ~ tau)) +
-  facet_wrap(~attr_long, scales = "free")
+  facet_wrap(~attr_long, scales = "free") +
+  ggpubr::stat_cor(aes(group = NA))
 ```
 
 ## Observed & inferred disturbance
@@ -92,15 +93,16 @@ data_rec <- read_tsv("data/derived_data/data_rec.tsv", col_types = cols()) %>%
   filter(variable == "ba") %>%
   group_by(site, plot) %>%
   summarise(ba_post = min(value, na.rm = TRUE))
-data_pre <- read_tsv("data/derived_data/data_ogf.tsv", col_types = cols()) %>%
+data_equ <- read_tsv("data/derived_data/data_equ.tsv", col_types = cols()) %>%
   filter(variable == "ba", rel_year <= 0) %>%
   group_by(site, plot) %>%
   summarise(ba_pre = median(value, na.rm = TRUE))
-dist_obs <- data_pre %>%
+dist_obs <- data_equ %>%
   left_join(data_rec) %>%
   na.omit() %>%
   mutate(dist_obs = (ba_pre - ba_post) / ba_pre * 100) %>%
-  select(site, plot, dist_obs)
+  select(site, plot, dist_obs) %>%
+  filter(dist_obs > 0)
 read_tsv("outputs/parameters.tsv") %>%
   filter(parameter == "phipct", attribute == "ba") %>%
   select(site, plot, median, sd, q5, q95) %>%
@@ -114,46 +116,10 @@ read_tsv("outputs/parameters.tsv") %>%
   geom_point() +
   facet_wrap(~site) +
   theme_bw() +
-  ggpubr::stat_cor() +
-  coord_equal() +
+  ggpubr::stat_cor(size = 3) +
   xlab(expression(phi[BA] ~ "inferred [ % lost ]")) +
-  ylab(expression(dist[BA] ~ "observed [ % lost ]"))
-```
-
-```{r}
-#| message: false
-#| warning: false
-#| eval: false
-read_tsv("outputs/parameters.tsv") %>%
-  filter(parameter == "phipct", attribute == "ba") %>%
-  select(site, plot, median, sd, q5, q95) %>%
-  unique() %>%
-  left_join(dist_obs) %>%
-  na.omit() %>%
-  group_by(site) %>%
-  summarise(r = cor(median, dist_obs)) %>%
-  mutate(plot_area = c(1, 4, 1, 0.25, 6.25)) %>%
-  left_join(
-    read_tsv("data/derived_data/data.tsv") %>%
-      filter(variable == "ba") %>%
-      filter(rel_year > 0) %>%
-      group_by(site) %>%
-      summarise(first_inventory = min(rel_year))
-  ) %>%
-  left_join(
-    read_tsv("data/derived_data/data.tsv") %>%
-      filter(variable == "ba") %>%
-      filter(rel_year <= 0) %>%
-      group_by(site) %>%
-      summarise(delta_ba_pre = sd(value))
-  ) %>%
-  ggplot(aes(delta_ba_pre, r, size = plot_area, label = site)) +
-  geom_point() +
-  ggrepel::geom_text_repel(size = 5) +
-  theme_bw() +
-  xlab("Variation in pre-logging basal area") +
-  ylab("Observed and inferred disturbance correlation") +
-  scale_size("Plot area [ ha ]")
+  ylab(expression(dist[BA] ~ "observed [ % lost ]")) +
+  theme(panel.spacing = unit(0, "lines"))
 ```
 
 ## H2 - Diversity & intensity
@@ -179,7 +145,7 @@ read_tsv("outputs/parameters.tsv") %>%
   theme_bw() +
   xlab(expression(phi[BA] ~ "[ % lost ]")) +
   ylab(expression(delta ~ "[ % ]")) +
-  scale_color_discrete("") +
+  scale_color_discrete(guide = "none") +
   ggpubr::stat_cor(aes(group = NA),
     label.x.npc = "left", label.y.npc = "top"
   )
@@ -195,31 +161,12 @@ read_tsv("outputs/parameters.tsv") %>%
   left_join(dist_p) %>%
   ggplot(aes(median_dist_ba, median)) +
   geom_smooth(method = "lm", se = FALSE) +
-  geom_point() +
+  geom_point(col = "grey") +
   facet_wrap(~site) +
-  ggpubr::stat_cor(label.x.npc = "left", label.y.npc = "top") +
+  ggpubr::stat_cor(size = 3) +
   theme_bw() +
   xlab(expression(phi[BA] ~ "[ % lost ]")) +
   ylab(expression(delta ~ "[ % ]")) +
-  theme(legend.position = "bottom")
-```
-
-```{r y15_dist}
-#| message: false
-#| warning: false
-read_tsv("outputs/parameters.tsv") %>%
-  filter(!(site %in% c("Kibale", "Uppangala"))) %>%
-  filter(parameter == "y15", type == "diversity") %>%
-  left_join(dist_p) %>%
-  ggplot(aes(median_dist_ba, median, col = site)) +
-  geom_smooth(method = "lm", se = FALSE, col = "black", aes(group = NA)) +
-  geom_point() +
-  facet_wrap(~attr_long, scales = "free") +
-  theme_bw() +
-  xlab(expression(phi[BA] ~ "[ % lost ]")) +
-  ylab(expression(y[15] ~ "[ % ]")) +
-  scale_color_discrete("") +
-  ggpubr::stat_cor(aes(group = NA),
-    label.x.npc = "left", label.y.npc = "top"
-  )
+  theme(legend.position = "bottom") +
+  theme(panel.spacing = unit(0, "lines"))
 ```
