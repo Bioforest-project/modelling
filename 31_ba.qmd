@@ -47,6 +47,8 @@ pvo_fig(data)
 #| message: false
 #| warning: false
 #| fig-cap: "Predicted trajectories."
+#| fig-width: 10
+#| fig-height: 10
 proj_fig(data)
 ```
 

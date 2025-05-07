@@ -122,6 +122,29 @@ read_tsv("outputs/parameters.tsv") %>%
   theme(panel.spacing = unit(0, "lines"))
 ```
 
+```{r}
+g <- read_tsv("outputs/parameters.tsv") %>%
+  filter(parameter == "phipct", attribute == "ba") %>%
+  select(site, plot, median, sd, q5, q95) %>%
+  unique() %>%
+  left_join(dist_obs) %>%
+  na.omit() %>%
+  filter(site %in% c("Paracou", "Mbaiki", "Misiones", "Moju")) %>% 
+  ggplot(aes(median, dist_obs)) +
+  geom_abline(col = "darkgrey") +
+  geom_segment(aes(x = median - sd, xend = median + sd)) +
+  geom_segment(aes(x = q5, xend = q95), size = .1) +
+  geom_point() +
+  ggrepel::geom_text_repel(aes(label = plot)) +
+  facet_wrap(~site) +
+  theme_bw() +
+  ggpubr::stat_cor(size = 3) +
+  xlab(expression(phi[BA] ~ "inferred [ % lost ]")) +
+  ylab(expression(dist[BA] ~ "observed [ % lost ]")) +
+  theme(panel.spacing = unit(0, "lines"))
+ggsave("~/Téléchargements/figure.png", g, bg = "white")
+```
+
 ## H2 - Diversity & intensity
 
 > **H2**: tree diversity also shows a non-linear response to increased intensity of logging: lightly logged forests show a transient increase in tree diversity, but more intensively logged forests show a strong negative effect on diversity
