@@ -58,3 +58,36 @@ proj_fig(data)
 #| fig-cap: "Theta posterior from recovery trajectories against its posterior."
 rec_theta_fig(data)
 ```
+
+```{r eval_phi}
+#| message: false
+#| warning: false
+dist_obs <- data$data_rec %>% 
+  group_by(site, plot) %>%
+  summarise(ba_post = min(value, na.rm = TRUE)) %>% 
+  left_join(data$data_equ %>%
+              filter(rel_year <= 0) %>%
+              group_by(site, plot) %>%
+              summarise(ba_pre = median(value, na.rm = TRUE))) %>% 
+  na.omit() %>% 
+  mutate(dist_obs = (ba_pre - ba_post) / ba_pre * 100) %>%
+  select(site, plot, dist_obs) %>%
+  filter(dist_obs > 0)
+data$fit_rec$summary("phipct_p") %>% 
+  separate(variable, c("X1", "X2", "plotnum"), convert = TRUE) %>% 
+  select(-X1, -X2) %>% 
+  left_join(data$ind_rec) %>% 
+  left_join(dist_obs) %>%
+  na.omit() %>%
+  ggplot(aes(median, dist_obs)) +
+  geom_abline(col = "darkgrey") +
+  geom_segment(aes(x = median - sd, xend = median + sd)) +
+  geom_segment(aes(x = q5, xend = q95), size = .1) +
+  geom_point() +
+  facet_wrap(~site) +
+  theme_bw() +
+  ggpubr::stat_cor(size = 3) +
+  xlab(expression(phi[BA] ~ "inferred [ % lost ]")) +
+  ylab(expression(dist[BA] ~ "observed [ % lost ]")) +
+  theme(panel.spacing = unit(0, "lines"))
+```

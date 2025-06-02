@@ -16,18 +16,19 @@ This section explore parameters all raw and derived parameters for each variable
 library(cmdstanr)
 tmp_path <- file.path("outputs", "pars_tmp")
 dir.create(tmp_path)
-index_p <- read_tsv("data/derived_data/data_rec.tsv") %>%
-  select(site, plot, sitenum, plotnum) %>%
-  unique()
-index_s <- index_p %>%
-  mutate(plot = NA, plotnum = NA) %>%
-  unique()
 vars <- c(
   "ba", "agb", "nstem", "gini",
   "diversity_q1_gen", "FDiv",
   "WD_cwm_ba", "SLA_cwm_ba"
 )
 for (var in vars) {
+  index_p <- read_tsv("data/derived_data/data_rec.tsv") %>%
+    filter(variable == var) %>% 
+    select(site, plot, sitenum, plotnum) %>%
+    unique()
+  index_s <- index_p %>%
+    mutate(plot = NA, plotnum = NA) %>%
+    unique()
   path <- file.path("chains", paste0("rec_", var))
   fit <- as_cmdstan_fit(list.files(path, full.names = TRUE))
   pars_a <- fit$summary(c(
