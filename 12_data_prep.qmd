@@ -3,7 +3,7 @@
 #| include: false
 library(tidyverse)
 library(knitr)
-aggregated_file <- "data/raw_data/aggregated_data_v8.csv"
+aggregated_file <- "data/raw_data/aggregated_data_v82.csv"
 ```
 
 # Data prep {.unnumbered}

@@ -15,6 +15,7 @@ This section develop trajectories per attributes.
 ```{r fit_all}
 #| eval: false
 equ <- cmdstan_model("models/equilibirum.stan")
+rec_pos <- cmdstan_model("models/recovery_positive.stan")
 rec <- cmdstan_model("models/recovery.stan")
 vars <- c(
   "ba", "agb", "nstem", "gini",

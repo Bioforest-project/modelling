@@ -32,7 +32,7 @@ for (var in vars) {
   fit <- as_cmdstan_fit(list.files(path, full.names = TRUE))
   pars_a <- fit$summary(c(
     "lp__",
-    "mu_phi", "mu_phipct",
+    # "mu_phi", "mu_phipct",
     "mu_delta", "mu_deltapct",
     "mu_tau0", "mu_tau",
     "mu_lambda", "mu_t90"
@@ -99,8 +99,8 @@ raw_pars <- read_tsv("outputs/raw_parameters.tsv") %>%
   ), "functional", type)) %>%
   mutate(par_parsed = recode(parameter,
     "lp__" = "likelihood",
-    "mu_phi" = "mu[~phi]",
-    "mu_phipct" = "mu[~phi]",
+    # "mu_phi" = "mu[~phi]",
+    # "mu_phipct" = "mu[~phi]",
     "mu_delta" = "mu[~delta]",
     "mu_deltapct" = "mu[~delta]",
     "mu_tau" = "mu[~tau]",
@@ -212,7 +212,8 @@ read_tsv("outputs/parameters.tsv") %>%
   coord_flip() +
   theme_bw() +
   scale_fill_viridis_c(expression(hat(R)), trans = "log") +
-  theme(axis.title = element_blank())
+  theme(axis.title = element_blank()) +
+  geom_hline(yintercept = c(1, 1.1), linetype = "dashed")
 ```
 
 ## Inter-site

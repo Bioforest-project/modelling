@@ -1,3 +1,4 @@
+-   modelling 0.1.0.9042: aggregated v82
 -   modelling 0.1.0.9041: aggregated v6 and env updated
 -   modelling 0.1.0.9040: post-trajectories update
 -   modelling 0.1.0.9039: all checks, models renaming, and updated fits

@@ -20,8 +20,8 @@ parameters {
   vector<lower=0, upper=0.5>[p] lambda_p; // recovery rate
   real<lower=0, upper=0.5> mu_lambda;
   real<lower=0> sigma_lambda;
-  vector<lower=-phi_p, upper=2>[p] delta_p; // bump height
-  real<lower=-2, upper=2> mu_delta;
+  vector<lower=0, upper=2>[p] delta_p; // bump height
+  real<lower=0, upper=2> mu_delta;
   real<lower=0> sigma_delta;
   vector<lower=5-3, upper=40-3>[s] tau0_s; // bump time
   real<lower=5-3, upper=40-3> mu_tau0;
@@ -39,7 +39,7 @@ transformed parameters {
 model {
   log(y) ~ normal(log(mu), sigma);
   lambda_p ~ normal(mu_lambda, sigma_lambda);
-  delta_p ~ cauchy(mu_delta, sigma_delta);
+  delta_p ~ lognormal(mu_delta, sigma_delta);
   tau0_s ~ normal(mu_tau0, sigma_tau);
   for(i in 1:s)
     theta_s[i] ~ normal(mu_theta_s[i], sigma_theta_s[i]);
