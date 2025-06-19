@@ -33,7 +33,6 @@ for (var in vars) {
   fit <- as_cmdstan_fit(list.files(path, full.names = TRUE))
   pars_a <- fit$summary(c(
     "lp__",
-    # "mu_phi", "mu_phipct",
     "mu_delta", "mu_deltapct",
     "mu_tau0", "mu_tau",
     "mu_lambda", "mu_t90"
@@ -100,8 +99,6 @@ raw_pars <- read_tsv("outputs/raw_parameters.tsv") %>%
   ), "functional", type)) %>%
   mutate(par_parsed = recode(parameter,
     "lp__" = "likelihood",
-    # "mu_phi" = "mu[~phi]",
-    # "mu_phipct" = "mu[~phi]",
     "mu_delta" = "mu[~delta]",
     "mu_deltapct" = "mu[~delta]",
     "mu_tau" = "mu[~tau]",
@@ -123,6 +120,19 @@ raw_pars <- read_tsv("outputs/raw_parameters.tsv") %>%
     "SLA_cwm_ba" = "Func - SLA",
     "N_cwm_ba" = "Func - N"
   ))
+dist_obs <- read_tsv("data/derived_data/data_rec.tsv") %>% 
+  filter(variable == "ba") %>% 
+  group_by(site, plot) %>%
+  summarise(ba_post = min(value, na.rm = TRUE)) %>% 
+  left_join(read_tsv("data/derived_data/data_equ.tsv") %>%
+              filter(variable == "ba") %>% 
+              filter(rel_year <= 0) %>%
+              group_by(site, plot) %>%
+              summarise(ba_pre = median(value, na.rm = TRUE))) %>% 
+  na.omit() %>% 
+  mutate(dist_obs = (ba_pre - ba_post) / ba_pre * 100) %>%
+  select(site, plot, dist_obs) %>%
+  filter(dist_obs > 0)
 biotic <- read_tsv("data/derived_data/data.tsv") %>%
   filter(treatment != "logged" | rel_year <= 0) %>%
   filter(variable %in% c(
@@ -150,6 +160,7 @@ env <- read_tsv("data/raw_data/environment.tsv") %>%
   mutate(site = ifelse(site %in% pad_sites, "Pad Limo", site)) %>%
   mutate(site = ifelse(site %in% antimary_sites, "Antimary", site))
 pars <- raw_pars %>%
+  left_join(dist_obs) %>% 
   left_join(region) %>%
   left_join(env) %>%
   left_join(biotic)
