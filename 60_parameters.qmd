@@ -158,7 +158,10 @@ env <- read_tsv("data/raw_data/environment.tsv") %>%
   left_join(read_tsv("data/raw_data/sites.tsv")) %>%
   select(-site_raw) %>%
   mutate(site = ifelse(site %in% pad_sites, "Pad Limo", site)) %>%
-  mutate(site = ifelse(site %in% antimary_sites, "Antimary", site))
+  mutate(site = ifelse(site %in% antimary_sites, "Antimary", site)) %>% 
+  group_by(site) %>% 
+  summarise_all(median) %>% 
+  ungroup()
 pars <- raw_pars %>%
   left_join(dist_obs) %>% 
   left_join(region) %>%
