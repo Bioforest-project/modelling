@@ -18,6 +18,7 @@ book:
         - 34_gini.qmd
         - 41_gen_q1.qmd
         - 42_fdiv.qmd
+        - 43_sp_q1.qmd
         - 51_wd.qmd
         - 52_sla.qmd
     - part: 60_parameters.qmd

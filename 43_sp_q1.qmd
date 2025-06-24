@@ -1,0 +1,58 @@
+```{r set}
+#| message: false
+#| include: false
+library(tidyverse)
+library(knitr)
+library(cmdstanr)
+library(bayesplot)
+library(loo)
+library(patchwork)
+list.files("r", full.names = TRUE, pattern = ".R") %>%
+  lapply(source)
+```
+
+# Div - Species {.unnumbered}
+
+```{r data}
+#| message: false
+#| warning: false
+var <- "diversity_q1_sp"
+lab <- expression("Species diversity" ~ q == 1)
+data <- load_all(var, lab)
+```
+
+```{r theta_equ}
+#| message: false
+#| warning: false
+#| fig-cap: "Theta posterior from forests at equilibirum."
+equ_theta_fig(data)
+```
+
+```{r fit_rec}
+#| message: false
+#| warning: false
+data$fit_rec
+```
+
+```{r pvo_stp}
+#| message: false
+#| warning: false
+#| fig-cap: "Predicted versus observed."
+pvo_fig(data)
+```
+
+```{r preds_stp}
+#| message: false
+#| warning: false
+#| fig-cap: "Predicted trajectories."
+#| fig-width: 10
+#| fig-height: 10
+proj_fig(data)
+```
+
+```{r theta_stp}
+#| message: false
+#| warning: false
+#| fig-cap: "Theta posterior from recovery trajectories against its posterior."
+rec_theta_fig(data)
+```

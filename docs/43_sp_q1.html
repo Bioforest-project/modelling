@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>modelling - Div - FDiv</title>
+<title>modelling - Div - Species</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -54,26 +54,7 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -83,8 +64,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./43_sp_q1.html" rel="next">
-<link href="./41_gen_q1.html" rel="prev">
+<link href="./51_wd.html" rel="next">
+<link href="./42_fdiv.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -127,7 +108,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_trajectories.html">Trajectories</a></li><li class="breadcrumb-item"><a href="./42_fdiv.html">Div - FDiv</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_trajectories.html">Trajectories</a></li><li class="breadcrumb-item"><a href="./43_sp_q1.html">Div - Species</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -217,13 +198,13 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./42_fdiv.html" class="sidebar-item-text sidebar-link active">
+  <a href="./42_fdiv.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Div - FDiv</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./43_sp_q1.html" class="sidebar-item-text sidebar-link">
+  <a href="./43_sp_q1.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Div - Species</span></a>
   </div>
 </li>
@@ -312,7 +293,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Div - FDiv</h1>
+<h1 class="title">Div - Species</h1>
 </div>
 
 
@@ -327,12 +308,11 @@ div.csl-indent {
 
 </header>
 
-<p>Functional diversity is measured through functional divergence Fdiv, the “Species deviance from the mean distance to the centre of gravity weighted by relative abundance” <span class="citation" data-cites="mouchet2010">(<a href="99_references.html#ref-mouchet2010" role="doc-biblioref">Mouchet et al. 2010</a>)</span>.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>var <span class="ot">&lt;-</span> <span class="st">"FDiv"</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>lab <span class="ot">&lt;-</span> <span class="fu">expression</span>(<span class="st">"FDiv"</span>)</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>var <span class="ot">&lt;-</span> <span class="st">"diversity_q1_sp"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>lab <span class="ot">&lt;-</span> <span class="fu">expression</span>(<span class="st">"Species diversity"</span> <span class="sc">~</span> q <span class="sc">==</span> <span class="dv">1</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">load_all</span>(var, lab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
@@ -344,7 +324,7 @@ div.csl-indent {
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="42_fdiv_files/figure-html/theta_equ-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="43_sp_q1_files/figure-html/theta_equ-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption class="figure-caption">Theta posterior from forests at equilibirum.</figcaption>
 </figure>
 </div>
@@ -356,19 +336,19 @@ div.csl-indent {
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fit_rec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> variable    mean  median     sd    mad      q5     q95 rhat ess_bulk ess_tail
- lp__     6410.36 6349.82 230.39 251.99 6137.00 6823.14 1.87        5       38
- phi_p[1]    0.89    0.95   0.16   0.05    0.51    1.00 1.04       73      244
- phi_p[2]    0.67    0.74   0.18   0.13    0.28    0.87 1.34        9      326
- phi_p[3]    0.80    0.84   0.15   0.09    0.49    0.96 1.14       19      322
- phi_p[4]    0.68    0.74   0.17   0.12    0.32    0.87 1.36        9      214
- phi_p[5]    0.82    0.86   0.13   0.08    0.55    0.96 1.11       25     1002
- phi_p[6]    0.79    0.84   0.14   0.09    0.48    0.95 1.14       18      356
- phi_p[7]    0.62    0.69   0.18   0.14    0.25    0.82 1.38        8      267
- phi_p[8]    0.87    0.90   0.12   0.07    0.64    0.99 1.04       68      875
- phi_p[9]    0.68    0.74   0.18   0.13    0.30    0.88 1.39        8      230
+<pre><code> variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
+ lp__     5260.32 5260.30 56.15 58.88 5169.31 5352.57 1.29       11       59
+ phi_p[1]    0.63    0.64  0.12  0.10    0.41    0.81 1.00     2117     1152
+ phi_p[2]    0.58    0.58  0.12  0.10    0.39    0.76 1.01     1653     1310
+ phi_p[3]    0.63    0.64  0.12  0.10    0.43    0.81 1.01     1622     1166
+ phi_p[4]    0.78    0.80  0.12  0.09    0.58    0.95 1.00     1656     1278
+ phi_p[5]    0.71    0.72  0.12  0.10    0.49    0.89 1.01     1495      999
+ phi_p[6]    0.31    0.31  0.11  0.10    0.15    0.50 1.01     1545     1309
+ phi_p[7]    0.31    0.31  0.11  0.09    0.15    0.48 1.02      233     1130
+ phi_p[8]    0.54    0.55  0.12  0.09    0.33    0.72 1.01      590     1259
+ phi_p[9]    0.57    0.57  0.11  0.09    0.37    0.74 1.01     1047     1393
 
- # showing 10 of 35281 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
+ # showing 10 of 34956 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -379,7 +359,7 @@ div.csl-indent {
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="42_fdiv_files/figure-html/pvo_stp-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="43_sp_q1_files/figure-html/pvo_stp-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption class="figure-caption">Predicted versus observed.</figcaption>
 </figure>
 </div>
@@ -393,7 +373,7 @@ div.csl-indent {
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="42_fdiv_files/figure-html/preds_stp-1.png" class="img-fluid figure-img" width="960"></p>
+<p><img src="43_sp_q1_files/figure-html/preds_stp-1.png" class="img-fluid figure-img" width="960"></p>
 <figcaption class="figure-caption">Predicted trajectories.</figcaption>
 </figure>
 </div>
@@ -407,7 +387,7 @@ div.csl-indent {
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="42_fdiv_files/figure-html/theta_stp-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="43_sp_q1_files/figure-html/theta_stp-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption class="figure-caption">Theta posterior from recovery trajectories against its posterior.</figcaption>
 </figure>
 </div>
@@ -415,11 +395,6 @@ div.csl-indent {
 </div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
-<div id="ref-mouchet2010" class="csl-entry" role="listitem">
-Mouchet, Maud A., Sébastien Villéger, Norman W. H. Mason, and David Mouillot. 2010. <span>“Functional Diversity Measures: An Overview of Their Redundancy and Their Ability to Discriminate Community Assembly Rules.”</span> <em>Functional Ecology</em> 24 (4): 867–76. <a href="https://doi.org/10.1111/j.1365-2435.2010.01695.x">https://doi.org/10.1111/j.1365-2435.2010.01695.x</a>.
-</div>
-</div>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -657,13 +632,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./41_gen_q1.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Div - Genus</span>
+      <a href="./42_fdiv.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Div - FDiv</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./43_sp_q1.html" class="pagination-link">
-        <span class="nav-page-text">Div - Species</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./51_wd.html" class="pagination-link">
+        <span class="nav-page-text">Func - WD</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

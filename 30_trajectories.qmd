@@ -19,8 +19,11 @@ rec_pos <- cmdstan_model("models/recovery_positive.stan")
 rec <- cmdstan_model("models/recovery.stan")
 vars <- c(
   "ba", "agb", "nstem", "gini",
-  "diversity_q1_gen", "FDiv",
+  "diversity_q1_gen", "diversity_q1_sp", "FDiv",
   "WD_cwm_ba", "SLA_cwm_ba"
+)
+vars <- c(
+  "diversity_q1_sp"
 )
 lapply(vars, sample_equ)
 lapply(vars, sample_rec)
