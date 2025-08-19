@@ -31,7 +31,7 @@ metadata <- read_tsv("data/raw_data/metadata.tsv") %>%
   mutate(harvest_year_min = ifelse(site == "Paracou", 1986, harvest_year_min))
 vars <- c(
   "ba", "agb", "nstem", "gini",
-  "diversity_q1_gen", "diversity_q1_sp", "diversity_q0_gen",
+  "diversity_q1_gen", "diversity_q1_sp", "diversity_q0_gen", "diversity_q0_sp",
   "FDiv",
   "WD_cwm_ba", "SLA_cwm_ba"
 )
@@ -100,7 +100,7 @@ write_tsv(data_equ, "data/derived_data/data_equ.tsv")
 #| fig-width: 10
 vars <- c(
   "ba", "agb", "nstem", "gini",
-  "diversity_q1_gen", "diversity_q1_sp", "diversity_q0_gen",
+  "diversity_q1_gen", "diversity_q1_sp", "diversity_q0_gen", "diversity_q0_sp",
   "FDiv",
   "WD_cwm_ba", "SLA_cwm_ba"
 )

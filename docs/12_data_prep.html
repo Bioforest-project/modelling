@@ -210,6 +210,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./44_gen_q0.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Div - Genus 0</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./45_sp_q0.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Div - Species 0</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./51_wd.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Func - WD</span></a>
   </div>
@@ -329,7 +341,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">harvest_year_min =</span> <span class="fu">ifelse</span>(site <span class="sc">==</span> <span class="st">"Paracou"</span>, <span class="dv">1986</span>, harvest_year_min))</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ba"</span>, <span class="st">"agb"</span>, <span class="st">"nstem"</span>, <span class="st">"gini"</span>,</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"diversity_q1_gen"</span>, <span class="st">"diversity_q1_sp"</span>, <span class="st">"diversity_q0_gen"</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"diversity_q1_gen"</span>, <span class="st">"diversity_q1_sp"</span>, <span class="st">"diversity_q0_gen"</span>, <span class="st">"diversity_q0_sp"</span>,</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">"FDiv"</span>,</span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"WD_cwm_ba"</span>, <span class="st">"SLA_cwm_ba"</span></span>
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -395,7 +407,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ba"</span>, <span class="st">"agb"</span>, <span class="st">"nstem"</span>, <span class="st">"gini"</span>,</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"diversity_q1_gen"</span>, <span class="st">"diversity_q1_sp"</span>, <span class="st">"diversity_q0_gen"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"diversity_q1_gen"</span>, <span class="st">"diversity_q1_sp"</span>, <span class="st">"diversity_q0_gen"</span>, <span class="st">"diversity_q0_sp"</span>,</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"FDiv"</span>,</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"WD_cwm_ba"</span>, <span class="st">"SLA_cwm_ba"</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -500,7 +512,7 @@ $diversity_q0_gen</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-$FDiv</code></pre>
+$diversity_q0_sp</code></pre>
 </div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -512,7 +524,7 @@ $FDiv</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-$WD_cwm_ba</code></pre>
+$FDiv</code></pre>
 </div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -524,12 +536,24 @@ $WD_cwm_ba</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-$SLA_cwm_ba</code></pre>
+$WD_cwm_ba</code></pre>
 </div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="12_data_prep_files/figure-html/figs-10.png" class="img-fluid figure-img" width="960"></p>
+<figcaption class="figure-caption">Trajectories across sites and treatments.</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$SLA_cwm_ba</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12_data_prep_files/figure-html/figs-11.png" class="img-fluid figure-img" width="960"></p>
 <figcaption class="figure-caption">Trajectories across sites and treatments.</figcaption>
 </figure>
 </div>

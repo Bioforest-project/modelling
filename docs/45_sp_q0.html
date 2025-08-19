@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>modelling - Div - Genus</title>
+<title>modelling - Div - Species 0</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -54,26 +54,7 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -83,8 +64,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./42_fdiv.html" rel="next">
-<link href="./34_gini.html" rel="prev">
+<link href="./51_wd.html" rel="next">
+<link href="./44_gen_q0.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -115,8 +96,6 @@ div.csl-indent {
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -129,7 +108,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_trajectories.html">Trajectories</a></li><li class="breadcrumb-item"><a href="./41_gen_q1.html">Div - Genus</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_trajectories.html">Trajectories</a></li><li class="breadcrumb-item"><a href="./45_sp_q0.html">Div - Species 0</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -213,7 +192,7 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./41_gen_q1.html" class="sidebar-item-text sidebar-link active">
+  <a href="./41_gen_q1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Div - Genus</span></a>
   </div>
 </li>
@@ -237,7 +216,7 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./45_sp_q0.html" class="sidebar-item-text sidebar-link">
+  <a href="./45_sp_q0.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Div - Species 0</span></a>
   </div>
 </li>
@@ -326,7 +305,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Div - Genus</h1>
+<h1 class="title">Div - Species 0</h1>
 </div>
 
 
@@ -341,12 +320,11 @@ div.csl-indent {
 
 </header>
 
-<p>Genus diversity is measured using Hill’s number with order <span class="math inline">\(q=1\)</span>. Hill’s numbers are parameterised by a diversity order <span class="math inline">\(q\)</span>, which determines the sensitivity of the measures to the relative abundances of species. Hill’s numbers include the three most commonly used measures of species diversity as special cases: species richness (q = 0), Shannon diversity (q = 1) and Simpson diversity (q = 2). The indices were derived from taxonomic censuses and cleaned taxonomies using the R package entropart <span class="citation" data-cites="marcon2015">(<a href="99_references.html#ref-marcon2015" role="doc-biblioref">Marcon and Hérault 2015</a>)</span>. Finally, to account for differences in species identification, the indices have been corrected by a rarefaction curve, taking into account the value at 80% coverage.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>var <span class="ot">&lt;-</span> <span class="st">"diversity_q1_gen"</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>lab <span class="ot">&lt;-</span> <span class="fu">expression</span>(<span class="st">"Genus diversity"</span> <span class="sc">~</span> q <span class="sc">==</span> <span class="dv">1</span>)</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>var <span class="ot">&lt;-</span> <span class="st">"diversity_q0_sp"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>lab <span class="ot">&lt;-</span> <span class="fu">expression</span>(<span class="st">"Species diversity"</span> <span class="sc">~</span> q <span class="sc">==</span> <span class="dv">0</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">load_all</span>(var, lab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
@@ -358,7 +336,7 @@ div.csl-indent {
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="41_gen_q1_files/figure-html/theta_equ-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="45_sp_q0_files/figure-html/theta_equ-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption class="figure-caption">Theta posterior from forests at equilibirum.</figcaption>
 </figure>
 </div>
@@ -371,18 +349,18 @@ div.csl-indent {
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> variable    mean  median    sd   mad      q5     q95 rhat ess_bulk ess_tail
- lp__     5646.22 5646.47 45.74 43.60 5568.17 5722.98 1.02      403      851
- phi_p[1]    0.64    0.64  0.10  0.08    0.47    0.79 1.01     2683     1528
- phi_p[2]    0.50    0.50  0.10  0.08    0.35    0.64 1.01     1444      584
- phi_p[3]    0.74    0.75  0.09  0.07    0.60    0.87 1.00     2742     1648
- phi_p[4]    0.76    0.77  0.10  0.08    0.59    0.90 1.00     2508     1452
- phi_p[5]    0.59    0.59  0.11  0.07    0.43    0.76 1.00     1408      507
- phi_p[6]    0.47    0.47  0.11  0.08    0.31    0.64 1.00     2577      941
- phi_p[7]    0.44    0.44  0.10  0.08    0.29    0.59 1.00     2917     1558
- phi_p[8]    0.63    0.63  0.10  0.07    0.48    0.77 1.00     2421     1652
- phi_p[9]    0.47    0.47  0.10  0.08    0.31    0.62 1.00     2426     1140
+ lp__     5798.80 5799.71 48.46 49.15 5717.48 5877.26 1.09       44      735
+ phi_p[1]    0.42    0.43  0.14  0.13    0.19    0.63 1.01     2158     1507
+ phi_p[2]    0.48    0.49  0.13  0.12    0.26    0.68 1.01     2075     1603
+ phi_p[3]    0.38    0.38  0.13  0.13    0.16    0.58 1.00     2349     1483
+ phi_p[4]    0.64    0.66  0.13  0.11    0.41    0.83 1.00     1587      936
+ phi_p[5]    0.56    0.57  0.14  0.12    0.31    0.76 1.00     2425     1435
+ phi_p[6]    0.36    0.36  0.13  0.13    0.16    0.58 1.00     3048     1972
+ phi_p[7]    0.30    0.29  0.12  0.12    0.13    0.50 1.00     3521     1997
+ phi_p[8]    0.47    0.48  0.14  0.13    0.23    0.69 1.01     2158     1173
+ phi_p[9]    0.35    0.34  0.13  0.13    0.15    0.55 1.01     2200     1738
 
- # showing 10 of 35281 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
+ # showing 10 of 34956 rows (change via 'max_rows' argument or 'cmdstanr_max_rows' option)</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -393,7 +371,7 @@ div.csl-indent {
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="41_gen_q1_files/figure-html/pvo_stp-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="45_sp_q0_files/figure-html/pvo_stp-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption class="figure-caption">Predicted versus observed.</figcaption>
 </figure>
 </div>
@@ -407,7 +385,7 @@ div.csl-indent {
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="41_gen_q1_files/figure-html/preds_stp-1.png" class="img-fluid figure-img" width="960"></p>
+<p><img src="45_sp_q0_files/figure-html/preds_stp-1.png" class="img-fluid figure-img" width="960"></p>
 <figcaption class="figure-caption">Predicted trajectories.</figcaption>
 </figure>
 </div>
@@ -421,7 +399,7 @@ div.csl-indent {
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="41_gen_q1_files/figure-html/theta_stp-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="45_sp_q0_files/figure-html/theta_stp-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption class="figure-caption">Theta posterior from recovery trajectories against its posterior.</figcaption>
 </figure>
 </div>
@@ -429,11 +407,6 @@ div.csl-indent {
 </div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
-<div id="ref-marcon2015" class="csl-entry" role="listitem">
-Marcon, Eric, and Bruno Hérault. 2015. <span>“<span><strong>Entropart</strong></span>: An<span><em>R</em></span>Package to Measure and Partition Diversity.”</span> <em>Journal of Statistical Software</em> 67 (8). <a href="https://doi.org/10.18637/jss.v067.i08">https://doi.org/10.18637/jss.v067.i08</a>.
-</div>
-</div>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -671,13 +644,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./34_gini.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Str - Gini</span>
+      <a href="./44_gen_q0.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Div - Genus 0</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./42_fdiv.html" class="pagination-link">
-        <span class="nav-page-text">Div - FDiv</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./51_wd.html" class="pagination-link">
+        <span class="nav-page-text">Func - WD</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

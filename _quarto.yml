@@ -20,6 +20,7 @@ book:
         - 42_fdiv.qmd
         - 43_sp_q1.qmd
         - 44_gen_q0.qmd
+        - 45_sp_q0.qmd
         - 51_wd.qmd
         - 52_sla.qmd
     - part: 60_parameters.qmd
