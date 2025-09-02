@@ -17,14 +17,14 @@ transformed data {
 }
 parameters {
   vector<lower=0.1, upper=1>[p] phi_p; // disturbance intensity
-  vector<lower=0, upper=0.5>[p] lambda_p; // recovery rate
-  real<lower=0, upper=0.5> mu_lambda;
+  vector<lower=0.001, upper=0.5>[p] lambda_p; // recovery rate
+  real<lower=0.001, upper=0.5> mu_lambda;
   real<lower=0> sigma_lambda;
   vector<lower=0, upper=2>[p] delta_p; // bump height
   real<lower=0, upper=2> mu_delta;
   real<lower=0> sigma_delta;
-  vector<lower=5-3, upper=40-3>[s] tau0_s; // bump time
-  real<lower=5-3, upper=40-3> mu_tau0;
+  vector<lower=6-3, upper=40-3>[s] tau0_s; // bump time
+  real<lower=6-3, upper=40-3> mu_tau0;
   real<lower=0> sigma_tau;
   vector<lower=(mu_theta_s-sigma_theta_s)*0.1, upper=(mu_theta_s+sigma_theta_s)*10>[s] theta_s; // asymptotic value
   real<lower=0> sigma; // residual variation

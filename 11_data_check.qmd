@@ -8,7 +8,7 @@ vars <- c(
   "diversity_q1_gen", "FDiv",
   "WD_cwm_ba", "SLA_cwm_ba"
 )
-aggregated_file <- "data/raw_data/aggregated_data_v82.csv"
+aggregated_file <- "data/raw_data/aggregated_data_v9.csv"
 options(knitr.kable.NA = "")
 ```
 
@@ -28,6 +28,13 @@ read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsM
   rename_all(tolower) %>%
   select(site, plot, treatment, year_of_harvest, longitude) %>%
   write_tsv("data/raw_data/metadata.tsv")
+read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?usp=sharing",
+           "plot_correspondance", col_types = "c") %>% 
+  write_tsv("data/raw_data/plot_metadata.tsv")
+read_sheet("https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?usp=sharing",
+           "spurious", col_types = "c") %>% 
+  na.omit() %>% 
+  write_tsv("data/raw_data/spurious.tsv")
 ```
 
 The following site names in metadata need to be fixed:

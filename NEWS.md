@@ -1,3 +1,4 @@
+-   modelling 0.1.0.9045: aggregated v9, tau\>6, lambda\>0.001
 -   modelling 0.1.0.9044: adding gen and sp 0
 -   modelling 0.1.0.9043: plotnum fix in pars
 -   modelling 0.1.0.9042: aggregated v82

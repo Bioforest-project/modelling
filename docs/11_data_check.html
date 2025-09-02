@@ -340,7 +340,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">read_sheet</span>(<span class="st">"https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?gid=0#gid=0"</span>, <span class="at">col_types =</span> <span class="st">"c"</span>) <span class="sc">%&gt;%</span> <span class="co"># nolint</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(tolower) <span class="sc">%&gt;%</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(site, plot, treatment, year_of_harvest, longitude) <span class="sc">%&gt;%</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_tsv</span>(<span class="st">"data/raw_data/metadata.tsv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_tsv</span>(<span class="st">"data/raw_data/metadata.tsv"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">read_sheet</span>(<span class="st">"https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?usp=sharing"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>           <span class="st">"plot_correspondance"</span>, <span class="at">col_types =</span> <span class="st">"c"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_tsv</span>(<span class="st">"data/raw_data/plot_metadata.tsv"</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">read_sheet</span>(<span class="st">"https://docs.google.com/spreadsheets/d/1fq2owxMBLBwwibcdw2uQQFxnIhsMbaH4Qcj_xUwVvSQ/edit?usp=sharing"</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>           <span class="st">"spurious"</span>, <span class="at">col_types =</span> <span class="st">"c"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_tsv</span>(<span class="st">"data/raw_data/spurious.tsv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>The following site names in metadata need to be fixed:</p>
@@ -572,32 +579,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <th style="text-align: left;">site</th>
 <th style="text-align: right;">agb</th>
 <th style="text-align: right;">ba</th>
-<th style="text-align: right;">nstem</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">BAFOG</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">Embrapa Acre</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Kibale</td>
-<td style="text-align: right;">18</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;"></td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">Kibale</td>
+<td style="text-align: right;">118</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">Nelliyampathy</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 </tr>
 </tbody>
@@ -725,20 +722,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">BAFOG</td>
+<td style="text-align: left;">Embrapa Acre</td>
 <td style="text-align: right;">1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Embrapa Acre</td>
+<td style="text-align: left;">Kibale</td>
 <td style="text-align: right;">2</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Kibale</td>
-<td style="text-align: right;">3</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">Nelliyampathy</td>
-<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
 </tr>
 </tbody>
 </table>
@@ -778,140 +771,148 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">2</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Corinto</td>
+<td style="text-align: left;">BAFOG</td>
 <td style="text-align: right;">3</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Ecosilva</td>
+<td style="text-align: left;">Corinto</td>
 <td style="text-align: right;">4</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Iracema</td>
+<td style="text-align: left;">Ecosilva</td>
 <td style="text-align: right;">5</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Iwokrama</td>
+<td style="text-align: left;">Iracema</td>
 <td style="text-align: right;">6</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Jari</td>
+<td style="text-align: left;">Iwokrama</td>
 <td style="text-align: right;">7</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Jenaro Herrera</td>
+<td style="text-align: left;">Jari</td>
 <td style="text-align: right;">8</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Kabo</td>
+<td style="text-align: left;">Jenaro Herrera</td>
 <td style="text-align: right;">9</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Lesong</td>
+<td style="text-align: left;">Kabo</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Malinau</td>
+<td style="text-align: left;">Lesong</td>
 <td style="text-align: right;">11</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Manare</td>
+<td style="text-align: left;">Malinau</td>
 <td style="text-align: right;">12</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Mbaiki</td>
+<td style="text-align: left;">Manare</td>
 <td style="text-align: right;">13</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Mil</td>
+<td style="text-align: left;">Mbaiki</td>
 <td style="text-align: right;">14</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Misiones</td>
+<td style="text-align: left;">Mil</td>
 <td style="text-align: right;">15</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Moju</td>
+<td style="text-align: left;">Misiones</td>
 <td style="text-align: right;">16</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Montagne Tortue</td>
+<td style="text-align: left;">Moju</td>
 <td style="text-align: right;">17</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">PAD Limoeiro Tabocal</td>
+<td style="text-align: left;">Montagne Tortue</td>
 <td style="text-align: right;">18</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Pad Limo 2 Barracos</td>
+<td style="text-align: left;">PAD Limoeiro Tabocal</td>
 <td style="text-align: right;">19</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Pad Limo Chico Bocao</td>
+<td style="text-align: left;">Pad Limo 2 Barracos</td>
 <td style="text-align: right;">20</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Pad Limo Cumaru</td>
+<td style="text-align: left;">Pad Limo Chico Bocao</td>
 <td style="text-align: right;">21</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Pad Limo Jatoba</td>
+<td style="text-align: left;">Pad Limo Cumaru</td>
 <td style="text-align: right;">22</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Pad Limo Pocao</td>
+<td style="text-align: left;">Pad Limo Jatoba</td>
 <td style="text-align: right;">23</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Pad Limo STCP</td>
+<td style="text-align: left;">Pad Limo Pocao</td>
 <td style="text-align: right;">24</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Paracou</td>
+<td style="text-align: left;">Pad Limo STCP</td>
 <td style="text-align: right;">25</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Peixoto</td>
+<td style="text-align: left;">Paracou</td>
 <td style="text-align: right;">26</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Peteco</td>
+<td style="text-align: left;">Peixoto</td>
 <td style="text-align: right;">27</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Sao Nicolau</td>
+<td style="text-align: left;">Peteco</td>
 <td style="text-align: right;">28</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Ser Filipinas</td>
+<td style="text-align: left;">Sao Nicolau</td>
 <td style="text-align: right;">29</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">STREK</td>
+<td style="text-align: left;">Ser Filipinas</td>
 <td style="text-align: right;">30</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Sungai Lalang</td>
+<td style="text-align: left;">STREK</td>
 <td style="text-align: right;">31</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Tapajos Km114</td>
+<td style="text-align: left;">SUAS</td>
 <td style="text-align: right;">32</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Tapajos Km67</td>
+<td style="text-align: left;">Sungai Lalang</td>
 <td style="text-align: right;">33</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Tirimbina</td>
+<td style="text-align: left;">Tapajos Km114</td>
 <td style="text-align: right;">34</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Ulu Muda</td>
+<td style="text-align: left;">Tapajos Km67</td>
 <td style="text-align: right;">35</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Uppangala</td>
+<td style="text-align: left;">Tirimbina</td>
 <td style="text-align: right;">36</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ulu Muda</td>
+<td style="text-align: right;">37</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Uppangala</td>
+<td style="text-align: right;">38</td>
 </tr>
 </tbody>
 </table>

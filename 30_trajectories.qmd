@@ -24,7 +24,7 @@ vars <- c(
   "WD_cwm_ba", "SLA_cwm_ba"
 )
 vars <- c(
-  "diversity_q0_sp"
+  "WD_cwm_ba"
 )
 lapply(vars, sample_equ)
 lapply(vars, sample_rec)
